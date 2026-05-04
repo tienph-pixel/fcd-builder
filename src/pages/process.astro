@@ -1,0 +1,106 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SectionLabel from '../components/SectionLabel.astro';
+import ProcessStep from '../components/ProcessStep.astro';
+
+const phases = [
+  {
+    number: '1',
+    title: 'Discovery & Planning',
+    description: 'Every project starts with the same thing: a real conversation. We listen, we ask the right questions, and we tell you honestly whether we\'re a fit before anyone signs anything.',
+    items: [
+      'Initial consultation (free) — in person or video call',
+      'Site visit and feasibility review',
+      'Preliminary budget range',
+      'Scope of work and project timeline estimate',
+    ],
+  },
+  {
+    number: '2',
+    title: 'Design & Permitting',
+    description: 'Once you\'re ready to move forward, we move into design coordination, permit submittal, and contract finalization. This is where the unknowns get nailed down.',
+    items: [
+      'Architect / designer coordination (or referral)',
+      'Permit application and plan check management',
+      'Subcontractor bidding and selection',
+      'Final contract and construction schedule',
+    ],
+  },
+  {
+    number: '3',
+    title: 'Active Construction',
+    description: 'Boots on the ground. Every active day on your project is documented, tracked, and reported. You will never have to ask, "What\'s happening on my job?"',
+    items: [
+      'Daily photo logs and progress updates',
+      'Weekly check-in calls with PM',
+      'Budget tracking — no surprises',
+      'Clean, secure job site maintained daily',
+    ],
+  },
+  {
+    number: '4',
+    title: 'Closeout & Delivery',
+    description: 'A project isn\'t done when the last drywall screw is set. It\'s done when your final walkthrough is clean, your warranty paperwork is in your hand, and you\'re standing in the room you imagined.',
+    items: [
+      'Final inspections and city sign-off',
+      'Punch list completed to zero',
+      'Final walkthrough with client',
+      'Warranty documentation and handoff',
+    ],
+  },
+];
+---
+<BaseLayout
+  title="How We Work — Our Construction Process"
+  description="See exactly how FCD manages every project from first call to final delivery."
+>
+
+  <!-- HERO -->
+  <section class="relative flex items-center" style="min-height: 60vh;">
+    <div class="absolute inset-0 bg-fcd-dark"></div>
+    <div class="absolute inset-0" style="background: radial-gradient(ellipse at center, rgba(201,168,76,0.08), rgba(10,10,15,0));"></div>
+    <div class="relative max-w-7xl mx-auto px-6 lg:px-12 py-16 w-full">
+      <SectionLabel>Our Process</SectionLabel>
+      <h1 class="font-heading font-bold tracking-tight text-fcd-navy text-5xl lg:text-7xl leading-[1.05] max-w-4xl">
+        Our Process. Your Peace of Mind.
+      </h1>
+      <p class="mt-8 text-base lg:text-lg text-fcd-navy/80 leading-relaxed max-w-2xl">
+        We believe the best client experience starts before we ever swing a hammer. Here's exactly how we run every project.
+      </p>
+    </div>
+  </section>
+
+  <!-- PHASES -->
+  <section class="bg-fcd-cream py-24 lg:py-32">
+    <div class="max-w-4xl mx-auto px-6 lg:px-12 space-y-16">
+      {phases.map((p, i) => (
+        <div>
+          <ProcessStep number={p.number} title={p.title} description={p.description} items={p.items} />
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <!-- TECHNOLOGY SECTION -->
+  <section class="bg-fcd-dark py-24 lg:py-32">
+    <div class="max-w-4xl mx-auto px-6 lg:px-12 text-center">
+      <SectionLabel>Technology That Keeps You in the Loop</SectionLabel>
+      <h2 class="font-heading text-4xl text-fcd-navy font-semibold mb-6">No More Wondering What's Happening on Your Job.</h2>
+      <p class="text-base lg:text-lg text-fcd-navy/80 leading-relaxed">
+        We use modern project management tools so you always have visibility — no chasing, no wondering what's happening on your job. From the first day of construction to the final walkthrough, you'll get daily logs, real-time photo updates, and a single point of contact who actually answers the phone.
+      </p>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="bg-fcd-cream py-24 lg:py-32 border-t border-fcd-border">
+    <div class="max-w-4xl mx-auto px-6 lg:px-12 text-center">
+      <h2 class="font-heading text-4xl lg:text-5xl text-fcd-navy font-bold tracking-tight">Ready to Walk Through It Together?</h2>
+      <p class="mt-6 text-base lg:text-lg text-fcd-navy/80 max-w-2xl mx-auto">A 10-minute call gets us aligned on scope, timeline, and a real ballpark range.</p>
+      <div class="mt-10">
+        <a href="/contact" class="inline-flex items-center gap-2 bg-fcd-gold text-fcd-black font-semibold text-sm tracking-widest2 uppercase px-10 py-5 hover:bg-fcd-gold-lt transition-colors duration-200">Start My Project →</a>
+      </div>
+    </div>
+  </section>
+
+</BaseLayout>

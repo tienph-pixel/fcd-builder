@@ -1,0 +1,113 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SectionLabel from '../components/SectionLabel.astro';
+import ContactForm from '../components/ContactForm.astro';
+
+const faqs = [
+  { q: 'What areas do you serve?', a: 'We serve Orange County, CA and surrounding cities.' },
+  { q: 'Are you licensed and insured?', a: 'Yes. CA Lic. #1127416. Fully licensed, bonded, and insured on every project.' },
+  { q: 'How long have you been in business?', a: "We were founded in 2024 by a team that has been building in Orange County for years. We're new to the brand, not new to the trade." },
+  { q: 'Do you handle permits?', a: "Yes. We pull all permits. You never have to deal with the city yourself — that's our job." },
+  { q: 'Do you handle HOA approvals?', a: 'Yes. If your project requires HOA approval, we manage the submission process and attend review meetings when needed.' },
+  { q: 'Can I live in my house during a remodel?', a: "It depends on the scope. For kitchen and bathroom remodels, most clients stay home. For whole-home renovations, we'll give you an honest answer about what to expect before we start." },
+  { q: 'How do you handle selections and allowances?', a: 'We establish your allowances upfront in your contract. You make selections with our guidance, and we track every choice against your budget in real time — no surprises at the end.' },
+  { q: 'How do change orders work?', a: 'If the scope changes, we issue a written change order with the cost and timeline impact before any additional work begins. You approve it in writing. Nothing happens without your sign-off.' },
+  { q: 'What is your warranty?', a: "We provide a 1-year workmanship warranty on all labor. Manufacturer warranties on materials pass through directly to you. We'll walk you through what's covered at final walkthrough." },
+  { q: 'Can I get a price without drawings?', a: 'Yes. We can give you a realistic budget range on the first call based on your scope and square footage. Full pricing requires permit-ready drawings.' },
+  { q: 'Can you give me a ballpark before moving into full estimating?', a: "Absolutely. A 10-minute call is usually enough to give you a ballpark range. We won't waste your time or ours." },
+  { q: 'How long does an ADU take to build?', a: 'Typically 4–6 months from permit approval to move-in, depending on size and complexity.' },
+  { q: 'Do you do design-build or work from existing plans?', a: "Both. We can coordinate design for you, or work directly from your architect's plans. Already have drawings? Email them to estimating@fcdteam.com." },
+  { q: 'What is your typical project minimum?', a: 'We take on projects starting at $50K. Most of our projects range from $100K–$1M+.' },
+  { q: 'How do you handle communication during a project?', a: 'You get daily photo logs, a dedicated PM as your point of contact, and weekly check-in calls. No chasing us down.' },
+  { q: 'Can I see past projects similar to mine?', a: "Yes. Reach out and we'll share relevant examples from our portfolio." },
+  { q: 'What happens after I fill out this form?', a: 'We review your submission and respond within 1 business day to schedule a free consultation call.' },
+];
+---
+<BaseLayout
+  title="Start My Project"
+  description="Tell us about your project. We respond within 1 business day."
+>
+
+  <!-- HERO -->
+  <section class="relative flex items-center" style="min-height: 50vh;">
+    <div class="absolute inset-0 bg-fcd-dark"></div>
+    <div class="absolute inset-0" style="background: radial-gradient(ellipse at center, rgba(201,168,76,0.08), rgba(10,10,15,0));"></div>
+    <div class="relative max-w-7xl mx-auto px-6 lg:px-12 py-24 w-full">
+      <SectionLabel>Start My Project</SectionLabel>
+      <h1 class="font-heading font-bold tracking-tight text-fcd-navy text-5xl lg:text-7xl leading-[1.05] max-w-4xl">
+        Let's Talk About Your Project.
+      </h1>
+    </div>
+  </section>
+
+  <!-- TWO-COLUMN: INFO + FORM -->
+  <section class="bg-fcd-cream py-24 lg:py-32">
+    <div class="max-w-7xl mx-auto px-6 lg:px-12 grid grid-cols-1 lg:grid-cols-12 gap-12">
+
+      <div class="lg:col-span-5">
+        <h2 class="font-heading text-3xl lg:text-4xl text-fcd-navy font-semibold mb-6">What Happens Next.</h2>
+        <p class="text-base lg:text-lg text-fcd-navy/80 leading-relaxed mb-8">
+          Tell us a little about your project below. Within 1 business day, you'll hear directly from our team to schedule a free consultation call. We'll give you a real ballpark range, talk through scope and timeline, and tell you honestly whether we're a fit.
+        </p>
+
+        <div class="bg-fcd-card border border-fcd-border rounded-lg p-6 mb-6">
+          <p class="text-xs font-semibold tracking-widest2 uppercase text-fcd-gold mb-1">Response Time</p>
+          <p class="font-heading text-xl text-fcd-navy font-semibold">We respond within 1 business day.</p>
+        </div>
+
+        <div class="space-y-4 text-base">
+          <div class="flex items-start gap-3">
+            <svg class="w-5 h-5 text-fcd-gold mt-1 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 5a2 2 0 012-2h2.28a2 2 0 011.94 1.515l.7 2.8a2 2 0 01-.45 1.95l-1.27 1.27a16 16 0 006.586 6.586l1.27-1.27a2 2 0 011.95-.45l2.8.7A2 2 0 0121 18.72V21a2 2 0 01-2 2A18 18 0 013 5z"/></svg>
+            <a href="tel:7149279777" class="text-fcd-navy hover:text-fcd-gold transition-colors">(714) 927-9777</a>
+          </div>
+          <div class="flex items-start gap-3">
+            <svg class="w-5 h-5 text-fcd-gold mt-1 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+            <a href="mailto:ceo@fcdteam.com" class="text-fcd-navy hover:text-fcd-gold transition-colors">ceo@fcdteam.com</a>
+          </div>
+          <div class="flex items-start gap-3">
+            <svg class="w-5 h-5 text-fcd-gold mt-1 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a2 2 0 01-2.828 0l-4.243-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+            <span class="text-fcd-navy">Orange County, CA</span>
+          </div>
+        </div>
+
+        <div class="mt-10 pt-8 border-t border-fcd-border">
+          <p class="text-xs font-semibold tracking-widest2 uppercase text-fcd-gold mb-3">Already Have Drawings?</p>
+          <p class="text-base text-fcd-navy/80 leading-relaxed">
+            Send your permit-ready plans directly to our estimating team:
+          </p>
+          <a href="mailto:estimating@fcdteam.com" class="mt-2 inline-block text-fcd-gold hover:text-fcd-gold-lt transition-colors underline underline-offset-4">estimating@fcdteam.com</a>
+        </div>
+      </div>
+
+      <div class="lg:col-span-7">
+        <div class="bg-fcd-card border border-fcd-border rounded-lg p-8 lg:p-10">
+          <ContactForm />
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="bg-fcd-dark py-24 lg:py-32">
+    <div class="max-w-4xl mx-auto px-6 lg:px-12">
+      <div class="mb-16">
+        <SectionLabel>FAQ</SectionLabel>
+        <h2 class="font-heading text-4xl text-fcd-navy font-semibold">Questions, Answered.</h2>
+      </div>
+
+      <div class="space-y-3">
+        {faqs.map((f, i) => (
+          <details class="group bg-fcd-card border border-fcd-border rounded-lg overflow-hidden hover:border-fcd-gold/50 transition-colors">
+            <summary class="flex items-center justify-between gap-4 p-6 cursor-pointer list-none">
+              <h3 class="font-heading text-lg text-fcd-navy font-semibold">{f.q}</h3>
+              <svg class="w-5 h-5 text-fcd-gold flex-shrink-0 transition-transform group-open:rotate-45" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
+            </summary>
+            <div class="px-6 pb-6 text-fcd-muted leading-relaxed">{f.a}</div>
+          </details>
+        ))}
+      </div>
+    </div>
+  </section>
+
+</BaseLayout>

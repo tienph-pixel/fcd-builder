@@ -1,0 +1,46 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SectionLabel from '../components/SectionLabel.astro';
+---
+<BaseLayout
+  title="Thank You"
+  description="Thanks for reaching out. Our team will review your project and respond within 1 business day."
+>
+  <section class="relative flex items-center" style="min-height: 90vh;">
+    <div class="absolute inset-0 bg-fcd-dark"></div>
+    <div class="absolute inset-0" style="background: radial-gradient(ellipse at center, rgba(201,168,76,0.10), rgba(10,10,15,0));"></div>
+
+    <div class="relative max-w-3xl mx-auto px-6 lg:px-12 py-32 w-full text-center">
+
+      <div class="inline-flex items-center justify-center w-28 h-28 rounded-full border-2 border-fcd-gold mb-10" style="box-shadow: 0 0 60px rgba(201,168,76,0.15);">
+        <svg class="w-14 h-14 text-fcd-gold" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
+        </svg>
+      </div>
+
+      <SectionLabel>Inquiry Received</SectionLabel>
+      <h1 class="font-heading font-bold tracking-tight text-fcd-navy text-4xl lg:text-6xl leading-[1.05]">
+        We Received Your Request.
+      </h1>
+      <p class="mt-8 text-base lg:text-lg text-fcd-navy/80 leading-relaxed max-w-2xl mx-auto">
+        Our team will review your project details and reach out within 1 business day. We look forward to building something great together.
+      </p>
+
+      <div class="mt-12">
+        <a href="/" class="inline-flex items-center gap-2 bg-fcd-gold text-fcd-black font-semibold text-sm tracking-widest2 uppercase px-10 py-5 hover:bg-fcd-gold-lt transition-colors duration-200">
+          Back to Home →
+        </a>
+      </div>
+
+      <div class="mt-16 pt-10 border-t border-fcd-border max-w-md mx-auto">
+        <p class="text-xs font-semibold tracking-widest2 uppercase text-fcd-gold mb-4">Need to Reach Us Sooner?</p>
+        <a href="tel:7149279777" class="inline-flex items-center gap-3 group">
+          <svg class="w-6 h-6 text-fcd-gold" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 5a2 2 0 012-2h2.28a2 2 0 011.94 1.515l.7 2.8a2 2 0 01-.45 1.95l-1.27 1.27a16 16 0 006.586 6.586l1.27-1.27a2 2 0 011.95-.45l2.8.7A2 2 0 0121 18.72V21a2 2 0 01-2 2A18 18 0 013 5z"/></svg>
+          <span class="font-heading text-2xl lg:text-3xl text-fcd-navy font-semibold group-hover:text-fcd-gold transition-colors">(714) 927-9777</span>
+        </a>
+        <p class="mt-3 text-sm text-fcd-muted">Call us directly — Orange County, CA</p>
+      </div>
+
+    </div>
+  </section>
+</BaseLayout>

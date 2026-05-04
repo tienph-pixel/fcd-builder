@@ -1,0 +1,33 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SectionLabel from '../components/SectionLabel.astro';
+---
+<BaseLayout
+  title="Page Not Found"
+  description="The page you're looking for doesn't exist."
+>
+  <section class="relative flex items-center" style="min-height: 80vh;">
+    <div class="absolute inset-0 bg-fcd-dark"></div>
+    <div class="absolute inset-0" style="background: radial-gradient(ellipse at center, rgba(201,168,76,0.08), rgba(10,10,15,0));"></div>
+
+    <div class="relative max-w-3xl mx-auto px-6 lg:px-12 py-32 w-full text-center">
+      <p class="font-heading text-7xl lg:text-9xl font-bold text-fcd-gold mb-4">404</p>
+      <SectionLabel>Page Not Found</SectionLabel>
+      <h1 class="font-heading font-bold tracking-tight text-fcd-navy text-4xl lg:text-5xl leading-[1.05]">
+        We Couldn't Find What You Were Looking For.
+      </h1>
+      <p class="mt-8 text-base lg:text-lg text-fcd-navy/80 leading-relaxed max-w-2xl mx-auto">
+        The page may have moved or never existed. Let's get you back to where you need to be.
+      </p>
+
+      <div class="mt-10 flex flex-wrap justify-center gap-4">
+        <a href="/" class="inline-flex items-center gap-2 bg-fcd-gold text-fcd-black font-semibold text-sm tracking-widest2 uppercase px-8 py-4 hover:bg-fcd-gold-lt transition-colors duration-200">
+          Back to Home →
+        </a>
+        <a href="/contact" class="inline-flex items-center gap-2 border border-fcd-gold text-fcd-gold font-semibold text-sm tracking-widest2 uppercase px-8 py-4 hover:bg-fcd-gold hover:text-fcd-black transition-colors duration-200">
+          Start My Project →
+        </a>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

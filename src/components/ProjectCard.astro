@@ -1,0 +1,23 @@
+---
+interface Props {
+  image: string;
+  title: string;
+  type: string;
+  location: string;
+  category?: string;
+}
+const { image, title, type, location, category } = Astro.props;
+---
+<div
+  class="project-card group overflow-hidden rounded-lg bg-fcd-card border border-fcd-border hover:border-fcd-gold transition-colors duration-300 cursor-pointer"
+  data-category={category ?? type.toLowerCase().replace(/\s+/g, '-')}
+>
+  <div class="aspect-[4/3] overflow-hidden">
+    <img src={image} alt={title} loading="lazy" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+  </div>
+  <div class="p-5">
+    <p class="text-xs font-semibold tracking-widest2 uppercase text-fcd-gold mb-1">{type}</p>
+    <h3 class="font-heading text-lg text-fcd-navy font-semibold">{title}</h3>
+    <p class="text-sm text-fcd-muted mt-1">{location}</p>
+  </div>
+</div>

@@ -1,0 +1,28 @@
+---
+interface Props {
+  number: string;
+  title: string;
+  description: string;
+  items?: string[];
+}
+const { number, title, description, items = [] } = Astro.props;
+---
+<div class="flex gap-6 items-start">
+  <div class="flex-shrink-0 w-12 h-12 rounded-full border border-fcd-gold flex items-center justify-center">
+    <span class="font-heading font-bold text-fcd-gold">{number}</span>
+  </div>
+  <div class="flex-1">
+    <h3 class="font-heading text-2xl text-fcd-navy font-semibold mb-2">{title}</h3>
+    <p class="font-body text-fcd-muted leading-relaxed mb-3">{description}</p>
+    {items.length > 0 && (
+      <ul class="space-y-1">
+        {items.map(item => (
+          <li class="flex items-start gap-2 text-sm text-fcd-muted">
+            <span class="text-fcd-gold mt-0.5">—</span>
+            <span>{item}</span>
+          </li>
+        ))}
+      </ul>
+    )}
+  </div>
+</div>

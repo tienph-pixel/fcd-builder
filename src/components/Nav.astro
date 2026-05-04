@@ -1,0 +1,137 @@
+---
+const links = [
+  { href: '/about',    label: 'About' },
+  { href: '/services', label: 'Services' },
+  { href: '/projects', label: 'Projects' },
+  { href: '/process',  label: 'Process' },
+  { href: '/contact',  label: 'Contact' },
+];
+---
+<header
+  id="site-nav"
+  class="sticky top-0 z-50 transition-colors duration-200"
+  style="background: rgba(247,244,239,0.92); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);"
+>
+  <div class="max-w-7xl mx-auto px-6 lg:px-12 flex items-center justify-between h-20">
+    <a href="/" class="flex items-center gap-3 shrink-0">
+      <img
+        src="/images/logo.png"
+        alt="Future Construction & Design"
+        class="h-14 w-auto"
+      />
+    </a>
+
+    <nav class="hidden lg:flex items-center gap-10">
+      {links.map(l => (
+        <a
+          href={l.href}
+          class="font-body text-sm tracking-widest2 uppercase text-fcd-navy/80 hover:text-fcd-gold transition-colors"
+        >{l.label}</a>
+      ))}
+    </nav>
+
+    <a
+      href="/contact"
+      class="hidden lg:inline-flex items-center gap-2 bg-fcd-gold text-fcd-black font-semibold text-xs tracking-widest2 uppercase px-6 py-3 hover:bg-fcd-gold-lt transition-colors duration-200"
+    >Start My Project →</a>
+
+    <button
+      id="nav-toggle"
+      class="lg:hidden text-fcd-navy p-2"
+      aria-label="Open menu"
+      aria-expanded="false"
+    >
+      <svg id="icon-open" class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/></svg>
+      <svg id="icon-close" class="w-6 h-6 hidden" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 6l12 12M6 18L18 6"/></svg>
+    </button>
+  </div>
+
+  <div
+    id="nav-drawer"
+    class="lg:hidden invisible opacity-0 transition-opacity duration-200 ease-out"
+    style="position: fixed; top: 0; left: 0; width: 100%; height: 100vh; height: 100dvh; z-index: 100; background: #f7f4ef;"
+  >
+    <button
+      id="nav-close"
+      type="button"
+      class="absolute top-6 right-6 text-fcd-navy p-2"
+      aria-label="Close menu"
+    >
+      <svg class="w-7 h-7" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 6l12 12M6 18L18 6"/></svg>
+    </button>
+
+    <nav class="flex flex-col items-center justify-center h-full gap-8 px-6">
+      {links.map(l => (
+        <a
+          href={l.href}
+          class="nav-mobile-link font-heading text-3xl text-fcd-navy hover:text-fcd-gold transition-colors"
+        >{l.label}</a>
+      ))}
+      <a
+        href="/contact"
+        class="nav-mobile-link mt-4 inline-flex items-center justify-center gap-2 bg-fcd-gold text-fcd-black font-semibold text-sm tracking-widest2 uppercase px-8 py-4 hover:bg-fcd-gold-lt transition-colors"
+      >Start My Project →</a>
+    </nav>
+  </div>
+</header>
+
+<script is:inline>
+  (function() {
+    const nav = document.getElementById('site-nav');
+    const toggle = document.getElementById('nav-toggle');
+    const closeBtn = document.getElementById('nav-close');
+    const drawer = document.getElementById('nav-drawer');
+    const iconOpen = document.getElementById('icon-open');
+    const iconClose = document.getElementById('icon-close');
+
+    function setOpen(open) {
+      if (!drawer || !toggle || !iconOpen || !iconClose) return;
+      if (open) {
+        drawer.classList.remove('invisible', 'opacity-0');
+        iconOpen.classList.add('hidden');
+        iconClose.classList.remove('hidden');
+        toggle.setAttribute('aria-expanded', 'true');
+        document.body.style.overflow = 'hidden';
+      } else {
+        drawer.classList.add('opacity-0');
+        iconOpen.classList.remove('hidden');
+        iconClose.classList.add('hidden');
+        toggle.setAttribute('aria-expanded', 'false');
+        document.body.style.overflow = '';
+        setTimeout(function() { drawer.classList.add('invisible'); }, 200);
+      }
+    }
+
+    if (toggle) {
+      toggle.addEventListener('click', function() {
+        const isOpen = toggle.getAttribute('aria-expanded') === 'true';
+        setOpen(!isOpen);
+      });
+    }
+
+    if (closeBtn) {
+      closeBtn.addEventListener('click', function() { setOpen(false); });
+    }
+
+    document.querySelectorAll('.nav-mobile-link').forEach(function(a) {
+      a.addEventListener('click', function() { setOpen(false); });
+    });
+
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape' && toggle && toggle.getAttribute('aria-expanded') === 'true') {
+        setOpen(false);
+      }
+    });
+
+    function onScroll() {
+      if (!nav) return;
+      if (window.scrollY > 80) {
+        nav.style.borderBottom = '1px solid #e5e0d6';
+      } else {
+        nav.style.borderBottom = 'none';
+      }
+    }
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+  })();
+</script>

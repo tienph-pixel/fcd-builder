@@ -1,0 +1,111 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SectionLabel from '../components/SectionLabel.astro';
+import ProjectCard from '../components/ProjectCard.astro';
+
+const projects = [
+  { image: '/images/projects/custom-home-1.jpg', title: 'Modern Custom Build',     type: 'Custom Home',  category: 'custom-home',  location: 'Newport Beach, CA' },
+  { image: '/images/projects/custom-home-2.jpg', title: 'Coastal Family Home',     type: 'Custom Home',  category: 'custom-home',  location: 'Huntington Beach, CA' },
+  { image: '/images/projects/custom-home-3.jpg', title: 'Hillside Custom',         type: 'Custom Home',  category: 'custom-home',  location: 'Laguna Beach, CA' },
+  { image: '/images/projects/adu-1.jpg',          title: 'Detached Backyard ADU',   type: 'ADU',          category: 'adu',          location: 'Anaheim, CA' },
+  { image: '/images/projects/adu-2.jpg',          title: 'Garage Conversion ADU',   type: 'ADU',          category: 'adu',          location: 'Garden Grove, CA' },
+  { image: '/images/projects/adu-3.jpg',          title: 'Modern Detached ADU',     type: 'ADU',          category: 'adu',          location: 'Westminster, CA' },
+  { image: '/images/projects/adu-4.jpg',          title: 'Permitted Backyard ADU',  type: 'ADU',          category: 'adu',          location: 'Fountain Valley, CA' },
+  { image: '/images/projects/remodel-1.jpg',      title: 'Whole-Home Remodel',      type: 'Remodel',      category: 'remodel',      location: 'Irvine, CA' },
+  { image: '/images/projects/remodel-2.jpg',      title: 'Kitchen Renovation',      type: 'Remodel',      category: 'remodel',      location: 'Costa Mesa, CA' },
+  { image: '/images/projects/remodel-3.jpg',      title: 'Master Bath Remodel',     type: 'Remodel',      category: 'remodel',      location: 'Tustin, CA' },
+  { image: '/images/projects/remodel-4.jpg',      title: 'Open-Concept Remodel',    type: 'Remodel',      category: 'remodel',      location: 'Orange, CA' },
+  { image: '/images/projects/remodel-5.jpg',      title: 'Whole-Home Renovation',   type: 'Remodel',      category: 'remodel',      location: 'Mission Viejo, CA' },
+  { image: 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=1200&q=80', title: 'Mixed-Use Multifamily', type: 'Multifamily', category: 'multifamily', location: 'Santa Ana, CA' },
+  { image: 'https://images.unsplash.com/photo-1486325212027-8081e485255e?w=1200&q=80', title: '12-Unit Apartment Build', type: 'Multifamily', category: 'multifamily', location: 'Anaheim, CA' },
+];
+
+const filters = [
+  { value: 'all',          label: 'All' },
+  { value: 'multifamily',  label: 'Multifamily' },
+  { value: 'custom-home',  label: 'Custom Home' },
+  { value: 'adu',          label: 'ADU' },
+  { value: 'remodel',      label: 'Remodel' },
+];
+---
+<BaseLayout
+  title="Our Work — Project Portfolio"
+  description="Browse completed custom homes, ADUs, multifamily builds, and remodels."
+>
+
+  <!-- HERO -->
+  <section class="relative flex items-center" style="min-height: 60vh;">
+    <div class="absolute inset-0 bg-fcd-dark"></div>
+    <div class="absolute inset-0" style="background: radial-gradient(ellipse at center, rgba(201,168,76,0.08), rgba(10,10,15,0));"></div>
+    <div class="relative max-w-7xl mx-auto px-6 lg:px-12 py-16 w-full">
+      <SectionLabel>Our Portfolio</SectionLabel>
+      <h1 class="font-heading font-bold tracking-tight text-fcd-navy text-5xl lg:text-7xl leading-[1.05] max-w-4xl">
+        Our Work Speaks for Itself.
+      </h1>
+    </div>
+  </section>
+
+  <!-- FILTER + GRID -->
+  <section class="bg-fcd-cream py-24 lg:py-32">
+    <div class="max-w-7xl mx-auto px-6 lg:px-12">
+      <div class="mb-12 flex flex-wrap gap-3">
+        {filters.map((f, i) => (
+          <button
+            type="button"
+            class={`filter-btn font-body text-xs font-semibold tracking-widest2 uppercase px-6 py-3 border transition-colors ${i === 0 ? 'bg-fcd-gold text-fcd-black border-fcd-gold' : 'border-fcd-border text-fcd-navy/80 hover:border-fcd-gold hover:text-fcd-gold'}`}
+            data-filter={f.value}
+          >{f.label}</button>
+        ))}
+      </div>
+
+      <div id="project-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        {projects.map((p, i) => (
+          <div data-category={p.category}>
+            <ProjectCard image={p.image} title={p.title} type={p.type} location={p.location} category={p.category} />
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="bg-fcd-dark py-24 lg:py-32 border-t border-fcd-border">
+    <div class="max-w-4xl mx-auto px-6 lg:px-12 text-center">
+      <h2 class="font-heading text-4xl lg:text-5xl text-fcd-navy font-bold tracking-tight">See One That Looks Like Your Vision?</h2>
+      <p class="mt-6 text-base lg:text-lg text-fcd-navy/80 max-w-2xl mx-auto">Tell us about your project and we'll send you relevant case studies and a real ballpark range.</p>
+      <div class="mt-10">
+        <a href="/contact" class="inline-flex items-center gap-2 bg-fcd-gold text-fcd-black font-semibold text-sm tracking-widest2 uppercase px-10 py-5 hover:bg-fcd-gold-lt transition-colors duration-200">Start My Project →</a>
+      </div>
+    </div>
+  </section>
+
+  <script is:inline>
+    (function() {
+      const buttons = document.querySelectorAll('.filter-btn');
+      const items = document.querySelectorAll('#project-grid > [data-category]');
+
+      buttons.forEach(function(btn) {
+        btn.addEventListener('click', function() {
+          const filter = btn.getAttribute('data-filter');
+
+          buttons.forEach(function(b) {
+            b.classList.remove('bg-fcd-gold', 'text-fcd-black', 'border-fcd-gold');
+            b.classList.add('border-fcd-border', 'text-fcd-navy/80');
+          });
+          btn.classList.add('bg-fcd-gold', 'text-fcd-black', 'border-fcd-gold');
+          btn.classList.remove('border-fcd-border', 'text-fcd-navy/80');
+
+          items.forEach(function(item) {
+            const cat = item.getAttribute('data-category');
+            if (filter === 'all' || cat === filter) {
+              item.style.display = '';
+            } else {
+              item.style.display = 'none';
+            }
+          });
+        });
+      });
+    })();
+  </script>
+
+</BaseLayout>

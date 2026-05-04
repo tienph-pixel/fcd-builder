@@ -1,0 +1,168 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SectionLabel from '../components/SectionLabel.astro';
+import ProcessStep from '../components/ProcessStep.astro';
+
+const firstWeek = [
+  {
+    number: 'Day 1–2',
+    title: 'Welcome & Kickoff Meeting',
+    description: 'You\'ll receive a welcome packet with your dedicated PM\'s direct contact info, your project portal login, and a kickoff meeting invite. We confirm scope, timeline, and your communication preferences.',
+  },
+  {
+    number: 'Day 2–4',
+    title: 'Pre-Construction Walkthrough',
+    description: 'We walk the site with you, document existing conditions with photos, identify any final-decision items, and confirm site access logistics, parking, and storage areas.',
+  },
+  {
+    number: 'Day 4–6',
+    title: 'Final Schedule & Allowances',
+    description: 'You receive your detailed construction schedule, allowance tracking sheet, and selection deadlines. Every milestone is mapped — no guessing what comes next.',
+  },
+  {
+    number: 'Day 7',
+    title: 'First Day on Site',
+    description: 'Construction begins. You receive your first daily log: photos, who was on site, what was completed. The same format every day until we hand you the keys.',
+  },
+];
+
+const communication = [
+  { title: 'Daily Logs',     desc: 'Photo and written summary of every active workday — sent automatically to your inbox.' },
+  { title: 'Weekly Calls',   desc: 'Scheduled check-in with your PM. Same time every week. We come prepared.' },
+  { title: 'Direct PM Line', desc: "Your PM's mobile number is yours. Text or call. We pick up." },
+  { title: 'Change Orders',  desc: 'Always in writing. Always before the work happens. Always signed by you.' },
+];
+
+const fromYou = [
+  'Final selections by their scheduled deadlines (we provide reminders)',
+  'Timely sign-off on change orders so we keep momentum',
+  'Access to the job site during scheduled hours',
+  'Clear primary point of contact (you or your designated representative)',
+];
+
+const siteStandards = [
+  'Job site cleaned at the end of every workday — every day',
+  'Crews follow our conduct standard: no profanity, no chaos',
+  'Materials staged and protected — your property treated like ours',
+  'Daily walkthrough by PM to verify quality and safety',
+];
+---
+<BaseLayout
+  title="Client Onboarding"
+  description="What to expect after signing with Future Construction & Design."
+>
+
+  <!-- HERO -->
+  <section class="relative flex items-center" style="min-height: 60vh;">
+    <div class="absolute inset-0 bg-fcd-dark"></div>
+    <div class="absolute inset-0" style="background: radial-gradient(ellipse at center, rgba(201,168,76,0.08), rgba(10,10,15,0));"></div>
+    <div class="relative max-w-7xl mx-auto px-6 lg:px-12 py-32 w-full">
+      <SectionLabel>Welcome</SectionLabel>
+      <h1 class="font-heading font-bold tracking-tight text-fcd-navy text-5xl lg:text-7xl leading-[1.05] max-w-5xl">
+        Welcome to Future Construction & Design. Here's What Happens Next.
+      </h1>
+      <p class="mt-8 text-base lg:text-lg text-fcd-navy/80 leading-relaxed max-w-2xl">
+        You've made the right choice. Here's exactly what to expect from us — before, during, and after your project.
+      </p>
+    </div>
+  </section>
+
+  <!-- FIRST 7 DAYS -->
+  <section class="bg-fcd-cream py-24 lg:py-32">
+    <div class="max-w-4xl mx-auto px-6 lg:px-12">
+      <div class="mb-16">
+        <SectionLabel>The First 7 Days</SectionLabel>
+        <h2 class="font-heading text-4xl text-fcd-navy font-semibold">From Contract Signed to First Day on Site.</h2>
+      </div>
+
+      <div class="space-y-12">
+        {firstWeek.map((p, i) => (
+          <div>
+            <ProcessStep number={p.number} title={p.title} description={p.description} />
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- COMMUNICATION STANDARDS -->
+  <section class="bg-fcd-dark py-24 lg:py-32">
+    <div class="max-w-7xl mx-auto px-6 lg:px-12">
+      <div class="max-w-3xl mb-16">
+        <SectionLabel>Communication Standards</SectionLabel>
+        <h2 class="font-heading text-4xl text-fcd-navy font-semibold">You'll Hear From Us. Always.</h2>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        {communication.map((c, i) => (
+          <div class="bg-fcd-card border border-fcd-border rounded-lg p-8 hover:border-fcd-gold transition-colors">
+            <svg class="w-8 h-8 text-fcd-gold mb-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.86 9.86 0 01-4-.84L3 21l1.84-3.84A8.07 8.07 0 013 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+            <h3 class="font-heading text-xl text-fcd-navy font-semibold mb-3">{c.title}</h3>
+            <p class="text-sm text-fcd-muted leading-relaxed">{c.desc}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- WHAT WE NEED FROM YOU -->
+  <section class="bg-fcd-cream py-24 lg:py-32">
+    <div class="max-w-4xl mx-auto px-6 lg:px-12">
+      <div class="mb-12">
+        <SectionLabel>What We Need From You</SectionLabel>
+        <h2 class="font-heading text-4xl text-fcd-navy font-semibold">Your Project Stays On Track When We Both Show Up.</h2>
+      </div>
+
+      <ul class="space-y-4">
+        {fromYou.map(item => (
+          <li class="flex items-start gap-3 bg-fcd-card border border-fcd-border rounded-lg p-5">
+            <svg class="w-6 h-6 text-fcd-gold flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+            <span class="text-fcd-navy/90 leading-relaxed">{item}</span>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <!-- SITE STANDARDS -->
+  <section class="bg-fcd-dark py-24 lg:py-32">
+    <div class="max-w-4xl mx-auto px-6 lg:px-12">
+      <div class="mb-12">
+        <SectionLabel>Site Standards</SectionLabel>
+        <h2 class="font-heading text-4xl text-fcd-navy font-semibold">How We Run Every Job Site.</h2>
+      </div>
+
+      <ul class="space-y-4">
+        {siteStandards.map(item => (
+          <li class="flex items-start gap-3 bg-fcd-card border border-fcd-border rounded-lg p-5">
+            <svg class="w-6 h-6 text-fcd-gold flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+            <span class="text-fcd-navy/90 leading-relaxed">{item}</span>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <!-- CONTACT YOUR PM -->
+  <section class="bg-fcd-cream py-24 lg:py-32 border-t border-fcd-border">
+    <div class="max-w-4xl mx-auto px-6 lg:px-12 text-center">
+      <SectionLabel>Contact Your PM</SectionLabel>
+      <h2 class="font-heading text-4xl lg:text-5xl text-fcd-navy font-bold tracking-tight mb-6">Anything You Need — Just Reach Out.</h2>
+      <p class="text-base lg:text-lg text-fcd-navy/80 leading-relaxed max-w-2xl mx-auto mb-10">
+        Your dedicated Project Manager is your direct line. For anything urgent or general project questions, you can reach our team here:
+      </p>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-2xl mx-auto">
+        <a href="tel:7149279777" class="flex items-center justify-center gap-3 bg-fcd-card border border-fcd-border rounded-lg px-6 py-5 hover:border-fcd-gold transition-colors">
+          <svg class="w-5 h-5 text-fcd-gold" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 5a2 2 0 012-2h2.28a2 2 0 011.94 1.515l.7 2.8a2 2 0 01-.45 1.95l-1.27 1.27a16 16 0 006.586 6.586l1.27-1.27a2 2 0 011.95-.45l2.8.7A2 2 0 0121 18.72V21a2 2 0 01-2 2A18 18 0 013 5z"/></svg>
+          <span class="text-fcd-navy font-semibold">(714) 927-9777</span>
+        </a>
+        <a href="mailto:ceo@fcdteam.com" class="flex items-center justify-center gap-3 bg-fcd-card border border-fcd-border rounded-lg px-6 py-5 hover:border-fcd-gold transition-colors">
+          <svg class="w-5 h-5 text-fcd-gold" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+          <span class="text-fcd-navy font-semibold">ceo@fcdteam.com</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+</BaseLayout>

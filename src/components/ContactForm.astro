@@ -1,0 +1,119 @@
+---
+---
+<form
+  action="https://formspree.io/f/mbdwdbkn"
+  method="POST"
+  class="space-y-5"
+>
+  <input type="hidden" name="_subject" value="New Project Inquiry — FCD Builder" />
+  <input type="text" name="_gotcha" style="display:none" tabindex="-1" autocomplete="off" />
+  <input type="hidden" name="_next" value="/thank-you" />
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+    <label class="block">
+      <span class="text-xs font-semibold tracking-widest2 uppercase text-fcd-gold">Full Name *</span>
+      <input type="text" name="name" required class="mt-2 w-full bg-fcd-dark border border-fcd-border rounded px-4 py-3 text-fcd-navy placeholder-fcd-muted focus:outline-none focus:border-fcd-gold transition-colors" />
+    </label>
+
+    <label class="block">
+      <span class="text-xs font-semibold tracking-widest2 uppercase text-fcd-gold">Email Address *</span>
+      <input type="email" name="email" required class="mt-2 w-full bg-fcd-dark border border-fcd-border rounded px-4 py-3 text-fcd-navy placeholder-fcd-muted focus:outline-none focus:border-fcd-gold transition-colors" />
+    </label>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+    <label class="block">
+      <span class="text-xs font-semibold tracking-widest2 uppercase text-fcd-gold">Phone Number *</span>
+      <input type="tel" name="phone" required class="mt-2 w-full bg-fcd-dark border border-fcd-border rounded px-4 py-3 text-fcd-navy placeholder-fcd-muted focus:outline-none focus:border-fcd-gold transition-colors" />
+    </label>
+
+    <label class="block">
+      <span class="text-xs font-semibold tracking-widest2 uppercase text-fcd-gold">Project Type *</span>
+      <select name="project_type" required class="mt-2 w-full bg-fcd-dark border border-fcd-border rounded px-4 py-3 text-fcd-navy focus:outline-none focus:border-fcd-gold transition-colors">
+        <option value="">Select project type…</option>
+        <option>Multifamily Construction</option>
+        <option>Custom Home Build</option>
+        <option>ADU Construction</option>
+        <option>Kitchen Remodel</option>
+        <option>Bathroom Remodel</option>
+        <option>Whole-Home Renovation</option>
+        <option>Room Addition</option>
+        <option>Other</option>
+      </select>
+    </label>
+  </div>
+
+  <label class="block">
+    <span class="text-xs font-semibold tracking-widest2 uppercase text-fcd-gold">Property Address or City *</span>
+    <input type="text" name="address" required class="mt-2 w-full bg-fcd-dark border border-fcd-border rounded px-4 py-3 text-fcd-navy placeholder-fcd-muted focus:outline-none focus:border-fcd-gold transition-colors" />
+  </label>
+
+  <fieldset class="space-y-3">
+    <legend class="text-xs font-semibold tracking-widest2 uppercase text-fcd-gold">Do you own the property?</legend>
+    <div class="flex flex-wrap gap-6 text-sm text-fcd-navy/90">
+      <label class="inline-flex items-center gap-2"><input type="radio" name="own_property" value="Yes" class="accent-fcd-gold" /> Yes</label>
+      <label class="inline-flex items-center gap-2"><input type="radio" name="own_property" value="No" class="accent-fcd-gold" /> No</label>
+      <label class="inline-flex items-center gap-2"><input type="radio" name="own_property" value="In Contract" class="accent-fcd-gold" /> In Contract</label>
+    </div>
+  </fieldset>
+
+  <fieldset class="space-y-3">
+    <legend class="text-xs font-semibold tracking-widest2 uppercase text-fcd-gold">Do you have plans/drawings?</legend>
+    <div class="flex flex-wrap gap-6 text-sm text-fcd-navy/90">
+      <label class="inline-flex items-center gap-2"><input type="radio" name="have_plans" value="Yes" class="accent-fcd-gold" /> Yes</label>
+      <label class="inline-flex items-center gap-2"><input type="radio" name="have_plans" value="No" class="accent-fcd-gold" /> No</label>
+      <label class="inline-flex items-center gap-2"><input type="radio" name="have_plans" value="In Progress" class="accent-fcd-gold" /> In Progress</label>
+    </div>
+  </fieldset>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+    <label class="block">
+      <span class="text-xs font-semibold tracking-widest2 uppercase text-fcd-gold">Estimated Budget</span>
+      <select name="budget" class="mt-2 w-full bg-fcd-dark border border-fcd-border rounded px-4 py-3 text-fcd-navy focus:outline-none focus:border-fcd-gold transition-colors">
+        <option value="">Select range…</option>
+        <option>Under $50K</option>
+        <option>$50K – $150K</option>
+        <option>$150K – $350K</option>
+        <option>$350K – $750K</option>
+        <option>$750K+</option>
+        <option>Not Sure Yet</option>
+      </select>
+    </label>
+
+    <label class="block">
+      <span class="text-xs font-semibold tracking-widest2 uppercase text-fcd-gold">When are you hoping to start?</span>
+      <select name="timeline" class="mt-2 w-full bg-fcd-dark border border-fcd-border rounded px-4 py-3 text-fcd-navy focus:outline-none focus:border-fcd-gold transition-colors">
+        <option value="">Select timeline…</option>
+        <option>ASAP</option>
+        <option>1–3 Months</option>
+        <option>3–6 Months</option>
+        <option>6–12 Months</option>
+        <option>Just Exploring</option>
+      </select>
+    </label>
+  </div>
+
+  <label class="block">
+    <span class="text-xs font-semibold tracking-widest2 uppercase text-fcd-gold">Tell us about your project *</span>
+    <textarea name="message" rows="5" required class="mt-2 w-full bg-fcd-dark border border-fcd-border rounded px-4 py-3 text-fcd-navy placeholder-fcd-muted focus:outline-none focus:border-fcd-gold transition-colors"></textarea>
+  </label>
+
+  <label class="block">
+    <span class="text-xs font-semibold tracking-widest2 uppercase text-fcd-gold">How did you hear about us?</span>
+    <select name="referral" class="mt-2 w-full bg-fcd-dark border border-fcd-border rounded px-4 py-3 text-fcd-navy focus:outline-none focus:border-fcd-gold transition-colors">
+      <option value="">Select…</option>
+      <option>Google</option>
+      <option>Referral</option>
+      <option>Instagram / Social Media</option>
+      <option>Nextdoor</option>
+      <option>Other</option>
+    </select>
+  </label>
+
+  <button
+    type="submit"
+    class="inline-flex items-center gap-2 bg-fcd-gold text-fcd-black font-semibold text-sm tracking-widest2 uppercase px-8 py-4 hover:bg-fcd-gold-lt transition-colors duration-200 mt-2"
+  >Send My Inquiry →</button>
+
+  <p class="text-xs text-fcd-muted mt-2">We respond within 1 business day. All submissions go to futureconstructionteam@gmail.com.</p>
+</form>

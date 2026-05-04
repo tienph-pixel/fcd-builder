@@ -1,0 +1,28 @@
+---
+interface Props {
+  image?: string;
+  initial?: string;
+  name: string;
+  title: string;
+  bio: string;
+}
+const { image, initial, name, title, bio } = Astro.props;
+---
+<div class="bg-fcd-card border border-fcd-border rounded-lg overflow-hidden">
+  <div class="aspect-[3/4] overflow-hidden">
+    {image ? (
+      <img src={image} alt={name} loading="lazy" class="w-full h-full object-cover object-top" />
+    ) : (
+      <div class="w-full h-full flex items-center justify-center bg-fcd-dark">
+        <div class="w-32 h-32 rounded-full border-2 border-fcd-gold flex items-center justify-center">
+          <span class="font-heading text-6xl italic text-fcd-gold">{initial ?? name.charAt(0)}</span>
+        </div>
+      </div>
+    )}
+  </div>
+  <div class="p-6">
+    <h3 class="font-heading text-xl text-fcd-navy font-semibold">{name}</h3>
+    <p class="text-xs font-semibold tracking-widest2 uppercase text-fcd-gold mt-1 mb-3">{title}</p>
+    <p class="text-sm text-fcd-muted leading-relaxed">{bio}</p>
+  </div>
+</div>

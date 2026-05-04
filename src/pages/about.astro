@@ -1,0 +1,141 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SectionLabel from '../components/SectionLabel.astro';
+import TeamCard from '../components/TeamCard.astro';
+
+const team = [
+  {
+    name: 'Quynh Ng',
+    title: 'Founder & CEO',
+    bio: 'Quynh founded Future Construction & Design with one mission: build homes and communities that people are proud of for generations. She leads every project with precision, care, and an obsessive standard for quality.',
+    initial: 'Q',
+  },
+  {
+    image: '/images/team/team-tien.jpg',
+    name: 'Tien Pham',
+    title: 'Director of Operations',
+    bio: 'Tien runs the engine that keeps every project moving. From initial estimate and proposal to budget tracking and client communication — if it needs to get done, Tien handles it. He is the reason projects stay on time and clients stay informed.',
+  },
+  {
+    image: '/images/team/team-andy.jpg',
+    name: 'Andy Bui',
+    title: 'Project Manager',
+    bio: 'Andy manages day-to-day operations on every active job site. He coordinates crews, tracks progress, and holds every subcontractor to the FCD standard — clean sites, quality work, zero excuses.',
+  },
+];
+
+const experience = [
+  { title: 'Direct PM Access',                   desc: "Your dedicated Project Manager's direct line, always." },
+  { title: 'Daily Progress Logs',                desc: 'Photos and a written log, every day your project is active.' },
+  { title: 'Clean, Professional Sites',          desc: 'No profanity. No chaos. Your property treated with respect.' },
+  { title: 'Over-Communication Is the Standard', desc: 'We send updates before you have to ask.' },
+  { title: 'We Honor Our Timelines',             desc: "When we commit to a date, we're there." },
+  { title: 'Punch List to Zero',                 desc: "We don't call a project done until your final walkthrough says so." },
+];
+---
+<BaseLayout
+  title="About Us"
+  description="Meet the team behind FCD and learn why clients keep coming back."
+>
+
+  <!-- HERO -->
+  <section class="relative flex items-center" style="min-height: 60vh;">
+    <div class="absolute inset-0 bg-fcd-dark"></div>
+    <div class="absolute inset-0" style="background: radial-gradient(ellipse at center, rgba(201,168,76,0.08), rgba(10,10,15,0));"></div>
+    <div class="relative max-w-7xl mx-auto px-6 lg:px-12 py-16 w-full">
+      <SectionLabel>About FCD</SectionLabel>
+      <h1 class="font-heading font-bold tracking-tight text-fcd-navy text-5xl lg:text-7xl leading-[1.05] max-w-4xl">
+        Built on Accountability. Driven by Craft.
+      </h1>
+    </div>
+  </section>
+
+  <!-- MISSION STATEMENT -->
+  <section class="bg-fcd-cream py-24 lg:py-32">
+    <div class="max-w-4xl mx-auto px-6 lg:px-12 text-center">
+      <SectionLabel>Our Mission</SectionLabel>
+      <p class="font-heading italic text-2xl lg:text-3xl text-fcd-navy leading-snug">
+        "Our mission is to build and renovate homes that reflect the lives inside them. We commit to delivering unmatched communication, craftsmanship, and care — from the first site visit to the final walkthrough."
+      </p>
+    </div>
+  </section>
+
+  <!-- OUR STORY -->
+  <section class="bg-fcd-dark py-24 lg:py-32">
+    <div class="max-w-4xl mx-auto px-6 lg:px-12">
+      <SectionLabel>Our Story</SectionLabel>
+      <h2 class="font-heading text-4xl text-fcd-navy font-semibold mb-8">A Builder Built for the Long Run.</h2>
+      <div class="space-y-6 text-base lg:text-lg text-fcd-navy/80 leading-relaxed">
+        <p>Future Construction & Design INC was founded by people who have lived this trade their entire careers — long before there was a logo, a license number, or a brand. We were on the job sites, behind the permit counters, and on the phone with subcontractors at 6:00 AM. We saw, up close, how clients were being treated by builders who took shortcuts, communicated poorly, and disappeared when problems showed up.</p>
+        <p>FCD exists because we knew it could be done better. We built this company around a simple promise: every project — whether it's an ADU in a backyard or a multifamily build with millions on the line — gets the full weight of our attention. Same standard. Same care. Same respect for your money and your time.</p>
+        <p>We serve homeowners building dream homes, investors adding ADUs to their portfolios, and developers turning ground into multifamily units. Different clients, different scopes — but every job runs through the same playbook: clear communication, clean sites, and a punch list that ends at zero.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- TEAM -->
+  <section class="bg-fcd-cream py-24 lg:py-32">
+    <div class="max-w-7xl mx-auto px-6 lg:px-12">
+      <div class="max-w-3xl mb-16">
+        <SectionLabel>The Team</SectionLabel>
+        <h2 class="font-heading text-4xl text-fcd-navy font-semibold">The People Running Your Project.</h2>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {team.map((m, i) => (
+          <div>
+            <TeamCard image={m.image} initial={m.initial} name={m.name} title={m.title} bio={m.bio} />
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- EXPANDED CEO STATEMENT -->
+  <section class="bg-fcd-dark py-24 lg:py-32">
+    <div class="max-w-4xl mx-auto px-6 lg:px-12">
+      <SectionLabel>From the CEO</SectionLabel>
+      <h2 class="font-heading text-4xl text-fcd-navy font-semibold mb-8">Why We Built This Company.</h2>
+      <div class="space-y-6 text-base lg:text-lg text-fcd-navy/80 leading-relaxed">
+        <p>I started Future Construction & Design because I was tired of watching homeowners get burned. I watched too many clients sign contracts with builders who oversold and under-delivered, who disappeared mid-project, who treated change orders like profit centers and communication like an afterthought.</p>
+        <p>That's not who we are. At FCD, we run every project on a single principle: <span class="text-fcd-gold font-semibold">we earn the trust before we earn the check.</span> That means showing up when we say we will, telling you the truth when something goes wrong, pulling every permit ourselves, and treating your home or investment like it's our family's.</p>
+        <p>If you hire us, you're going to know exactly what's happening on your project — every day. You'll have a dedicated PM whose job is to keep you informed. You'll have honest pricing, fixed-price contracts where possible, and zero surprise invoices. And when we walk away on the final day, your punch list will be at zero.</p>
+        <p>That's the standard. It's the only one we work to.</p>
+      </div>
+      <p class="mt-10 text-sm text-fcd-muted">— Quynh Ng, Founder & CEO · Future Construction & Design INC</p>
+      <p class="mt-4 text-sm text-fcd-gold">Want to reach me directly? <a href="mailto:ceo@fcdteam.com" class="underline underline-offset-4 hover:text-fcd-gold-lt">ceo@fcdteam.com</a></p>
+    </div>
+  </section>
+
+  <!-- FULL CLIENT EXPERIENCE -->
+  <section class="bg-fcd-cream py-24 lg:py-32">
+    <div class="max-w-7xl mx-auto px-6 lg:px-12">
+      <div class="max-w-3xl mb-16">
+        <SectionLabel>Client Experience</SectionLabel>
+        <h2 class="font-heading text-4xl text-fcd-navy font-semibold">What It's Actually Like to Work With Us.</h2>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {experience.map((e, i) => (
+          <div class="bg-fcd-card border border-fcd-border rounded-lg p-8 hover:border-fcd-gold transition-colors">
+            <svg class="w-8 h-8 text-fcd-gold mb-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+            <h3 class="font-heading text-xl text-fcd-navy font-semibold mb-3">{e.title}</h3>
+            <p class="text-sm text-fcd-muted leading-relaxed">{e.desc}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="bg-fcd-dark py-24 lg:py-32 border-t border-fcd-border">
+    <div class="max-w-4xl mx-auto px-6 lg:px-12 text-center">
+      <h2 class="font-heading text-4xl lg:text-5xl text-fcd-navy font-bold tracking-tight">Let's Talk About Your Project.</h2>
+      <p class="mt-6 text-base lg:text-lg text-fcd-navy/80 max-w-2xl mx-auto">From first call to final walkthrough — we make it feel easy. Tell us what you're building.</p>
+      <div class="mt-10">
+        <a href="/contact" class="inline-flex items-center gap-2 bg-fcd-gold text-fcd-black font-semibold text-sm tracking-widest2 uppercase px-10 py-5 hover:bg-fcd-gold-lt transition-colors duration-200">Start My Project →</a>
+      </div>
+    </div>
+  </section>
+
+</BaseLayout>

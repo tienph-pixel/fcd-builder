@@ -1,0 +1,49 @@
+@import "tailwindcss";
+
+@theme {
+  /* Cream theme — dark navy text, gold accents, cream sections, white cards */
+  --color-fcd-black:   #0a0f1a;  /* dark navy — used for "text-fcd-black" on gold elements */
+  --color-fcd-dark:    #f7f4ef;  /* cream — section bg (alias) */
+  --color-fcd-cream:   #f7f4ef;  /* cream — section bg */
+  --color-fcd-card:    #ffffff;  /* pure white — cards */
+  --color-fcd-border:  #e5e0d6;  /* light cream border */
+  --color-fcd-gold:    #c9a84c;
+  --color-fcd-gold-lt: #b8932f;  /* darker gold for hover on cream — better contrast */
+  --color-fcd-white:   #00253e;  /* legacy alias → now points to fcd-navy */
+  --color-fcd-gray:    #6b7c8a;  /* legacy alias → now points to fcd-muted */
+  --color-fcd-navy:    #00253e;  /* primary heading & body text on light backgrounds */
+  --color-fcd-muted:   #6b7c8a;  /* secondary/body text on light backgrounds */
+
+  --font-heading: "Playfair Display", Georgia, serif;
+  --font-body:    "Inter", system-ui, sans-serif;
+
+  --tracking-widest2: 0.25em;
+}
+
+@layer base {
+  html, body {
+    overflow-x: hidden;
+    max-width: 100%;
+  }
+  html {
+    scroll-behavior: smooth;
+    background-color: #f7f4ef;
+    color: #1a1f2e;
+  }
+  body {
+    font-family: var(--font-body);
+    margin: 0;
+  }
+  ::selection {
+    background-color: #c9a84c;
+    color: #0a0f1a;
+  }
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: #f7f4ef; }
+  ::-webkit-scrollbar-thumb { background: #e5e0d6; border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: #c9a84c; }
+}
+
+/* AOS safety override — content always visible even if AOS misfires or scripts fail */
+[data-aos] { opacity: 1 !important; transform: none !important; }
+[data-aos].aos-animate { opacity: 1 !important; transform: none !important; }

@@ -1,0 +1,378 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SectionLabel from '../components/SectionLabel.astro';
+import ProjectCard from '../components/ProjectCard.astro';
+import TestimonialCard from '../components/TestimonialCard.astro';
+import ProcessStep from '../components/ProcessStep.astro';
+
+const featuredProjects = [
+  { image: '/images/projects/custom-home-1.jpg', title: 'Modern Custom Build', type: 'Custom Home',  location: 'Newport Beach, CA' },
+  { image: '/images/projects/custom-home-2.jpg', title: 'Coastal Family Home', type: 'Custom Home',  location: 'Huntington Beach, CA' },
+  { image: '/images/projects/adu-1.jpg',          title: 'Detached Backyard ADU', type: 'ADU',          location: 'Anaheim, CA' },
+  { image: '/images/projects/adu-2.jpg',          title: 'Garage Conversion ADU', type: 'ADU',          location: 'Garden Grove, CA' },
+  { image: '/images/projects/remodel-1.jpg',      title: 'Whole-Home Remodel',     type: 'Remodel',      location: 'Irvine, CA' },
+  { image: 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=1200&q=80', title: 'Mixed-Use Multifamily', type: 'Multifamily', location: 'Santa Ana, CA' },
+];
+
+const testimonials = [
+  { quote: "We built our dream home with FCD and they made every step easy. The communication alone was worth it — we always knew what was happening.", name: 'The Nguyen Family', projectType: 'Custom Home' },
+  { quote: "Our ADU added $180K to our property value. FCD handled permits, design coordination, everything. Done in 4 months.", name: 'Marcus T.', projectType: 'ADU Client' },
+  { quote: "Kitchen remodel was done on budget and a week early. The crew was clean, professional, and respectful of our home.", name: 'Sarah & David K.', projectType: 'Remodel Client' },
+  { quote: "As a developer, I need a GC I can trust. FCD has delivered 3 multifamily units for me. They're my go-to.", name: 'James R.', projectType: 'Real Estate Investor' },
+];
+
+const values = [
+  { title: 'Communication First',     desc: "You'll hear from us every day. No chasing, no silence." },
+  { title: 'Craftsmanship Always',    desc: 'We treat every home like it has our name on the front door.' },
+  { title: 'Honest Pricing',          desc: 'No surprise invoices. No scope creep without a conversation.' },
+  { title: 'Clean Job Sites',         desc: "We respect your space — whether it's your home or your investment." },
+  { title: 'Permits Done Right',      desc: 'Every project is fully permitted and code-compliant. No shortcuts.' },
+  { title: 'We Show Up',              desc: "If we commit to a date, we're there. That's just who we are." },
+];
+
+const experience = [
+  { title: 'Direct PM Access',                     desc: "You'll have your dedicated Project Manager's direct line. No call centers, no chasing — just answers." },
+  { title: 'Daily Progress Logs',                  desc: 'Every day your project is active, you get a photo log showing who was on site and exactly what was done.' },
+  { title: 'Clean Job Sites, Always',              desc: 'We run tight, professional sites. No profanity, no chaos, no mess left behind. Your home is treated with respect.' },
+  { title: "Communication That Doesn't Stop",      desc: 'Weekly check-ins. Immediate replies. If something comes up — you hear from us first, not last.' },
+];
+
+const setUsApart = [
+  'Daily progress photos and logs — you always know what\'s happening',
+  'Dedicated Project Manager for every job',
+  'Fully licensed, bonded, and insured — in writing',
+  'We pull all permits — never ask you to do it yourself',
+  'Fixed-price contracts where possible — no budget surprises',
+  'We work with your architect OR help you find one',
+];
+---
+<BaseLayout
+  title="Future Construction & Design — Custom Homes & More"
+  description="We build custom homes, multifamily units, ADUs, and remodels. Licensed GC."
+>
+
+  <!-- HERO -->
+  <section class="relative w-full" style="min-height: 100vh;">
+    <img
+      src="/images/hero-bg.jpg"
+      alt=""
+      class="absolute inset-0 w-full h-full object-cover"
+      style="object-position: center;"
+    />
+    <div
+      class="absolute inset-0"
+      style="background: linear-gradient(to right, rgba(0,15,28,0.65) 0%, rgba(0,15,28,0.25) 55%, rgba(0,15,28,0.45) 100%);"
+    ></div>
+
+    <div class="relative w-full max-w-7xl mx-auto px-6 lg:px-12 flex items-center" style="min-height: 100vh;">
+
+      <!-- FLOATING CARD -->
+      <div
+        class="w-full max-w-[560px] my-32"
+        style="background: rgba(0,37,62,0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-radius: 16px; padding: 2.5rem; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);"
+      >
+        <!-- Trusted badge pill -->
+        <div class="inline-flex items-center gap-2 bg-fcd-gold/15 border border-fcd-gold/40 rounded-full px-3 py-1.5 mb-6">
+          <svg class="w-4 h-4 text-fcd-gold" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+          <span class="text-[11px] font-semibold tracking-widest uppercase text-fcd-gold">Trusted · CA Lic. #1127416</span>
+        </div>
+
+        <!-- Headline -->
+        <h1 class="font-heading font-bold tracking-tight text-4xl sm:text-5xl lg:text-6xl leading-[1.05]">
+          <span class="block text-white">We Build Homes</span>
+          <span class="block" style="color: #dab76b;">That Tell Your Story.</span>
+        </h1>
+
+        <!-- Subtitle -->
+        <p class="mt-5 text-base text-white/70 leading-relaxed">
+          Multifamily, custom homes, ADUs, and remodels — on time, on budget, built to last a generation.
+        </p>
+
+        <!-- Urgency pill -->
+        <div class="inline-flex items-center gap-2 mt-6 bg-emerald-500/15 border border-emerald-400/40 rounded-full px-3 py-1.5">
+          <span class="w-2 h-2 rounded-full bg-emerald-400" style="animation: fcd-pulse 1.6s ease-in-out infinite;"></span>
+          <span class="text-[11px] font-semibold tracking-wide text-emerald-300">Limited spots available — Orange County</span>
+        </div>
+
+        <!-- CTAs -->
+        <div class="mt-7 space-y-3">
+          <a
+            href="/contact"
+            class="flex items-center justify-center gap-2 bg-fcd-gold text-fcd-navy font-semibold text-sm tracking-widest2 uppercase px-6 py-4 rounded-md hover:bg-fcd-gold-lt hover:text-white transition-colors duration-200"
+          >Get Free Quote →</a>
+          <a
+            href="/projects"
+            class="flex items-center justify-center gap-2 border border-white/30 text-white font-semibold text-sm tracking-widest2 uppercase px-6 py-4 rounded-md hover:bg-white/10 hover:border-white/50 transition-colors duration-200"
+          >View Our Projects →</a>
+        </div>
+
+        <!-- Stat boxes -->
+        <div class="grid grid-cols-2 gap-3 mt-6">
+          <div class="bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-center">
+            <p class="font-heading text-xl text-fcd-gold font-bold leading-tight">100%</p>
+            <p class="text-[11px] tracking-widest uppercase text-white/70 mt-1 font-semibold">Permitted</p>
+          </div>
+          <div class="bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-center">
+            <p class="font-heading text-xl text-fcd-gold font-bold leading-tight">✓</p>
+            <p class="text-[11px] tracking-widest uppercase text-white/70 mt-1 font-semibold">Licensed &amp; Insured</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+  <style>
+    @keyframes fcd-pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+  </style>
+
+  <!-- WHAT WE BUILD -->
+  <section class="bg-fcd-dark py-24 lg:py-32">
+    <div class="max-w-7xl mx-auto px-6 lg:px-12">
+      <div class="max-w-3xl mb-16">
+        <SectionLabel>What We Build</SectionLabel>
+        <h2 class="font-heading text-4xl text-fcd-navy font-semibold">One Team. Every Phase. Every Project Type.</h2>
+        <p class="mt-5 text-base lg:text-lg text-fcd-navy/80 leading-relaxed">
+          From breaking ground on a custom home to transforming an outdated kitchen — we handle it all with the same obsession for quality.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div class="bg-fcd-card border border-fcd-border rounded-lg p-8 hover:border-fcd-gold transition-colors">
+          <svg class="w-10 h-10 text-fcd-gold mb-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 21h18M5 21V7l7-4 7 4v14M9 9h2v2H9zM13 9h2v2h-2zM9 13h2v2H9zM13 13h2v2h-2zM9 17h2v4H9zM13 17h2v4h-2z"/></svg>
+          <h3 class="font-heading text-2xl text-fcd-navy font-semibold mb-3">Multifamily Construction</h3>
+          <p class="text-sm text-fcd-muted leading-relaxed">Duplexes, triplexes, apartment complexes, and mixed-use builds. We manage the full project cycle for developers and investors.</p>
+        </div>
+
+        <div class="bg-fcd-card border border-fcd-border rounded-lg p-8 hover:border-fcd-gold transition-colors">
+          <svg class="w-10 h-10 text-fcd-gold mb-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 12l9-9 9 9M5 10v11h14V10"/></svg>
+          <h3 class="font-heading text-2xl text-fcd-navy font-semibold mb-3">Custom Home Builds</h3>
+          <p class="text-sm text-fcd-muted leading-relaxed">Ground-up custom homes designed around your life. We work from your vision — or connect you with a designer to create one.</p>
+        </div>
+
+        <div class="bg-fcd-card border border-fcd-border rounded-lg p-8 hover:border-fcd-gold transition-colors">
+          <svg class="w-10 h-10 text-fcd-gold mb-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 21V10l8-6 8 6v11M9 21v-6h6v6"/></svg>
+          <h3 class="font-heading text-2xl text-fcd-navy font-semibold mb-3">ADU Construction</h3>
+          <p class="text-sm text-fcd-muted leading-relaxed">Accessory Dwelling Units built to maximize your property value. Detached, attached, or garage conversions — permitted and delivered.</p>
+        </div>
+
+        <div class="bg-fcd-card border border-fcd-border rounded-lg p-8 hover:border-fcd-gold transition-colors">
+          <svg class="w-10 h-10 text-fcd-gold mb-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M14.7 6.3a4 4 0 105.66 5.66l-1.41-1.41-2.83 2.83-1.41-1.41 2.83-2.83-1.41-1.41a4 4 0 00-1.43-.43zM3 21l9-9M3 21h6l9-9"/></svg>
+          <h3 class="font-heading text-2xl text-fcd-navy font-semibold mb-3">Remodels & Renovations</h3>
+          <p class="text-sm text-fcd-muted leading-relaxed">Kitchen, bathroom, whole-home, or structural — we transform existing spaces with precision and minimal disruption to your life.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FEATURED PROJECTS -->
+  <section class="bg-fcd-cream py-24 lg:py-32">
+    <div class="max-w-7xl mx-auto px-6 lg:px-12">
+      <div class="max-w-3xl mb-16">
+        <SectionLabel>Our Work</SectionLabel>
+        <h2 class="font-heading text-4xl text-fcd-navy font-semibold">Proof in Every Square Foot.</h2>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        {featuredProjects.map((p, i) => (
+          <div>
+            <ProjectCard image={p.image} title={p.title} type={p.type} location={p.location} />
+          </div>
+        ))}
+      </div>
+
+      <div class="mt-12 text-center">
+        <a href="/projects" class="inline-flex items-center gap-2 border border-fcd-gold text-fcd-gold font-semibold text-sm tracking-widest2 uppercase px-8 py-4 hover:bg-fcd-gold hover:text-fcd-black transition-colors duration-200">View All Projects →</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOUNDER STATEMENT -->
+  <section class="bg-fcd-dark py-16 lg:py-20">
+    <div class="max-w-7xl mx-auto px-6 lg:px-12 grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+      <div class="lg:col-span-7">
+        <SectionLabel>From Our Founder</SectionLabel>
+        <p class="font-heading italic text-2xl text-fcd-navy leading-snug">
+          "We started this company because every family deserves a home built with care — and every investor deserves a builder they can actually trust."
+        </p>
+        <p class="mt-8 text-base lg:text-lg text-fcd-navy/80 leading-relaxed">
+          Future Construction & Design was built by people who grew up in this industry — who have been on job sites, pulled permits, negotiated with subs, and walked final walkthroughs long before FCD existed. We started this company because we saw how it should be done, and we were tired of watching clients settle for less. Every project — no matter the size — gets our full attention from day one to final walkthrough.
+        </p>
+        <p class="mt-8 text-sm text-fcd-muted">— Quynh Ng, Founder & CEO · Future Construction & Design</p>
+        <p class="mt-6 text-sm text-fcd-gold">Want to reach me directly? <a href="mailto:ceo@fcdteam.com" class="underline underline-offset-4 hover:text-fcd-gold-lt">ceo@fcdteam.com</a></p>
+        <p class="mt-2 text-sm text-fcd-muted">Already have drawings? Send them directly to our estimating team: <a href="mailto:estimating@fcdteam.com" class="text-fcd-gold underline underline-offset-4 hover:text-fcd-gold-lt">estimating@fcdteam.com</a></p>
+      </div>
+
+      <div class="lg:col-span-5">
+        <div class="flex flex-col items-center justify-center gap-4 bg-fcd-card border border-fcd-border rounded-lg p-10">
+          <div class="w-24 h-24 rounded-full border-2 border-fcd-gold flex items-center justify-center">
+            <span class="font-heading text-4xl italic text-fcd-gold">Q</span>
+          </div>
+          <div class="text-center">
+            <p class="font-heading text-lg text-fcd-navy font-semibold">Quynh Ng</p>
+            <p class="text-xs font-semibold tracking-widest2 uppercase text-fcd-gold mt-1">Founder &amp; CEO</p>
+          </div>
+          <div class="w-12 h-px bg-fcd-gold opacity-50"></div>
+          <p class="text-xs text-fcd-muted text-center tracking-wide">Future Construction &amp; Design INC</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TESTIMONIALS -->
+  <section class="bg-fcd-cream py-24 lg:py-32">
+    <div class="max-w-7xl mx-auto px-6 lg:px-12">
+      <div class="max-w-3xl mb-16">
+        <SectionLabel>Client Stories</SectionLabel>
+        <h2 class="font-heading text-4xl text-fcd-navy font-semibold">Real Projects. Real People. Real Results.</h2>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        {testimonials.map((t, i) => (
+          <div>
+            <TestimonialCard quote={t.quote} name={t.name} projectType={t.projectType} />
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- STATS BAR -->
+  <section class="bg-fcd-gold">
+    <div class="max-w-7xl mx-auto px-6 lg:px-12 py-12 grid grid-cols-2 lg:grid-cols-4 gap-8 text-fcd-black">
+      <div>
+        <p class="font-heading text-3xl font-bold">CA Lic.</p>
+        <p class="mt-1 text-sm font-semibold tracking-widest2 uppercase">#1127416</p>
+      </div>
+      <div>
+        <p class="font-heading text-3xl font-bold">100%</p>
+        <p class="mt-1 text-sm font-semibold tracking-widest2 uppercase">Permitted — Every Project</p>
+      </div>
+      <div>
+        <p class="font-heading text-3xl font-bold">Orange County</p>
+        <p class="mt-1 text-sm font-semibold tracking-widest2 uppercase">Based & Operated</p>
+      </div>
+      <div>
+        <p class="font-heading text-3xl font-bold">Licensed</p>
+        <p class="mt-1 text-sm font-semibold tracking-widest2 uppercase">Bonded & Insured</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROCESS PREVIEW -->
+  <section class="bg-fcd-dark py-24 lg:py-32">
+    <div class="max-w-7xl mx-auto px-6 lg:px-12">
+      <div class="max-w-3xl mb-16">
+        <SectionLabel>How We Work</SectionLabel>
+        <h2 class="font-heading text-4xl text-fcd-navy font-semibold">A Clear Path From First Call to Final Walkthrough.</h2>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 lg:gap-6">
+        <div>
+          <ProcessStep number="1" title="Discovery" description="We listen first. You tell us the vision, we ask the right questions." />
+        </div>
+        <div>
+          <ProcessStep number="2" title="Planning" description="Design coordination, permitting, budgeting, and scheduling — all handled." />
+        </div>
+        <div>
+          <ProcessStep number="3" title="Build" description="Daily updates, clean job site, and a dedicated PM on every project." />
+        </div>
+        <div>
+          <ProcessStep number="4" title="Deliver" description="Final walkthrough, punch list to zero, keys in hand." />
+        </div>
+      </div>
+
+      <div class="mt-14 text-center">
+        <a href="/process" class="inline-flex items-center gap-2 border border-fcd-gold text-fcd-gold font-semibold text-sm tracking-widest2 uppercase px-8 py-4 hover:bg-fcd-gold hover:text-fcd-black transition-colors duration-200">See Full Process →</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- CORE VALUES -->
+  <section class="bg-fcd-cream py-16 lg:py-20">
+    <div class="max-w-7xl mx-auto px-6 lg:px-12">
+      <div class="max-w-3xl mb-16">
+        <SectionLabel>Our Values</SectionLabel>
+        <h2 class="font-heading text-4xl text-fcd-navy font-semibold">The Standard We Build By.</h2>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {values.map((v, i) => (
+          <div class="bg-fcd-card border border-fcd-border rounded-lg p-8 hover:border-fcd-gold transition-colors">
+            <h3 class="font-heading text-xl text-fcd-navy font-semibold mb-3">{v.title}</h3>
+            <p class="text-sm text-fcd-muted leading-relaxed">{v.desc}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- CLIENT EXPERIENCE -->
+  <section class="bg-fcd-dark py-24 lg:py-32">
+    <div class="max-w-7xl mx-auto px-6 lg:px-12">
+      <div class="max-w-3xl mb-16">
+        <SectionLabel>What to Expect</SectionLabel>
+        <h2 class="font-heading text-4xl text-fcd-navy font-semibold">You'll Know What's Happening. Every Single Day.</h2>
+        <p class="mt-5 text-base lg:text-lg text-fcd-navy/80 leading-relaxed">
+          We feel that you've made the right choice in choosing us to be your General Contractor. Here's what it's like working with FCD.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        {experience.map((e, i) => (
+          <div class="bg-fcd-card border border-fcd-border rounded-lg p-8 hover:border-fcd-gold transition-colors">
+            <svg class="w-8 h-8 text-fcd-gold mb-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+            <h3 class="font-heading text-xl text-fcd-navy font-semibold mb-3">{e.title}</h3>
+            <p class="text-sm text-fcd-muted leading-relaxed">{e.desc}</p>
+          </div>
+        ))}
+      </div>
+
+      <p class="mt-12 text-center font-heading italic text-xl text-fcd-navy/90">
+        "That's our Client Experience — and we can't wait to start your project."
+      </p>
+    </div>
+  </section>
+
+  <!-- WHAT SETS US APART -->
+  <section class="bg-fcd-dark py-24 lg:py-32 border-t border-fcd-border">
+    <div class="max-w-7xl mx-auto px-6 lg:px-12 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+      <div>
+        <SectionLabel>The Difference</SectionLabel>
+        <h2 class="font-heading text-4xl text-fcd-navy font-semibold">Not Just Another Contractor.</h2>
+        <ul class="mt-8 space-y-4">
+          {setUsApart.map(item => (
+            <li class="flex items-start gap-3">
+              <svg class="w-6 h-6 text-fcd-gold flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+              <span class="text-base text-fcd-navy/90 leading-relaxed">{item}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <div class="rounded-lg overflow-hidden aspect-[4/3]">
+        <img src="/images/projects/custom-home-3.jpg" alt="Finished custom home project" loading="lazy" class="w-full h-full object-cover" />
+      </div>
+    </div>
+  </section>
+
+  <!-- FINAL CTA -->
+  <section class="relative py-32 lg:py-40 overflow-hidden">
+    <img src="/images/hero-bg.jpg" alt="" class="absolute inset-0 w-full h-full object-cover" />
+    <div class="absolute inset-0" style="background: rgba(10,10,15,0.85);"></div>
+    <div class="relative max-w-4xl mx-auto px-6 lg:px-12 text-center">
+      <h2 class="font-heading text-4xl lg:text-6xl text-white font-bold tracking-tight">
+        Ready to Build Something You'll Be Proud Of?
+      </h2>
+      <p class="mt-6 text-base lg:text-lg text-white/80 leading-relaxed max-w-2xl mx-auto">
+        Whether it's a dream home, an ADU, or a full remodel — let's talk about your project.
+      </p>
+      <div class="mt-10">
+        <a href="/contact" class="inline-flex items-center gap-2 bg-fcd-gold text-fcd-black font-semibold text-sm tracking-widest2 uppercase px-10 py-5 hover:bg-fcd-gold-lt transition-colors duration-200">Start My Project →</a>
+      </div>
+    </div>
+  </section>
+
+</BaseLayout>

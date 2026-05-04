@@ -1,0 +1,166 @@
+---
+import Nav from '../components/Nav.astro';
+import Footer from '../components/Footer.astro';
+import '../styles/global.css';
+
+interface Props {
+  title: string;
+  description?: string;
+  ogImage?: string;
+}
+const {
+  title,
+  description = 'Future Construction & Design INC — Custom Homes, Multifamily, ADUs, and Remodels. Built to last.',
+  ogImage = '/images/hero-bg.jpg',
+} = Astro.props;
+
+const fullTitle = `${title} | Future Construction & Design`;
+const canonical = new URL(Astro.url.pathname, Astro.site).toString();
+const ogImageUrl = new URL(ogImage, Astro.site).toString();
+---
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content={description} />
+    <title>{fullTitle}</title>
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" href="/images/logo.png" type="image/png" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Future Construction & Design INC" />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImageUrl} />
+    <meta property="og:locale" content="en_US" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={fullTitle} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImageUrl} />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet" />
+  </head>
+  <body class="bg-fcd-cream text-fcd-navy antialiased font-body">
+
+    <!-- ANNOUNCEMENT BAR -->
+    <div id="announcement-bar" class="relative bg-fcd-navy text-white text-sm">
+      <div class="max-w-7xl mx-auto px-6 lg:px-12 py-2.5 pr-12 flex items-center justify-center gap-2 flex-wrap">
+        <p class="text-center">
+          Now booking Summer 2026 projects — Lock in current pricing!
+          <a href="/contact" class="text-fcd-gold underline underline-offset-2 hover:text-fcd-gold-lt ml-2 font-semibold whitespace-nowrap">Get Free Quote →</a>
+        </p>
+      </div>
+      <button id="announcement-close" type="button" class="absolute right-3 top-1/2 -translate-y-1/2 text-white/70 hover:text-white p-1.5" aria-label="Dismiss announcement">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 6l12 12M6 18L18 6"/></svg>
+      </button>
+    </div>
+    <script is:inline>
+      (function() {
+        var bar = document.getElementById('announcement-bar');
+        var btn = document.getElementById('announcement-close');
+        if (!bar || !btn) return;
+        var dismissed = false;
+        try { dismissed = sessionStorage.getItem('fcd-announcement-dismissed') === '1'; } catch (e) {}
+        if (dismissed) bar.style.display = 'none';
+        btn.addEventListener('click', function() {
+          dismissed = true;
+          bar.style.display = 'none';
+          try { sessionStorage.setItem('fcd-announcement-dismissed', '1'); } catch (e) {}
+        });
+      })();
+    </script>
+
+    <Nav />
+    <main class="pb-20 md:pb-0"><slot /></main>
+    <Footer />
+
+    <!-- MOBILE BOTTOM NAV -->
+    <nav id="mobile-bottom-nav" class="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white border-t border-fcd-border shadow-[0_-4px_16px_rgba(0,37,62,0.06)]">
+      <div class="grid grid-cols-5 items-end px-2 pt-2 pb-2" style="padding-bottom: max(0.5rem, env(safe-area-inset-bottom));">
+        <a href="/" class="flex flex-col items-center gap-1 py-1 text-fcd-navy hover:text-fcd-gold transition-colors">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 12l9-9 9 9M5 10v11h14V10"/></svg>
+          <span class="text-[10px] font-semibold tracking-wider uppercase">Home</span>
+        </a>
+        <a href="/projects" class="flex flex-col items-center gap-1 py-1 text-fcd-navy hover:text-fcd-gold transition-colors">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4zM14 14h6v6h-6z"/></svg>
+          <span class="text-[10px] font-semibold tracking-wider uppercase">Projects</span>
+        </a>
+        <a href="tel:7149279777" class="flex flex-col items-center gap-1 py-1">
+          <span class="w-12 h-12 rounded-full bg-fcd-navy flex items-center justify-center -mt-5 shadow-md">
+            <svg class="w-5 h-5 text-fcd-gold" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 5a2 2 0 012-2h2.28a2 2 0 011.94 1.515l.7 2.8a2 2 0 01-.45 1.95l-1.27 1.27a16 16 0 006.586 6.586l1.27-1.27a2 2 0 011.95-.45l2.8.7A2 2 0 0121 18.72V21a2 2 0 01-2 2A18 18 0 013 5z"/></svg>
+          </span>
+          <span class="text-[10px] font-semibold tracking-wider uppercase text-fcd-navy">Call</span>
+        </a>
+        <a href="/contact" class="flex flex-col items-center gap-1 py-1 text-fcd-navy hover:text-fcd-gold transition-colors">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>
+          <span class="text-[10px] font-semibold tracking-wider uppercase">Quote</span>
+        </a>
+        <button id="mobile-more-toggle" type="button" class="flex flex-col items-center gap-1 py-1 text-fcd-navy hover:text-fcd-gold transition-colors" aria-expanded="false" aria-controls="mobile-more-popover">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/></svg>
+          <span class="text-[10px] font-semibold tracking-wider uppercase">More</span>
+        </button>
+      </div>
+
+      <div id="mobile-more-popover" class="hidden absolute bottom-full right-2 mb-2 bg-white border border-fcd-border rounded-lg shadow-xl py-2 min-w-[180px]">
+        <a href="/about" class="block px-5 py-3 text-sm font-semibold text-fcd-navy hover:bg-fcd-cream hover:text-fcd-gold transition-colors">About</a>
+        <a href="/services" class="block px-5 py-3 text-sm font-semibold text-fcd-navy hover:bg-fcd-cream hover:text-fcd-gold transition-colors">Services</a>
+        <a href="/process" class="block px-5 py-3 text-sm font-semibold text-fcd-navy hover:bg-fcd-cream hover:text-fcd-gold transition-colors">Process</a>
+        <a href="/client-onboarding" class="block px-5 py-3 text-sm font-semibold text-fcd-navy hover:bg-fcd-cream hover:text-fcd-gold transition-colors">Onboarding</a>
+      </div>
+    </nav>
+    <script is:inline>
+      (function() {
+        var toggle = document.getElementById('mobile-more-toggle');
+        var pop = document.getElementById('mobile-more-popover');
+        if (!toggle || !pop) return;
+        toggle.addEventListener('click', function(e) {
+          e.stopPropagation();
+          var open = !pop.classList.contains('hidden');
+          if (open) {
+            pop.classList.add('hidden');
+            toggle.setAttribute('aria-expanded', 'false');
+          } else {
+            pop.classList.remove('hidden');
+            toggle.setAttribute('aria-expanded', 'true');
+          }
+        });
+        document.addEventListener('click', function(e) {
+          if (!pop.contains(e.target) && e.target !== toggle) {
+            pop.classList.add('hidden');
+            toggle.setAttribute('aria-expanded', 'false');
+          }
+        });
+        pop.querySelectorAll('a').forEach(function(a) {
+          a.addEventListener('click', function() {
+            pop.classList.add('hidden');
+            toggle.setAttribute('aria-expanded', 'false');
+          });
+        });
+      })();
+    </script>
+
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js" is:inline></script>
+    <script is:inline>
+      document.addEventListener('DOMContentLoaded', function() {
+        if (typeof AOS !== 'undefined') {
+          AOS.init({
+            duration: 600,
+            easing: 'ease-out-cubic',
+            once: true,
+            offset: 0,
+            startEvent: 'DOMContentLoaded',
+            initClassName: 'aos-init',
+            animatedClassName: 'aos-animated',
+            disable: false
+          });
+        }
+      });
+    </script>
+  </body>
+</html>
