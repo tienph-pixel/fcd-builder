@@ -52,7 +52,7 @@ const setUsApart = [
 >
 
   <!-- HERO -->
-  <section class="relative w-full" style="min-height: 100vh;">
+  <section class="relative w-full min-h-[80vh] lg:min-h-screen">
     <img
       src="/images/hero-bg.jpg"
       alt=""
@@ -64,57 +64,57 @@ const setUsApart = [
       style="background: linear-gradient(to right, rgba(0,15,28,0.65) 0%, rgba(0,15,28,0.25) 55%, rgba(0,15,28,0.45) 100%);"
     ></div>
 
-    <div class="relative w-full max-w-7xl mx-auto px-6 lg:px-12 flex items-center" style="min-height: 100vh;">
+    <div class="relative w-full max-w-7xl mx-auto px-6 lg:px-12 flex items-center min-h-[80vh] lg:min-h-screen">
 
       <!-- FLOATING CARD -->
       <div
-        class="w-full max-w-[560px] my-32"
-        style="background: rgba(0,37,62,0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-radius: 16px; padding: 2.5rem; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);"
+        class="w-full max-w-[560px] my-6 lg:my-32 p-6 sm:p-10 rounded-2xl"
+        style="background: rgba(0,37,62,0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);"
       >
         <!-- Trusted badge pill -->
-        <div class="inline-flex items-center gap-2 bg-fcd-gold/15 border border-fcd-gold/40 rounded-full px-3 py-1.5 mb-6">
+        <div class="inline-flex items-center gap-2 bg-fcd-gold/15 border border-fcd-gold/40 rounded-full px-3 py-1.5 mb-3 sm:mb-6">
           <svg class="w-4 h-4 text-fcd-gold" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
           <span class="text-[11px] font-semibold tracking-widest uppercase text-fcd-gold">Trusted · CA Lic. #1127416</span>
         </div>
 
         <!-- Headline -->
-        <h1 class="font-heading font-bold tracking-tight text-4xl sm:text-5xl lg:text-6xl leading-[1.05]">
+        <h1 class="font-heading font-bold tracking-tight text-3xl sm:text-5xl lg:text-6xl leading-[1.05]">
           <span class="block text-white">We Build Homes</span>
           <span class="block" style="color: #dab76b;">That Tell Your Story.</span>
         </h1>
 
         <!-- Subtitle -->
-        <p class="mt-5 text-base text-white/70 leading-relaxed">
+        <p class="mt-3 sm:mt-5 text-sm sm:text-base text-white/70 leading-relaxed">
           Multifamily, custom homes, ADUs, and remodels — on time, on budget, built to last a generation.
         </p>
 
         <!-- Urgency pill -->
-        <div class="inline-flex items-center gap-2 mt-6 bg-emerald-500/15 border border-emerald-400/40 rounded-full px-3 py-1.5">
+        <div class="inline-flex items-center gap-2 mt-4 sm:mt-6 bg-emerald-500/15 border border-emerald-400/40 rounded-full px-3 py-1.5">
           <span class="w-2 h-2 rounded-full bg-emerald-400" style="animation: fcd-pulse 1.6s ease-in-out infinite;"></span>
           <span class="text-[11px] font-semibold tracking-wide text-emerald-300">Limited spots available — Orange County</span>
         </div>
 
         <!-- CTAs -->
-        <div class="mt-7 space-y-3">
+        <div class="mt-5 sm:mt-7 space-y-2 sm:space-y-3">
           <a
             href="/contact"
-            class="flex items-center justify-center gap-2 bg-fcd-gold text-fcd-navy font-semibold text-sm tracking-widest2 uppercase px-6 py-4 rounded-md hover:bg-fcd-gold-lt hover:text-white transition-colors duration-200"
+            class="flex items-center justify-center gap-2 bg-fcd-gold text-fcd-navy font-semibold text-sm tracking-widest2 uppercase px-6 py-3 sm:py-4 rounded-md hover:bg-fcd-gold-lt hover:text-white transition-colors duration-200"
           >Get Free Quote →</a>
           <a
             href="/projects"
-            class="flex items-center justify-center gap-2 border border-white/30 text-white font-semibold text-sm tracking-widest2 uppercase px-6 py-4 rounded-md hover:bg-white/10 hover:border-white/50 transition-colors duration-200"
+            class="flex items-center justify-center gap-2 border border-white/30 text-white font-semibold text-sm tracking-widest2 uppercase px-6 py-3 sm:py-4 rounded-md hover:bg-white/10 hover:border-white/50 transition-colors duration-200"
           >View Our Projects →</a>
         </div>
 
         <!-- Stat boxes -->
-        <div class="grid grid-cols-2 gap-3 mt-6">
-          <div class="bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-center">
-            <p class="font-heading text-xl text-fcd-gold font-bold leading-tight">100%</p>
-            <p class="text-[11px] tracking-widest uppercase text-white/70 mt-1 font-semibold">Permitted</p>
+        <div class="grid grid-cols-2 gap-3 mt-4 sm:mt-6">
+          <div class="bg-white/5 border border-white/10 rounded-lg px-3 py-2 sm:px-4 sm:py-3 text-center">
+            <p class="font-heading text-lg sm:text-xl text-fcd-gold font-bold leading-tight">100%</p>
+            <p class="text-[10px] sm:text-[11px] tracking-widest uppercase text-white/70 mt-1 font-semibold">Permitted</p>
           </div>
-          <div class="bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-center">
-            <p class="font-heading text-xl text-fcd-gold font-bold leading-tight">✓</p>
-            <p class="text-[11px] tracking-widest uppercase text-white/70 mt-1 font-semibold">Licensed &amp; Insured</p>
+          <div class="bg-white/5 border border-white/10 rounded-lg px-3 py-2 sm:px-4 sm:py-3 text-center">
+            <p class="font-heading text-lg sm:text-xl text-fcd-gold font-bold leading-tight">✓</p>
+            <p class="text-[10px] sm:text-[11px] tracking-widest uppercase text-white/70 mt-1 font-semibold">Licensed &amp; Insured</p>
           </div>
         </div>
       </div>
