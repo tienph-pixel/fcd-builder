@@ -28,59 +28,41 @@ const faqs = [
   description="Tell us about your project. We respond within 1 business day."
 >
 
-  <!-- HERO -->
-  <section class="relative flex items-center" style="min-height: 50vh;">
-    <div class="absolute inset-0 bg-fcd-dark"></div>
-    <div class="absolute inset-0" style="background: radial-gradient(ellipse at center, rgba(201,168,76,0.08), rgba(10,10,15,0));"></div>
-    <div class="relative max-w-7xl mx-auto px-6 lg:px-12 py-16 w-full">
-      <SectionLabel>Start My Project</SectionLabel>
-      <h1 class="font-heading font-bold tracking-tight text-fcd-navy text-5xl lg:text-7xl leading-[1.05] max-w-4xl">
-        Let's Talk About Your Project.
-      </h1>
-    </div>
-  </section>
+  <!-- HEADLINE + FORM (Top section) -->
+  <section class="bg-fcd-cream">
+    <div class="max-w-7xl mx-auto px-6 lg:px-12 py-16 grid grid-cols-1 lg:grid-cols-12 gap-12">
 
-  <!-- TWO-COLUMN: INFO + FORM -->
-  <section class="bg-fcd-cream py-24 lg:py-32">
-    <div class="max-w-7xl mx-auto px-6 lg:px-12 grid grid-cols-1 lg:grid-cols-12 gap-12">
-
+      <!-- LEFT: copy and contact info -->
       <div class="lg:col-span-5">
-        <h2 class="font-heading text-3xl lg:text-4xl text-fcd-navy font-semibold mb-6">What Happens Next.</h2>
-        <p class="text-base lg:text-lg text-fcd-navy/80 leading-relaxed mb-8">
-          Tell us a little about your project below. Within 1 business day, you'll hear directly from our team to schedule a free consultation call. We'll give you a real ballpark range, talk through scope and timeline, and tell you honestly whether we're a fit.
+        <SectionLabel>Start My Project</SectionLabel>
+        <h1 class="font-heading font-bold tracking-tight text-fcd-navy text-4xl lg:text-5xl leading-[1.05] mb-6">
+          Let's Talk About Your Project.
+        </h1>
+
+        <h2 class="font-heading text-2xl text-fcd-navy font-semibold mb-3">What Happens Next.</h2>
+        <p class="text-base text-fcd-navy/80 leading-relaxed mb-5">
+          Tell us a little about your project. Within 1 business day, you'll hear directly from our team to schedule a free consultation call.
         </p>
 
-        <div class="bg-fcd-card border border-fcd-border rounded-lg p-6 mb-6">
-          <p class="text-xs font-semibold tracking-widest2 uppercase text-fcd-gold mb-1">Response Time</p>
-          <p class="font-heading text-xl text-fcd-navy font-semibold">We respond within 1 business day.</p>
-        </div>
-
-        <div class="space-y-4 text-base">
-          <div class="flex items-start gap-3">
-            <svg class="w-5 h-5 text-fcd-gold mt-1 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 5a2 2 0 012-2h2.28a2 2 0 011.94 1.515l.7 2.8a2 2 0 01-.45 1.95l-1.27 1.27a16 16 0 006.586 6.586l1.27-1.27a2 2 0 011.95-.45l2.8.7A2 2 0 0121 18.72V21a2 2 0 01-2 2A18 18 0 013 5z"/></svg>
-            <a href="tel:7149279777" class="text-fcd-navy hover:text-fcd-gold transition-colors">(714) 927-9777</a>
-          </div>
-          <div class="flex items-start gap-3">
-            <svg class="w-5 h-5 text-fcd-gold mt-1 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
-            <a href="mailto:futureconstructionteam@gmail.com" class="text-fcd-navy hover:text-fcd-gold transition-colors">futureconstructionteam@gmail.com</a>
-          </div>
-          <div class="flex items-start gap-3">
-            <svg class="w-5 h-5 text-fcd-gold mt-1 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a2 2 0 01-2.828 0l-4.243-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
-            <span class="text-fcd-navy">Orange County, CA</span>
-          </div>
-        </div>
-
-        <div class="mt-10 pt-8 border-t border-fcd-border">
-          <p class="text-xs font-semibold tracking-widest2 uppercase text-fcd-gold mb-3">Already Have Drawings?</p>
-          <p class="text-base text-fcd-navy/80 leading-relaxed">
-            Send your permit-ready plans directly to our estimating team:
-          </p>
-          <a href="mailto:futureconstructionteam@gmail.com" class="mt-2 inline-block text-fcd-gold hover:text-fcd-gold-lt transition-colors underline underline-offset-4">futureconstructionteam@gmail.com</a>
-        </div>
+        <ul class="space-y-3">
+          <li class="flex items-start gap-3">
+            <svg class="w-5 h-5 text-fcd-gold flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+            <span class="text-base text-fcd-navy/90">Free ballpark range — no obligation</span>
+          </li>
+          <li class="flex items-start gap-3">
+            <svg class="w-5 h-5 text-fcd-gold flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+            <span class="text-base text-fcd-navy/90">Real answers about scope and timeline</span>
+          </li>
+          <li class="flex items-start gap-3">
+            <svg class="w-5 h-5 text-fcd-gold flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+            <span class="text-base text-fcd-navy/90">Honest read on whether we're a fit</span>
+          </li>
+        </ul>
       </div>
 
+      <!-- RIGHT: form -->
       <div class="lg:col-span-7">
-        <div class="bg-fcd-card border border-fcd-border rounded-lg p-8 lg:p-10">
+        <div class="bg-fcd-card border border-fcd-border rounded-lg p-6 sm:p-8 lg:p-10">
           <ContactForm />
         </div>
       </div>
@@ -91,65 +73,49 @@ const faqs = [
   <!-- VISIT & CONTACT US -->
   <section class="bg-fcd-cream py-24 lg:py-32 border-t border-fcd-border">
     <div class="max-w-7xl mx-auto px-6 lg:px-12">
-      <div class="max-w-3xl mb-12">
-        <SectionLabel>Visit & Contact Us</SectionLabel>
-        <h2 class="font-heading text-4xl text-fcd-navy font-semibold">Come See Us in Garden Grove.</h2>
-      </div>
 
-      <!-- Three info cards -->
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <a href="tel:+17149279777" class="group block bg-fcd-card border border-fcd-border rounded-lg p-8 hover:border-fcd-gold transition-colors">
-          <div class="w-12 h-12 rounded-full bg-fcd-gold/15 border border-fcd-gold/40 flex items-center justify-center mb-5">
-            <svg class="w-5 h-5 text-fcd-gold" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 5a2 2 0 012-2h2.28a2 2 0 011.94 1.515l.7 2.8a2 2 0 01-.45 1.95l-1.27 1.27a16 16 0 006.586 6.586l1.27-1.27a2 2 0 011.95-.45l2.8.7A2 2 0 0121 18.72V21a2 2 0 01-2 2A18 18 0 013 5z"/></svg>
+      <!-- Four compact horizontal contact cards -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+        <!-- Card 1: Call -->
+        <a href="tel:+17149279777" class="flex items-center gap-3 hover:opacity-90 transition-opacity"
+           style="background:#f7f4ef; border:1px solid #e8e3da; border-radius:12px; padding:14px 16px;">
+          <div class="flex items-center justify-center flex-shrink-0" style="width:36px; height:36px; background:#dab76b; border-radius:8px;">
+            <svg class="w-5 h-5" fill="none" stroke="#00253e" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 5a2 2 0 012-2h2.28a2 2 0 011.94 1.515l.7 2.8a2 2 0 01-.45 1.95l-1.27 1.27a16 16 0 006.586 6.586l1.27-1.27a2 2 0 011.95-.45l2.8.7A2 2 0 0121 18.72V21a2 2 0 01-2 2A18 18 0 013 5z"/></svg>
           </div>
-          <p class="text-xs font-semibold tracking-widest2 uppercase text-fcd-gold mb-2">Call Us</p>
-          <p class="font-heading text-xl text-fcd-navy font-semibold group-hover:text-fcd-gold transition-colors">(714) 927-9777</p>
+          <div class="min-w-0">
+            <p style="color:#00253e; font-size:11px; font-weight:500; text-transform:uppercase; letter-spacing:0.08em;">Call Us</p>
+            <p class="font-heading font-semibold" style="color:#00253e; font-size:16px; margin-top:2px;">(714) 927-9777</p>
+          </div>
         </a>
 
-        <a href="mailto:futureconstructionteam@gmail.com" class="group block bg-fcd-card border border-fcd-border rounded-lg p-8 hover:border-fcd-gold transition-colors">
-          <div class="w-12 h-12 rounded-full bg-fcd-gold/15 border border-fcd-gold/40 flex items-center justify-center mb-5">
-            <svg class="w-5 h-5 text-fcd-gold" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+        <!-- Card 2: Text -->
+        <a href="sms:+17149279777" class="flex items-center gap-3 hover:opacity-90 transition-opacity"
+           style="background:#f7f4ef; border:1px solid #e8e3da; border-radius:12px; padding:14px 16px;">
+          <div class="flex items-center justify-center flex-shrink-0" style="width:36px; height:36px; background:#dab76b; border-radius:8px;">
+            <svg class="w-5 h-5" fill="none" stroke="#00253e" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.86 9.86 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
           </div>
-          <p class="text-xs font-semibold tracking-widest2 uppercase text-fcd-gold mb-2">Email Us</p>
-          <p class="font-heading text-base lg:text-lg text-fcd-navy font-semibold group-hover:text-fcd-gold transition-colors break-all">futureconstructionteam@gmail.com</p>
+          <p style="color:#00253e; font-size:11px; font-weight:500; text-transform:uppercase; letter-spacing:0.08em;">Text Us</p>
         </a>
 
-        <div class="block bg-fcd-card border border-fcd-border rounded-lg p-8">
-          <div class="w-12 h-12 rounded-full bg-fcd-gold/15 border border-fcd-gold/40 flex items-center justify-center mb-5">
-            <svg class="w-5 h-5 text-fcd-gold" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a2 2 0 01-2.828 0l-4.243-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+        <!-- Card 3: Email -->
+        <a href="mailto:futureconstructionteam@gmail.com" class="flex items-center gap-3 hover:opacity-90 transition-opacity"
+           style="background:#f7f4ef; border:1px solid #e8e3da; border-radius:12px; padding:14px 16px;">
+          <div class="flex items-center justify-center flex-shrink-0" style="width:36px; height:36px; background:#dab76b; border-radius:8px;">
+            <svg class="w-5 h-5" fill="none" stroke="#00253e" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
           </div>
-          <p class="text-xs font-semibold tracking-widest2 uppercase text-fcd-gold mb-2">Our Office</p>
-          <p class="font-heading text-base text-fcd-navy font-semibold leading-snug">12122 Brookhurst St<br/>Garden Grove, CA 92840</p>
-        </div>
-      </div>
+          <p style="color:#00253e; font-size:11px; font-weight:500; text-transform:uppercase; letter-spacing:0.08em;">Email</p>
+        </a>
 
-      <!-- Business hours -->
-      <div class="mt-10 bg-fcd-card border border-fcd-border rounded-lg p-6 max-w-md">
-        <p class="text-xs font-semibold tracking-widest2 uppercase text-fcd-gold mb-4">Business Hours</p>
-        <div class="space-y-2 text-base text-fcd-navy">
-          <div class="flex justify-between gap-8">
-            <span class="font-semibold">Mon – Fri</span>
-            <span>10:00 AM – 6:00 PM</span>
+        <!-- Card 4: Office (opens directions) -->
+        <a href="https://www.google.com/maps/dir/?api=1&destination=12122+Brookhurst+St%2C+Garden+Grove%2C+CA+92840" target="_blank" rel="noopener" class="flex items-center gap-3 hover:opacity-90 transition-opacity"
+           style="background:#f7f4ef; border:1px solid #e8e3da; border-radius:12px; padding:14px 16px;">
+          <div class="flex items-center justify-center flex-shrink-0" style="width:36px; height:36px; background:#dab76b; border-radius:8px;">
+            <svg class="w-5 h-5" fill="none" stroke="#00253e" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a2 2 0 01-2.828 0l-4.243-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
           </div>
-          <div class="flex justify-between gap-8">
-            <span class="font-semibold">Sat – Sun</span>
-            <span class="text-fcd-muted">Closed</span>
-          </div>
-        </div>
-      </div>
+          <p style="color:#00253e; font-size:11px; font-weight:500; text-transform:uppercase; letter-spacing:0.08em;">Our Office</p>
+        </a>
 
-      <!-- Google Maps embed -->
-      <div class="mt-10 rounded-lg overflow-hidden border border-fcd-border">
-        <iframe
-          src="https://maps.google.com/maps?q=12122%20Brookhurst%20St%2C%20Garden%20Grove%2C%20CA%2092840&t=&z=15&ie=UTF8&iwloc=&output=embed"
-          width="100%"
-          height="300"
-          style="border:0; display:block;"
-          allowfullscreen=""
-          loading="lazy"
-          referrerpolicy="no-referrer-when-downgrade"
-          title="FCD Office Location — 12122 Brookhurst St, Garden Grove, CA"
-        ></iframe>
       </div>
     </div>
   </section>
