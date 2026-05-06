@@ -1,0 +1,113 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import SectionLabel from '../../components/SectionLabel.astro';
+
+const faqs = [
+  { q: "How much does a whole-home renovation cost in Orange County?", a: "Whole-home renovations in Orange County typically run $200,000–$600,000+ depending on square footage, scope, and finish level. A full update of a 2,000 sq ft home (kitchen, bathrooms, flooring, paint, windows) typically runs $200,000–$350,000. We give you a detailed scope and fixed price before any work starts." },
+  { q: "How long does a whole-home renovation take?", a: "Depending on scope, whole-home renovations take 4–9 months. We phase the work strategically — structural first, then MEP rough-in, then finishes — to minimize downtime and keep the project moving." },
+  { q: "Can I stay in the house during a whole-home renovation?", a: "It depends on the scope. For renovations that include kitchen and multiple bathrooms simultaneously, most clients move out temporarily. For phased renovations where we tackle one section at a time, many clients stay. We will be honest with you about what makes sense for your specific project before you commit." },
+  { q: "Do you handle everything, or do I need to hire separate contractors?", a: "We handle everything. Demolition, structural, plumbing, electrical, HVAC coordination, insulation, drywall, flooring, tile, cabinetry, paint, and punch list. One contract, one PM, one point of contact." },
+  { q: "How do whole-home renovations affect resale value in Orange County?", a: "In Orange County's market, a well-executed whole-home renovation typically returns 60–80% of cost at resale — and makes the home significantly easier to sell. Updated kitchens, bathrooms, and flooring are the highest-return investments. We can walk you through which scope items give you the best ROI for your specific situation." },
+];
+
+const schema = {
+  "@context": "https://schema.org", "@type": "Service", "name": "Whole Home Renovation Orange County",
+  "description": "Licensed whole-home renovation contractor in Orange County, CA. Full gut renovations, kitchen, bathroom, flooring, structural — all managed by one team. CA Lic. #1127416.",
+  "provider": { "@type": "LocalBusiness", "name": "Future Construction & Design INC", "url": "https://www.fcdteam.com", "telephone": "(714) 927-9777", "address": { "@type": "PostalAddress", "streetAddress": "12122 Brookhurst St", "addressLocality": "Garden Grove", "addressRegion": "CA", "postalCode": "92840", "addressCountry": "US" }, "license": "CA Lic. #1127416" },
+  "serviceType": "Whole Home Renovation", "areaServed": "Orange County, CA"
+};
+---
+<BaseLayout
+  title="Whole Home Renovation Orange County | Future Construction & Design"
+  description="Licensed whole-home renovation contractor in Orange County, CA. Full gut renovations — kitchen, bathrooms, flooring, structural — all under one roof. CA Lic. #1127416."
+>
+  <script type="application/ld+json" set:html={JSON.stringify(schema)} />
+
+  <section class="relative flex items-center" style="min-height: 55vh;">
+    <div class="absolute inset-0 overflow-hidden">
+      <img src="/images/projects/remodel-2.jpg" alt="Whole home renovation Orange County" class="w-full h-full object-cover" loading="eager" />
+      <div class="absolute inset-0" style="background: linear-gradient(to right, rgba(0,37,62,0.88) 50%, rgba(0,37,62,0.4));"></div>
+    </div>
+    <div class="relative max-w-7xl mx-auto px-6 lg:px-12 py-20 w-full">
+      <SectionLabel>Whole-Home Renovation · Orange County</SectionLabel>
+      <h1 class="font-heading font-bold tracking-tight text-white text-4xl lg:text-6xl leading-[1.05] max-w-3xl mt-4">Whole Home Renovation Orange County</h1>
+      <p class="mt-6 text-base lg:text-lg text-white/80 leading-relaxed max-w-2xl">Complete home transformations — kitchen, bathrooms, flooring, structure, electrical, plumbing — managed by one team with one fixed price. CA Lic. #1127416.</p>
+      <div class="mt-10 flex flex-col sm:flex-row gap-4">
+        <a href="/contact" class="inline-flex items-center justify-center gap-2 bg-fcd-gold text-fcd-black font-semibold text-sm tracking-widest2 uppercase px-8 py-4 hover:bg-fcd-gold-lt transition-colors duration-200">Start My Renovation &rarr;</a>
+        <a href="tel:7149279777" class="inline-flex items-center justify-center gap-2 border border-white/40 text-white font-semibold text-sm tracking-widest2 uppercase px-8 py-4 hover:border-fcd-gold hover:text-fcd-gold transition-colors duration-200">(714) 927-9777</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="bg-fcd-cream py-20 lg:py-28">
+    <div class="max-w-7xl mx-auto px-6 lg:px-12">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
+        <div>
+          <SectionLabel>Full Scope</SectionLabel>
+          <h2 class="font-heading text-3xl lg:text-4xl text-fcd-navy font-semibold mt-4 mb-8">Everything Under One Contract</h2>
+          <p class="text-fcd-navy/80 leading-relaxed mb-8">Most homeowners doing a whole-home renovation end up managing five different contractors — a GC for framing, a separate plumber, electrician, tile contractor, and cabinet installer. Each one on their own timeline. Nobody talking to each other. That's how projects go over budget and take twice as long.</p>
+          <p class="text-fcd-navy/80 leading-relaxed mb-10">We run the whole thing. One contract. One PM. One phone number. Every trade is coordinated by us — sequenced properly so the plumber isn't waiting on the framer and the tile guy isn't waiting on the plumber.</p>
+          <div class="space-y-3">
+            {["Full demolition and structural changes", "Plumbing — full re-pipe or targeted relocation", "Electrical — panel upgrades, new circuits, recessed lighting", "HVAC coordination", "Insulation and energy efficiency upgrades", "Drywall, texture, and paint", "Kitchen — cabinets, countertops, appliances", "Bathrooms — tile, fixtures, glass, vanities", "Flooring throughout — hardwood, tile, LVP", "Windows and doors", "Exterior paint and curb appeal"].map(item => (
+              <div class="flex gap-3 items-start">
+                <svg class="w-5 h-5 text-fcd-gold flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                <span class="text-fcd-navy/80 text-sm">{item}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+        <div class="space-y-6">
+          <div class="bg-fcd-dark border border-fcd-border rounded-lg p-8">
+            <p class="text-xs font-semibold tracking-widest2 uppercase text-fcd-gold mb-6">By the Numbers</p>
+            <div class="grid grid-cols-2 gap-8">
+              {[{ stat: "$200K–$600K+", label: "Typical Range" }, { stat: "4–9 months", label: "Full Renovation" }, { stat: "1 PM", label: "Your Contact" }, { stat: "100%", label: "Permitted" }].map(item => (
+                <div><p class="font-heading text-2xl text-fcd-gold font-bold">{item.stat}</p><p class="text-fcd-navy/60 text-sm mt-1">{item.label}</p></div>
+              ))}
+            </div>
+          </div>
+          <div class="rounded-lg overflow-hidden aspect-[16/9]"><img src="/images/projects/remodel-3.jpg" alt="Whole home renovation OC" loading="lazy" class="w-full h-full object-cover" /></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="bg-fcd-dark py-20 lg:py-28">
+    <div class="max-w-4xl mx-auto px-6 lg:px-12">
+      <SectionLabel>FAQ</SectionLabel>
+      <h2 class="font-heading text-3xl lg:text-4xl text-fcd-navy font-semibold mt-4 mb-12">Whole-Home Renovation Questions</h2>
+      <div class="divide-y divide-fcd-border">
+        {faqs.map(faq => (
+          <div class="py-6">
+            <button class="faq-btn w-full flex items-start justify-between gap-4 text-left group" aria-expanded="false">
+              <h3 class="font-heading text-lg text-fcd-navy font-semibold group-hover:text-fcd-gold transition-colors pr-4">{faq.q}</h3>
+              <svg class="faq-icon w-5 h-5 text-fcd-gold flex-shrink-0 mt-1 transition-transform duration-200" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+            </button>
+            <div class="faq-answer hidden mt-4"><p class="text-fcd-navy/75 leading-relaxed">{faq.a}</p></div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+  <script is:inline>
+    document.querySelectorAll('.faq-btn').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        var answer = btn.nextElementSibling; var icon = btn.querySelector('.faq-icon'); var isOpen = !answer.classList.contains('hidden');
+        document.querySelectorAll('.faq-answer').forEach(function(a) { a.classList.add('hidden'); });
+        document.querySelectorAll('.faq-icon').forEach(function(ic) { ic.style.transform = ''; });
+        document.querySelectorAll('.faq-btn').forEach(function(b) { b.setAttribute('aria-expanded', 'false'); });
+        if (!isOpen) { answer.classList.remove('hidden'); icon.style.transform = 'rotate(180deg)'; btn.setAttribute('aria-expanded', 'true'); }
+      });
+    });
+  </script>
+  <section class="bg-fcd-navy py-20 lg:py-28">
+    <div class="max-w-4xl mx-auto px-6 lg:px-12 text-center">
+      <h2 class="font-heading text-3xl lg:text-5xl text-white font-bold tracking-tight mb-6">Ready to Transform Your Entire Home?</h2>
+      <p class="text-white/70 text-lg max-w-2xl mx-auto mb-10">Tell us your vision. We will scope it, price it, and deliver it — under one contract, with one team you can actually reach.</p>
+      <div class="flex flex-col sm:flex-row gap-4 justify-center">
+        <a href="/contact" class="inline-flex items-center justify-center gap-2 bg-fcd-gold text-fcd-black font-semibold text-sm tracking-widest2 uppercase px-10 py-5 hover:bg-fcd-gold-lt transition-colors duration-200">Start My Renovation &rarr;</a>
+        <a href="tel:7149279777" class="inline-flex items-center justify-center gap-2 border border-white/30 text-white font-semibold text-sm tracking-widest2 uppercase px-10 py-5 hover:border-fcd-gold hover:text-fcd-gold transition-colors duration-200">Call (714) 927-9777</a>
+      </div>
+      <p class="mt-8 text-white/40 text-sm">CA Lic. #1127416 &middot; Serving Orange County, CA</p>
+    </div>
+  </section>
+</BaseLayout>

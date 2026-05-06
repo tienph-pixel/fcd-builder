@@ -1,0 +1,148 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import SectionLabel from '../../components/SectionLabel.astro';
+
+const faqs = [
+  { q: "How much does a custom home cost in Orange County?", a: "Custom homes in Orange County typically range from $400,000 to $1.5M+ depending on size, site conditions, design complexity, and finishes. The cost-per-square-foot for a quality custom build runs $350–$600+. We provide a detailed budget breakdown after reviewing your plans or design intent — no guessing." },
+  { q: "Do I need an architect before coming to you?", a: "No. We offer true design-build, meaning we can connect you with architects we trust and coordinate the entire process from design through construction. If you already have plans, we work directly from those." },
+  { q: "How long does a custom home take to build?", a: "From breaking ground to move-in, most custom homes take 12–18 months. Design and permitting add another 6–12 months depending on complexity and your city. We set a realistic schedule before you sign and hold to it." },
+  { q: "What is value engineering?", a: "Value engineering is the process of reviewing your plans and finding places to achieve the same design intent at a lower cost — different materials, structural changes, or phasing decisions. We do this on every project before finalizing the budget." },
+  { q: "Can you build on a sloped or difficult lot?", a: "Yes. Orange County has plenty of hillside and challenging lots. We assess the site, coordinate geotechnical reports, and work with structural engineers experienced in complex foundations." },
+  { q: "What areas of Orange County do you build custom homes in?", a: "We build throughout Orange County including Irvine, Newport Beach, Huntington Beach, Yorba Linda, Anaheim Hills, Garden Grove, and surrounding areas." },
+];
+
+const schema = {
+  "@context": "https://schema.org",
+  "@type": "Service",
+  "name": "Custom Home Builder Orange County",
+  "description": "Licensed custom home builder in Orange County, CA. Ground-up construction from plans or design-build. CA Lic. #1127416.",
+  "provider": {
+    "@type": "LocalBusiness",
+    "name": "Future Construction & Design INC",
+    "url": "https://www.fcdteam.com",
+    "telephone": "(714) 927-9777",
+    "address": { "@type": "PostalAddress", "streetAddress": "12122 Brookhurst St", "addressLocality": "Garden Grove", "addressRegion": "CA", "postalCode": "92840", "addressCountry": "US" },
+    "license": "CA Lic. #1127416"
+  },
+  "serviceType": "Custom Home Construction",
+  "areaServed": "Orange County, CA"
+};
+---
+<BaseLayout
+  title="Custom Home Builder Orange County | Future Construction & Design"
+  description="Licensed custom home builder in Orange County, CA. Ground-up construction, design-build, architect coordination. We deliver homes built the way you envisioned them. CA Lic. #1127416."
+>
+  <script type="application/ld+json" set:html={JSON.stringify(schema)} />
+
+  <!-- HERO -->
+  <section class="relative flex items-center" style="min-height: 55vh;">
+    <div class="absolute inset-0 overflow-hidden">
+      <img src="/images/projects/custom-home-1.jpg" alt="Custom home builder Orange County" class="w-full h-full object-cover" loading="eager" />
+      <div class="absolute inset-0" style="background: linear-gradient(to right, rgba(0,37,62,0.88) 50%, rgba(0,37,62,0.4));"></div>
+    </div>
+    <div class="relative max-w-7xl mx-auto px-6 lg:px-12 py-20 w-full">
+      <SectionLabel>Custom Home Builds · Orange County</SectionLabel>
+      <h1 class="font-heading font-bold tracking-tight text-white text-4xl lg:text-6xl leading-[1.05] max-w-3xl mt-4">Custom Home Builder Orange County</h1>
+      <p class="mt-6 text-base lg:text-lg text-white/80 leading-relaxed max-w-2xl">Ground-up custom homes built around your vision. We coordinate design, manage the build, and deliver a finished home that matches what you signed — not a compromise. CA Lic. #1127416.</p>
+      <div class="mt-10 flex flex-col sm:flex-row gap-4">
+        <a href="/contact" class="inline-flex items-center justify-center gap-2 bg-fcd-gold text-fcd-black font-semibold text-sm tracking-widest2 uppercase px-8 py-4 hover:bg-fcd-gold-lt transition-colors duration-200">Start Your Custom Home &rarr;</a>
+        <a href="tel:7149279777" class="inline-flex items-center justify-center gap-2 border border-white/40 text-white font-semibold text-sm tracking-widest2 uppercase px-8 py-4 hover:border-fcd-gold hover:text-fcd-gold transition-colors duration-200">(714) 927-9777</a>
+      </div>
+      <div class="mt-8 flex flex-wrap gap-6 text-sm text-white/70">
+        <span class="flex items-center gap-2"><svg class="w-4 h-4 text-fcd-gold" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>Design-Build Available</span>
+        <span class="flex items-center gap-2"><svg class="w-4 h-4 text-fcd-gold" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>Fixed-Price Contracts</span>
+        <span class="flex items-center gap-2"><svg class="w-4 h-4 text-fcd-gold" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>CA Licensed &amp; Insured</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- INTRO -->
+  <section class="bg-fcd-cream py-20 lg:py-28">
+    <div class="max-w-7xl mx-auto px-6 lg:px-12 grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+      <div>
+        <SectionLabel>What We Build</SectionLabel>
+        <h2 class="font-heading text-3xl lg:text-4xl text-fcd-navy font-semibold mt-4 mb-6">A Home Built Exactly the Way You Imagined It</h2>
+        <p class="text-fcd-navy/80 leading-relaxed mb-5">Building a custom home is the biggest project most families ever take on. We make it feel like a real partnership — not a transaction. Whether you bring us finished plans or want to start from scratch, we deliver a home that actually matches what we agreed to on day one.</p>
+        <p class="text-fcd-navy/80 leading-relaxed mb-5">We coordinate your architect, value-engineer the budget so your money goes further, manage every subcontractor, and give you daily visibility into what's happening on your site. No surprises. No silence.</p>
+        <div class="grid grid-cols-2 gap-6 mt-10">
+          {[{ stat: "$400K–$1.5M+", label: "Typical Range" }, { stat: "12–18 mo", label: "Ground to Move-In" }, { stat: "$350–$600", label: "Per Sq Ft" }, { stat: "100%", label: "Permitted Projects" }].map(item => (
+            <div><p class="font-heading text-2xl text-fcd-gold font-bold">{item.stat}</p><p class="text-fcd-navy/60 text-sm mt-1">{item.label}</p></div>
+          ))}
+        </div>
+      </div>
+      <div class="space-y-4">
+        <div class="rounded-lg overflow-hidden aspect-[16/9]"><img src="/images/projects/custom-home-2.jpg" alt="Custom home Orange County" loading="lazy" class="w-full h-full object-cover" /></div>
+        <div class="rounded-lg overflow-hidden aspect-[16/9]"><img src="/images/projects/custom-home-3.jpg" alt="Custom home build Orange County" loading="lazy" class="w-full h-full object-cover" /></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- WHAT'S INCLUDED -->
+  <section class="bg-fcd-dark py-20 lg:py-28">
+    <div class="max-w-7xl mx-auto px-6 lg:px-12">
+      <SectionLabel>What's Included</SectionLabel>
+      <h2 class="font-heading text-3xl lg:text-4xl text-fcd-navy font-semibold mt-4 mb-14 max-w-2xl">Everything Managed Under One Roof</h2>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {[
+          { title: "Design Coordination", desc: "We connect you with trusted architects or work from your existing plans. We manage the design process so you are not stuck in the middle between your architect and your builder." },
+          { title: "Permits & Engineering", desc: "We handle all permit submittals, structural engineering coordination, soils reports, and plan check responses. You never deal with the city directly." },
+          { title: "Full Construction", desc: "Framing, roofing, MEP rough-in, insulation, drywall, flooring, cabinetry, millwork, exterior finish — all managed by your dedicated Project Manager." },
+          { title: "Value Engineering", desc: "We review your plans and identify where we can achieve the same result at a lower cost before locking in the contract. Most clients save 10–20% without sacrificing quality." },
+          { title: "Budget Tracking", desc: "You see exactly where every dollar is going, in real time. No invoices you did not expect. Change orders require your written approval before any work begins." },
+          { title: "Daily Photo Logs", desc: "Every active day on your build, you get a photo log of what was done. Your PM is always reachable — not a call center, not a shared email." }
+        ].map(item => (
+          <div class="bg-fcd-cream border border-fcd-border rounded-lg p-7 hover:border-fcd-gold transition-colors">
+            <svg class="w-6 h-6 text-fcd-gold mb-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+            <h3 class="font-heading text-xl text-fcd-navy font-semibold mb-2">{item.title}</h3>
+            <p class="text-fcd-navy/70 text-sm leading-relaxed">{item.desc}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="bg-fcd-cream py-20 lg:py-28">
+    <div class="max-w-4xl mx-auto px-6 lg:px-12">
+      <SectionLabel>FAQ</SectionLabel>
+      <h2 class="font-heading text-3xl lg:text-4xl text-fcd-navy font-semibold mt-4 mb-12">Custom Home Questions — Answered</h2>
+      <div class="divide-y divide-fcd-border">
+        {faqs.map(faq => (
+          <div class="py-6">
+            <button class="faq-btn w-full flex items-start justify-between gap-4 text-left group" aria-expanded="false">
+              <h3 class="font-heading text-lg text-fcd-navy font-semibold group-hover:text-fcd-gold transition-colors pr-4">{faq.q}</h3>
+              <svg class="faq-icon w-5 h-5 text-fcd-gold flex-shrink-0 mt-1 transition-transform duration-200" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+            </button>
+            <div class="faq-answer hidden mt-4"><p class="text-fcd-navy/75 leading-relaxed">{faq.a}</p></div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <script is:inline>
+    document.querySelectorAll('.faq-btn').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        var answer = btn.nextElementSibling; var icon = btn.querySelector('.faq-icon'); var isOpen = !answer.classList.contains('hidden');
+        document.querySelectorAll('.faq-answer').forEach(function(a) { a.classList.add('hidden'); });
+        document.querySelectorAll('.faq-icon').forEach(function(ic) { ic.style.transform = ''; });
+        document.querySelectorAll('.faq-btn').forEach(function(b) { b.setAttribute('aria-expanded', 'false'); });
+        if (!isOpen) { answer.classList.remove('hidden'); icon.style.transform = 'rotate(180deg)'; btn.setAttribute('aria-expanded', 'true'); }
+      });
+    });
+  </script>
+
+  <!-- CTA -->
+  <section class="bg-fcd-navy py-20 lg:py-28">
+    <div class="max-w-4xl mx-auto px-6 lg:px-12 text-center">
+      <p class="text-xs font-semibold tracking-widest2 uppercase text-fcd-gold mb-4">Let's Build It</p>
+      <h2 class="font-heading text-3xl lg:text-5xl text-white font-bold tracking-tight mb-6">Tell Us About Your Custom Home</h2>
+      <p class="text-white/70 text-lg max-w-2xl mx-auto mb-10">Already have plans? Email them to <a href="mailto:futureconstructionteam@gmail.com" class="text-fcd-gold underline">our estimating team</a>. Starting from scratch? Let's talk about your vision first.</p>
+      <div class="flex flex-col sm:flex-row gap-4 justify-center">
+        <a href="/contact" class="inline-flex items-center justify-center gap-2 bg-fcd-gold text-fcd-black font-semibold text-sm tracking-widest2 uppercase px-10 py-5 hover:bg-fcd-gold-lt transition-colors duration-200">Start My Custom Home &rarr;</a>
+        <a href="tel:7149279777" class="inline-flex items-center justify-center gap-2 border border-white/30 text-white font-semibold text-sm tracking-widest2 uppercase px-10 py-5 hover:border-fcd-gold hover:text-fcd-gold transition-colors duration-200">Call (714) 927-9777</a>
+      </div>
+      <p class="mt-8 text-white/40 text-sm">CA Lic. #1127416 &middot; Serving Orange County, CA</p>
+    </div>
+  </section>
+</BaseLayout>

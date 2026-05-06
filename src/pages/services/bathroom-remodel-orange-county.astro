@@ -1,0 +1,103 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import SectionLabel from '../../components/SectionLabel.astro';
+
+const faqs = [
+  { q: "How much does a bathroom remodel cost in Orange County?", a: "A mid-range bathroom remodel in Orange County runs $25,000–$60,000. A master bath with custom tile, freestanding tub, frameless glass, and heated floors runs $60,000–$120,000+. We give you a fixed quote — what we say is what you pay." },
+  { q: "How long does a bathroom remodel take?", a: "Most bathroom remodels take 3–6 weeks of active construction. Custom tile work, specialty fixtures, or structural changes can extend the timeline. We build the full schedule into your proposal before we start." },
+  { q: "Can I use another bathroom while mine is being remodeled?", a: "Yes — that is usually the plan. We sequence the work to minimize disruption, and most clients use another bathroom in the home during construction." },
+  { q: "Do you handle plumbing and tile, or just framing?", a: "We handle everything — demo, plumbing, electrical, waterproofing, tile, vanity, fixtures, glass enclosures, and finish work. You have one team and one PM, not four different contractors to coordinate." },
+  { q: "Do I need permits for a bathroom remodel?", a: "For cosmetic updates — tile, fixtures, vanity — permits are typically not required. For plumbing relocations, adding a bathroom, or electrical panel work, permits are required. We assess your project and handle any necessary permits." },
+];
+
+const schema = {
+  "@context": "https://schema.org", "@type": "Service", "name": "Bathroom Remodel Orange County",
+  "description": "Licensed bathroom remodeling contractor in Orange County, CA. Full gut remodels, custom tile, plumbing, walk-in showers, and master bath renovations. CA Lic. #1127416.",
+  "provider": { "@type": "LocalBusiness", "name": "Future Construction & Design INC", "url": "https://www.fcdteam.com", "telephone": "(714) 927-9777", "address": { "@type": "PostalAddress", "streetAddress": "12122 Brookhurst St", "addressLocality": "Garden Grove", "addressRegion": "CA", "postalCode": "92840", "addressCountry": "US" }, "license": "CA Lic. #1127416" },
+  "serviceType": "Bathroom Remodeling", "areaServed": "Orange County, CA"
+};
+---
+<BaseLayout
+  title="Bathroom Remodel Orange County | Future Construction & Design"
+  description="Licensed bathroom remodeling contractor in Orange County, CA. Custom tile, walk-in showers, master baths, and full gut remodels. Fixed price. CA Lic. #1127416."
+>
+  <script type="application/ld+json" set:html={JSON.stringify(schema)} />
+
+  <section class="relative flex items-center" style="min-height: 55vh;">
+    <div class="absolute inset-0 overflow-hidden">
+      <img src="/images/projects/remodel-5.jpg" alt="Bathroom remodel Orange County" class="w-full h-full object-cover" loading="eager" />
+      <div class="absolute inset-0" style="background: linear-gradient(to right, rgba(0,37,62,0.88) 50%, rgba(0,37,62,0.4));"></div>
+    </div>
+    <div class="relative max-w-7xl mx-auto px-6 lg:px-12 py-20 w-full">
+      <SectionLabel>Bathroom Remodeling · Orange County</SectionLabel>
+      <h1 class="font-heading font-bold tracking-tight text-white text-4xl lg:text-6xl leading-[1.05] max-w-3xl mt-4">Bathroom Remodel Orange County</h1>
+      <p class="mt-6 text-base lg:text-lg text-white/80 leading-relaxed max-w-2xl">Full bathroom remodels — custom tile, walk-in showers, soaking tubs, plumbing, waterproofing, fixtures — all handled by one crew. No coordinating separate contractors. CA Lic. #1127416.</p>
+      <div class="mt-10 flex flex-col sm:flex-row gap-4">
+        <a href="/contact" class="inline-flex items-center justify-center gap-2 bg-fcd-gold text-fcd-black font-semibold text-sm tracking-widest2 uppercase px-8 py-4 hover:bg-fcd-gold-lt transition-colors duration-200">Get Bathroom Quote &rarr;</a>
+        <a href="tel:7149279777" class="inline-flex items-center justify-center gap-2 border border-white/40 text-white font-semibold text-sm tracking-widest2 uppercase px-8 py-4 hover:border-fcd-gold hover:text-fcd-gold transition-colors duration-200">(714) 927-9777</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="bg-fcd-cream py-20 lg:py-28">
+    <div class="max-w-7xl mx-auto px-6 lg:px-12">
+      <SectionLabel>What We Build</SectionLabel>
+      <h2 class="font-heading text-3xl lg:text-4xl text-fcd-navy font-semibold mt-4 mb-12 max-w-2xl">Every Type of Bathroom Renovation Done Right</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {[
+          { title: "Master Bath Remodels", desc: "Spa-level master baths with large-format tile, frameless glass, freestanding tubs, dual vanities, and heated floors. Built the way you designed it." },
+          { title: "Walk-In Shower Conversions", desc: "Convert a tub-shower combo to a full walk-in shower. Curbless designs, custom tile, built-in niches, and premium fixtures." },
+          { title: "Full Guest Bath Remodels", desc: "Complete gut and rebuild — new plumbing, tile, vanity, toilet, and lighting. Clean, functional, and done without disrupting your whole house." },
+          { title: "Tub-to-Shower Conversion", desc: "Remove an unused tub and expand your shower footprint. More usable space, better design, higher resale value." },
+          { title: "Powder Room Updates", desc: "A powder room says a lot to guests. New vanity, tile, fixtures, and lighting — transformed in as little as 2–3 weeks." },
+          { title: "Accessible Bath Remodels", desc: "Walk-in showers, grab bars, wider doorways, and accessible fixtures — designed for long-term comfort and independence." }
+        ].map(item => (
+          <div class="bg-fcd-dark border border-fcd-border rounded-lg p-7 hover:border-fcd-gold transition-colors">
+            <h3 class="font-heading text-xl text-fcd-navy font-semibold mb-3">{item.title}</h3>
+            <p class="text-fcd-navy/70 text-sm leading-relaxed">{item.desc}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="bg-fcd-dark py-20 lg:py-28">
+    <div class="max-w-4xl mx-auto px-6 lg:px-12">
+      <SectionLabel>FAQ</SectionLabel>
+      <h2 class="font-heading text-3xl lg:text-4xl text-fcd-navy font-semibold mt-4 mb-12">Bathroom Remodel Questions</h2>
+      <div class="divide-y divide-fcd-border">
+        {faqs.map(faq => (
+          <div class="py-6">
+            <button class="faq-btn w-full flex items-start justify-between gap-4 text-left group" aria-expanded="false">
+              <h3 class="font-heading text-lg text-fcd-navy font-semibold group-hover:text-fcd-gold transition-colors pr-4">{faq.q}</h3>
+              <svg class="faq-icon w-5 h-5 text-fcd-gold flex-shrink-0 mt-1 transition-transform duration-200" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+            </button>
+            <div class="faq-answer hidden mt-4"><p class="text-fcd-navy/75 leading-relaxed">{faq.a}</p></div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+  <script is:inline>
+    document.querySelectorAll('.faq-btn').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        var answer = btn.nextElementSibling; var icon = btn.querySelector('.faq-icon'); var isOpen = !answer.classList.contains('hidden');
+        document.querySelectorAll('.faq-answer').forEach(function(a) { a.classList.add('hidden'); });
+        document.querySelectorAll('.faq-icon').forEach(function(ic) { ic.style.transform = ''; });
+        document.querySelectorAll('.faq-btn').forEach(function(b) { b.setAttribute('aria-expanded', 'false'); });
+        if (!isOpen) { answer.classList.remove('hidden'); icon.style.transform = 'rotate(180deg)'; btn.setAttribute('aria-expanded', 'true'); }
+      });
+    });
+  </script>
+  <section class="bg-fcd-navy py-20 lg:py-28">
+    <div class="max-w-4xl mx-auto px-6 lg:px-12 text-center">
+      <h2 class="font-heading text-3xl lg:text-5xl text-white font-bold tracking-tight mb-6">Ready to Transform Your Bathroom?</h2>
+      <p class="text-white/70 text-lg max-w-2xl mx-auto mb-10">Tell us what you are envisioning. We will give you an honest price and a clear timeline.</p>
+      <div class="flex flex-col sm:flex-row gap-4 justify-center">
+        <a href="/contact" class="inline-flex items-center justify-center gap-2 bg-fcd-gold text-fcd-black font-semibold text-sm tracking-widest2 uppercase px-10 py-5 hover:bg-fcd-gold-lt transition-colors duration-200">Get Free Quote &rarr;</a>
+        <a href="tel:7149279777" class="inline-flex items-center justify-center gap-2 border border-white/30 text-white font-semibold text-sm tracking-widest2 uppercase px-10 py-5 hover:border-fcd-gold hover:text-fcd-gold transition-colors duration-200">Call (714) 927-9777</a>
+      </div>
+      <p class="mt-8 text-white/40 text-sm">CA Lic. #1127416 &middot; Serving Orange County, CA</p>
+    </div>
+  </section>
+</BaseLayout>

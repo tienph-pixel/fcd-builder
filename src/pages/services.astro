@@ -4,106 +4,149 @@ import SectionLabel from '../components/SectionLabel.astro';
 
 const services = [
   {
-    title: 'Multifamily Construction',
-    label: 'Multifamily',
-    image: 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=1200&q=80',
-    description: 'We build duplexes, triplexes, and 4–20 unit apartment buildings for developers and investors who need a contractor that runs a tight project. From dirt to certificate of occupancy — we handle it. Mixed-use ground-floor commercial? Done. Investor reporting and schedule transparency at every milestone — built in.',
-    bullets: [
-      'Duplexes, triplexes, 4–20 unit apartment buildings',
-      'Mixed-use residential / commercial',
-      'Full-cycle: permits, framing, MEP, finishes',
-      'Investor reporting and schedule transparency',
-    ],
+    label: "ADU Construction",
+    title: "ADU Contractor Orange County",
+    desc: "Detached ADUs, garage conversions, JADUs, and SB9 units. Permits handled. Design coordinated. Keys delivered. The highest-ROI move on your property.",
+    image: "/images/projects/adu-1.jpg",
+    href: "/services/adu-contractor-orange-county",
+    tag: "Most In-Demand",
+    highlights: ["Detached, attached, or garage conversion", "Full permit processing included", "Fixed-price proposals", "Design coordination handled"]
   },
   {
-    title: 'Custom Home Builds',
-    label: 'Custom Homes',
-    image: '/images/projects/custom-home-1.jpg',
-    description: 'Building a custom home is the biggest project most families ever take on. We make it feel like a real partnership — not a transaction. Whether you bring us a finished set of plans or want a true design-build experience, we coordinate your architect, value-engineer the budget, and deliver a finished home you actually want to live in.',
-    bullets: [
-      'Ground-up construction from plans or design-build',
-      'Architect coordination or referral',
-      'Budget development and value engineering',
-      'High-end finishes and custom millwork available',
-    ],
+    label: "Custom Home Builds",
+    title: "Custom Home Builder Orange County",
+    desc: "Ground-up custom homes built from your plans or through our design-build process. Architect coordination, value engineering, and daily site updates.",
+    image: "/images/projects/custom-home-1.jpg",
+    href: "/services/custom-home-builder-orange-county",
+    tag: "Highest Ticket",
+    highlights: ["Design-build or work from your plans", "Architect coordination included", "Value engineering on every project", "Fixed-price contracts"]
   },
   {
-    title: 'ADU Construction',
-    label: 'ADU',
-    image: '/images/projects/adu-1.jpg',
-    description: 'ADUs are one of the highest-ROI moves you can make on your property — but only if they\'re built right and permitted clean. We handle the entire process: design coordination, structural engineering referrals, full permit submittal, and construction. Detached, attached, or garage conversion — we deliver the keys.',
-    bullets: [
-      'Detached, attached, or garage conversion',
-      'Full permit processing included',
-      'Design coordination and structural engineering referrals',
-      'Standard ADU packages starting at fixed price',
-    ],
+    label: "Kitchen Remodels",
+    title: "Kitchen Remodel Orange County",
+    desc: "Full kitchen remodels — cabinets, countertops, layout changes, plumbing, electrical, and tile. One team, one contract, no chasing separate contractors.",
+    image: "/images/projects/remodel-1.jpg",
+    href: "/services/kitchen-remodel-orange-county",
+    tag: "Most Popular",
+    highlights: ["Custom cabinetry and countertops", "Layout changes and wall removal", "Plumbing and electrical included", "6–12 weeks active construction"]
   },
   {
-    title: 'Remodels & Renovations',
-    label: 'Remodels',
-    image: '/images/projects/remodel-1.jpg',
-    description: 'A remodel done right transforms how your home feels — and how it functions. Done wrong, it\'s a months-long nightmare. We treat your home like ours: clean job sites, daily updates, respectful crews, and a finish that actually matches what we promised on day one. Kitchens, bathrooms, additions, structural — all coordinated in-house.',
-    bullets: [
-      'Kitchen and bathroom remodels',
-      'Whole-home renovations',
-      'Room additions and structural changes',
-      'Structural, electrical, plumbing — all in-house coordination',
-    ],
+    label: "Bathroom Remodels",
+    title: "Bathroom Remodel Orange County",
+    desc: "Master baths, walk-in showers, guest baths, and powder rooms. Custom tile, frameless glass, plumbing, fixtures — all done by one crew.",
+    image: "/images/projects/remodel-5.jpg",
+    href: "/services/bathroom-remodel-orange-county",
+    tag: "",
+    highlights: ["Walk-in shower conversions", "Custom tile and waterproofing", "Frameless glass enclosures", "Plumbing and electrical included"]
   },
+  {
+    label: "Whole-Home Renovations",
+    title: "Whole Home Renovation Orange County",
+    desc: "Complete home transformations — kitchen, bathrooms, flooring, structure, and electrical — all managed under one contract with one fixed price.",
+    image: "/images/projects/remodel-2.jpg",
+    href: "/services/whole-home-renovation-orange-county",
+    tag: "",
+    highlights: ["Full scope — all trades coordinated", "Structural changes handled", "Phased to minimize disruption", "4–9 months full renovation"]
+  },
+  {
+    label: "Multifamily Construction",
+    title: "Multifamily Construction",
+    desc: "Duplexes, triplexes, and 4–20 unit apartment buildings. Full-cycle construction for developers and investors who need a GC that runs a tight project.",
+    image: "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=1200&q=80",
+    href: "/contact",
+    tag: "",
+    highlights: ["Duplexes, triplexes, apartment buildings", "Mixed-use residential/commercial", "Full-cycle: permits through CO", "Investor reporting and transparency"]
+  }
 ];
 ---
 <BaseLayout
-  title="Our Services — Custom Homes, ADU, Remodels"
-  description="Full-service construction: multifamily, custom homes, ADUs, and remodels."
+  title="Our Services — General Contractor Orange County | Future Construction & Design"
+  description="Custom homes, ADUs, kitchen remodels, bathroom remodels, whole-home renovations, and multifamily construction. Licensed GC serving Orange County, CA. CA Lic. #1127416."
 >
 
   <!-- HERO -->
-  <section class="relative flex items-center" style="min-height: 60vh;">
+  <section class="relative flex items-center" style="min-height: 50vh;">
     <div class="absolute inset-0 bg-fcd-dark"></div>
-    <div class="absolute inset-0" style="background: radial-gradient(ellipse at center, rgba(201,168,76,0.08), rgba(10,10,15,0));"></div>
-    <div class="relative max-w-7xl mx-auto px-6 lg:px-12 py-16 w-full">
-      <SectionLabel>Our Services</SectionLabel>
-      <h1 class="font-heading font-bold tracking-tight text-fcd-navy text-5xl lg:text-7xl leading-[1.05] max-w-4xl">
+    <div class="absolute inset-0" style="background: radial-gradient(ellipse at center, rgba(201,168,76,0.07), rgba(0,37,62,0));"></div>
+    <div class="relative max-w-7xl mx-auto px-6 lg:px-12 py-20 w-full">
+      <SectionLabel>What We Build</SectionLabel>
+      <h1 class="font-heading font-bold tracking-tight text-fcd-navy text-5xl lg:text-7xl leading-[1.05] max-w-4xl mt-4">
         Everything You Need. One Builder You Can Trust.
       </h1>
-      <p class="mt-8 text-base lg:text-lg text-fcd-navy/80 leading-relaxed max-w-2xl">
-        Whether it's a 12-unit apartment building or a single-bath remodel — we run the same playbook. Same standard. Same accountability. Same care.
+      <p class="mt-6 text-base lg:text-lg text-fcd-navy/70 leading-relaxed max-w-2xl">
+        Whether it's a 12-unit apartment building or a single bathroom remodel — we run the same playbook. Same standard. Same accountability. Same care.
       </p>
+      <div class="mt-6 flex items-center gap-2 text-sm text-fcd-navy/50">
+        <svg class="w-4 h-4 text-fcd-gold" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+        Orange County, CA &nbsp;·&nbsp; CA Lic. #1127416 &nbsp;·&nbsp; Fully Licensed &amp; Insured
+      </div>
     </div>
   </section>
 
-  <!-- SERVICE SECTIONS -->
-  {services.map((s, i) => (
-    <section class={`py-24 lg:py-32 ${i % 2 === 0 ? 'bg-fcd-cream' : 'bg-fcd-dark'}`}>
-      <div class="max-w-7xl mx-auto px-6 lg:px-12 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-        <div class={i % 2 === 0 ? 'lg:order-1' : 'lg:order-2'}>
-          <SectionLabel>{s.label}</SectionLabel>
-          <h2 class="font-heading text-4xl text-fcd-navy font-semibold mb-6">{s.title}</h2>
-          <p class="text-base lg:text-lg text-fcd-navy/80 leading-relaxed mb-8">{s.description}</p>
-          <ul class="space-y-3">
-            {s.bullets.map(b => (
-              <li class="flex items-start gap-3">
-                <svg class="w-5 h-5 text-fcd-gold flex-shrink-0 mt-1" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
-                <span class="text-fcd-navy/90">{b}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
-        <div class={`rounded-lg overflow-hidden aspect-[4/3] ${i % 2 === 0 ? 'lg:order-2' : 'lg:order-1'}`}>
-          <img src={s.image} alt={s.title} loading="lazy" class="w-full h-full object-cover" />
-        </div>
+  <!-- SERVICE GRID -->
+  <section class="bg-fcd-cream py-20 lg:py-28">
+    <div class="max-w-7xl mx-auto px-6 lg:px-12">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        {services.map(s => (
+          <a href={s.href} class="group bg-white border border-fcd-border rounded-lg overflow-hidden hover:border-fcd-gold hover:shadow-lg transition-all duration-300 flex flex-col">
+            <div class="aspect-[16/9] overflow-hidden relative">
+              <img src={s.image} alt={s.title} loading="lazy" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+              {s.tag && (
+                <span class="absolute top-4 left-4 text-xs font-semibold tracking-wider uppercase text-fcd-black bg-fcd-gold px-3 py-1 rounded-full">{s.tag}</span>
+              )}
+            </div>
+            <div class="p-8 flex flex-col flex-1">
+              <p class="text-xs font-semibold tracking-widest2 uppercase text-fcd-gold mb-2">{s.label}</p>
+              <h2 class="font-heading text-2xl text-fcd-navy font-semibold mb-3 group-hover:text-fcd-gold transition-colors">{s.title}</h2>
+              <p class="text-fcd-navy/70 text-sm leading-relaxed mb-6">{s.desc}</p>
+              <ul class="space-y-2 mb-8">
+                {s.highlights.map(h => (
+                  <li class="flex items-center gap-2 text-sm text-fcd-navy/70">
+                    <svg class="w-4 h-4 text-fcd-gold flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                    {h}
+                  </li>
+                ))}
+              </ul>
+              <div class="mt-auto">
+                <span class="inline-flex items-center gap-2 text-fcd-gold font-semibold text-sm tracking-wider uppercase group-hover:gap-3 transition-all">
+                  {s.href === '/contact' ? 'Get a Quote' : 'Learn More'} &rarr;
+                </span>
+              </div>
+            </div>
+          </a>
+        ))}
       </div>
-    </section>
-  ))}
+    </div>
+  </section>
+
+  <!-- TRUST BAR -->
+  <section class="bg-fcd-navy py-14">
+    <div class="max-w-7xl mx-auto px-6 lg:px-12">
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+        {[
+          { stat: "CA Lic. #1127416", label: "Licensed & Insured" },
+          { stat: "100%", label: "Permitted Projects" },
+          { stat: "$50K+", label: "Project Minimum" },
+          { stat: "Orange County", label: "Based & Operated" }
+        ].map(item => (
+          <div>
+            <p class="font-heading text-2xl text-fcd-gold font-bold">{item.stat}</p>
+            <p class="text-white/60 text-sm mt-1">{item.label}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
 
   <!-- CTA -->
-  <section class="bg-fcd-cream py-24 lg:py-32 border-t border-fcd-border">
+  <section class="bg-fcd-cream py-20 lg:py-28 border-t border-fcd-border">
     <div class="max-w-4xl mx-auto px-6 lg:px-12 text-center">
-      <h2 class="font-heading text-4xl lg:text-5xl text-fcd-navy font-bold tracking-tight">Tell Us What You're Building.</h2>
-      <p class="mt-6 text-base lg:text-lg text-fcd-navy/80 max-w-2xl mx-auto">A 10-minute call is enough to give you a real ballpark. Don't waste your time chasing builders who won't pick up.</p>
-      <div class="mt-10">
-        <a href="/contact" class="inline-flex items-center gap-2 bg-fcd-gold text-fcd-black font-semibold text-sm tracking-widest2 uppercase px-10 py-5 hover:bg-fcd-gold-lt transition-colors duration-200">Start My Project →</a>
+      <SectionLabel>Ready to Start?</SectionLabel>
+      <h2 class="font-heading text-4xl lg:text-5xl text-fcd-navy font-bold tracking-tight mt-4">Tell Us What You're Building.</h2>
+      <p class="mt-6 text-base lg:text-lg text-fcd-navy/70 max-w-2xl mx-auto">A 10-minute call is enough to give you a real ballpark. Don't waste your time chasing builders who won't pick up.</p>
+      <div class="mt-10 flex flex-col sm:flex-row gap-4 justify-center">
+        <a href="/contact" class="inline-flex items-center justify-center gap-2 bg-fcd-gold text-fcd-black font-semibold text-sm tracking-widest2 uppercase px-10 py-5 hover:bg-fcd-gold-lt transition-colors duration-200">Start My Project &rarr;</a>
+        <a href="tel:7149279777" class="inline-flex items-center justify-center gap-2 border border-fcd-border text-fcd-navy font-semibold text-sm tracking-widest2 uppercase px-10 py-5 hover:border-fcd-gold hover:text-fcd-gold transition-colors duration-200">Call (714) 927-9777</a>
       </div>
     </div>
   </section>
