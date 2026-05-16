@@ -158,6 +158,23 @@
       padding-right: 44px;
     }
 
+    /* Phone lookup feedback */
+    .worker-greeting {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--green);
+      margin-top: 10px;
+      min-height: 28px;
+    }
+    .worker-error {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--red);
+      margin-top: 10px;
+      line-height: 1.5;
+      min-height: 28px;
+    }
+
     .site-card {
       border-radius: 14px;
       padding: 18px 20px;
@@ -467,13 +484,27 @@
       flex-shrink: 0;
     }
     .footer-link {
-      font-size: 15px;
-      color: var(--orange);
-      font-weight: 700;
-      background: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      width: 100%;
+      min-height: 64px;
+      padding: 16px 20px;
       border: none;
+      border-radius: 14px;
+      font-size: 22px;
+      font-weight: 800;
       cursor: pointer;
-      text-decoration: underline;
+      transition: transform 0.1s, opacity 0.1s;
+      text-decoration: none;
+      letter-spacing: 0.5px;
+      background: var(--orange);
+      color: var(--white);
+    }
+    .footer-link:active {
+      transform: scale(0.97);
+      opacity: 0.9;
     }
 
     .gps-loading {
@@ -531,9 +562,36 @@
       font-weight: 600;
       font-size: 15px;
     }
+
+    /* Submit loading state */
+    .submit-status {
+      text-align: center;
+      font-size: 16px;
+      font-weight: 600;
+      padding: 10px;
+      border-radius: 10px;
+    }
+    .submit-status.loading {
+      background: var(--gray-light);
+      color: #555;
+    }
+    .submit-status.error-msg {
+      background: #ffebee;
+      color: var(--red);
+    }
   </style>
 </head>
 <body>
+
+<!-- Hidden Netlify form for deploy-time detection -->
+<form name="worker-receipt" netlify data-netlify="true" hidden>
+  <input type="text" name="worker_name">
+  <input type="text" name="job_site">
+  <input type="text" name="submission_date">
+  <input type="file" name="store_photo">
+  <input type="file" name="receipt_photo">
+</form>
+
 <div id="app">
 
   <!-- ========== SCREEN 1: WELCOME ========== -->
@@ -550,20 +608,22 @@
         <p class="note" style="margin-top:6px;" data-es="Completa los pasos para enviar tu recibo de compra." data-en="Complete the steps to submit your purchase receipt.">Completa los pasos para enviar tu recibo de compra.</p>
       </div>
 
-      <!-- Worker name -->
+      <!-- Phone last-4 lookup -->
       <div>
-        <label class="field-label" for="worker-name" data-es="Tu nombre:" data-en="Your name:">Tu nombre:</label>
+        <label class="field-label" for="phone-last4" data-es="Ultimos 4 digitos de tu telefono / Last 4 digits of your phone:" data-en="Last 4 digits of your phone / Ultimos 4 digitos de tu telefono:">Ultimos 4 digitos de tu telefono / Last 4 digits of your phone:</label>
         <input
           class="text-input"
-          type="text"
-          id="worker-name"
-          placeholder="Escribe tu nombre completo"
-          data-ph-es="Escribe tu nombre completo"
-          data-ph-en="Enter your full name"
-          autocomplete="given-name"
+          type="tel"
+          inputmode="numeric"
+          pattern="[0-9]*"
+          id="phone-last4"
+          maxlength="4"
+          placeholder="_ _ _ _"
+          autocomplete="off"
           autocorrect="off"
-          autocapitalize="words"
         >
+        <div class="worker-greeting" id="worker-greeting" style="display:none;"></div>
+        <div class="worker-error" id="worker-error" style="display:none;"></div>
       </div>
 
       <!-- GPS detection area -->
@@ -672,7 +732,7 @@
       <button class="retake-btn" id="retake2" style="display:none;" onclick="triggerCamera('photo2-input')" data-es="Volver a tomar foto" data-en="Retake photo">Volver a tomar foto</button>
 
       <button class="btn btn-success" id="btn-next2" disabled onclick="goToScreen4()">
-        <span data-es="ENVIAR ✓" data-en="SUBMIT ✓">ENVIAR ✓</span>
+        <span data-es="SIGUIENTE →" data-en="NEXT →">SIGUIENTE →</span>
       </button>
     </div>
     <div class="call-bar">
@@ -726,16 +786,19 @@
         </div>
       </div>
 
-      <div class="warn-box">
-        <p class="note" data-es='Al tocar "CONFIRMAR Y ENVIAR", se abrira tu app de correo. Presiona <strong>Enviar</strong> ahi tambien para completar.' data-en='Tapping "CONFIRM AND SEND" will open your email app. Press <strong>Send</strong> there too to complete.'>Al tocar "CONFIRMAR Y ENVIAR", se abrira tu app de correo. Presiona <strong>Enviar</strong> ahi tambien para completar.</p>
-      </div>
-      <div class="error-box" data-es="Si no se abre el correo, llama a Tien: <strong>310-634-2157</strong>" data-en="If email doesn't open, call Tien: <strong>310-634-2157</strong>">
-        Si no se abre el correo, llama a Tien: <strong>310-634-2157</strong>
-      </div>
+      <div id="submit-status" class="submit-status" style="display:none;"></div>
 
-      <button class="btn btn-success" onclick="submitReceipt()">
-        <span data-es="CONFIRMAR Y ENVIAR" data-en="CONFIRM AND SEND">CONFIRMAR Y ENVIAR</span>
+      <button class="btn btn-success" id="btn-submit" onclick="handleSubmit()">
+        <span data-es="ENVIAR / SUBMIT" data-en="SUBMIT / ENVIAR">ENVIAR / SUBMIT</span>
       </button>
+
+      <button class="btn btn-outline" id="btn-retry" style="display:none;" onclick="handleSubmit()">
+        <span data-es="Intentar de nuevo / Retry" data-en="Retry / Intentar de nuevo">Intentar de nuevo / Retry</span>
+      </button>
+
+      <div id="fallback-error" class="error-box" style="display:none;" data-es="Si no funciona, llama a Tien: <strong>310-634-2157</strong>" data-en="If it doesn't work, call Tien: <strong>310-634-2157</strong>">
+        Si no funciona, llama a Tien: <strong>310-634-2157</strong>
+      </div>
     </div>
   </div>
 
@@ -751,7 +814,6 @@
       <div class="success-icon">&#10003;</div>
       <div class="success-title" data-es="Enviado!" data-en="Sent!">Enviado!</div>
       <div class="success-sub" data-es="Gracias, tu recibo fue enviado correctamente." data-en="Thank you, your receipt was submitted successfully.">Gracias, tu recibo fue enviado correctamente.</div>
-      <p class="note" data-es='Asegurate de haber presionado <strong>Enviar</strong> en tu app de correo.' data-en='Make sure you pressed <strong>Send</strong> in your email app.'>Asegurate de haber presionado <strong>Enviar</strong> en tu app de correo.</p>
 
       <button class="btn btn-primary" onclick="resetApp()" style="margin-top:20px;">
         <span data-es="Enviar Otro Recibo" data-en="Submit Another Receipt">Enviar Otro Recibo</span>
@@ -761,7 +823,7 @@
       </button>
     </div>
     <div class="call-bar">
-      <span data-es="Problemas? Llama a Tien:" data-en="If email didn't open, call Tien:">Problemas? Llama a Tien:</span> <a href="tel:3106342157">310-634-2157</a>
+      <span data-es="Problemas? Llama a Tien:" data-en="Problems? Call Tien:">Problemas? Llama a Tien:</span> <a href="tel:3106342157">310-634-2157</a>
     </div>
   </div>
 
@@ -803,10 +865,18 @@
 </div>
 
 <script>
+// ── WORKER DATABASE ──
+var WORKERS = [
+  { last4: "8677", name: "Juan Hernesto" }
+  // Andy Bui: phone TBD — add when known
+];
+
 var STATE = {
   workerName: '',
   jobSite: '',
+  photo1File: null,
   photo1DataUrl: null,
+  photo2File: null,
   photo2DataUrl: null,
   currentDate: '',
   checkinInterval: null,
@@ -834,7 +904,6 @@ var GEOFENCE_METERS = 500;
 // ── LANGUAGE TOGGLE ──
 function toggleLang() {
   STATE.lang = STATE.lang === 'es' ? 'en' : 'es';
-  // Persist
   try { localStorage.setItem('fcd_worker_lang', STATE.lang); } catch(e) {}
   applyLang();
 }
@@ -843,48 +912,39 @@ function applyLang() {
   var lang = STATE.lang;
   var opposite = lang === 'es' ? 'EN' : 'ES';
 
-  // Update all lang toggle buttons
   var langBtns = document.querySelectorAll('.lang-toggle-btn');
   for (var i = 0; i < langBtns.length; i++) {
     langBtns[i].textContent = opposite;
   }
 
-  // Update html lang attr
   document.documentElement.lang = lang;
 
-  // Apply text to all elements with data-es / data-en
   var els = document.querySelectorAll('[data-es][data-en]');
   for (var j = 0; j < els.length; j++) {
     var el = els[j];
     var tagName = el.tagName;
-    // Skip inputs/selects — handle via placeholder
     if (tagName === 'INPUT' || tagName === 'SELECT' || tagName === 'TEXTAREA') continue;
-    // For elements that contain HTML (warn-box notes, error-box)
     var val = el.getAttribute('data-' + lang);
     if (val !== null) {
       el.innerHTML = val;
     }
   }
 
-  // Placeholders
   var phEls = document.querySelectorAll('[data-ph-es][data-ph-en]');
   for (var k = 0; k < phEls.length; k++) {
     phEls[k].placeholder = phEls[k].getAttribute('data-ph-' + lang);
   }
 
-  // Select options
   var opts = document.querySelectorAll('select option[data-es][data-en]');
   for (var m = 0; m < opts.length; m++) {
     var optVal = opts[m].getAttribute('data-' + lang);
     if (optVal) opts[m].textContent = optVal;
   }
 
-  // GPS detected site card override text if visible
   refreshGpsCardText();
 }
 
 function refreshGpsCardText() {
-  // If gps-result is showing a detected site, update the label and override-button text
   var gpsResult = document.getElementById('gps-result');
   if (gpsResult && gpsResult.style.display !== 'none' && STATE.jobSite) {
     var label = gpsResult.querySelector('.site-card-label');
@@ -892,6 +952,43 @@ function refreshGpsCardText() {
     var overrideBtn = gpsResult.querySelector('.retake-btn');
     if (overrideBtn) overrideBtn.textContent = STATE.lang === 'es' ? 'No es correcto - cambiar sitio' : 'Not correct - change site';
   }
+}
+
+// ── PHONE LOOKUP ──
+function lookupWorker(last4) {
+  for (var i = 0; i < WORKERS.length; i++) {
+    if (WORKERS[i].last4 === last4) return WORKERS[i];
+  }
+  return null;
+}
+
+function handlePhoneLast4(e) {
+  var val = e.target.value.replace(/\D/g, '').slice(0, 4);
+  e.target.value = val;
+
+  var greetingEl = document.getElementById('worker-greeting');
+  var errorEl = document.getElementById('worker-error');
+
+  // Reset
+  greetingEl.style.display = 'none';
+  greetingEl.textContent = '';
+  errorEl.style.display = 'none';
+  errorEl.textContent = '';
+  STATE.workerName = '';
+
+  if (val.length === 4) {
+    var worker = lookupWorker(val);
+    if (worker) {
+      STATE.workerName = worker.name;
+      greetingEl.textContent = 'Hola, ' + worker.name + '!';
+      greetingEl.style.display = 'block';
+    } else {
+      errorEl.textContent = 'No autorizado. Llama a Tien: 310-634-2157 / Not authorized. Call Tien: 310-634-2157';
+      errorEl.style.display = 'block';
+    }
+  }
+
+  checkStartReady();
 }
 
 function haversineDistance(lat1, lon1, lat2, lon2) {
@@ -939,9 +1036,8 @@ function showScreen(id) {
 }
 
 function checkStartReady() {
-  var name = document.getElementById('worker-name').value.trim();
   var btn = document.getElementById('btn-start');
-  btn.disabled = !(name.length > 0 && STATE.jobSite.length > 0);
+  btn.disabled = !(STATE.workerName.length > 0 && STATE.jobSite.length > 0);
 }
 
 function initGPS() {
@@ -1028,13 +1124,7 @@ function overrideSite() {
   checkStartReady();
 }
 
-document.getElementById('worker-name').addEventListener('input', function() {
-  STATE.workerName = this.value.trim();
-  checkStartReady();
-});
-
 function goToScreen2() {
-  STATE.workerName = document.getElementById('worker-name').value.trim();
   if (!STATE.workerName || !STATE.jobSite) return;
   STATE.currentDate = formatDateShort(new Date());
   showScreen('screen-photo1');
@@ -1047,6 +1137,12 @@ function goToScreen3() {
 
 function goToScreen4() {
   if (!STATE.photo2DataUrl) return;
+  // Reset confirm screen state
+  document.getElementById('submit-status').style.display = 'none';
+  document.getElementById('btn-retry').style.display = 'none';
+  document.getElementById('fallback-error').style.display = 'none';
+  document.getElementById('btn-submit').disabled = false;
+
   document.getElementById('confirm-name').textContent = STATE.workerName;
   document.getElementById('confirm-site').textContent = STATE.jobSite;
   document.getElementById('confirm-date').textContent = STATE.currentDate;
@@ -1066,6 +1162,7 @@ function handlePhoto(event, key) {
   reader.onload = function(e) {
     var dataUrl = e.target.result;
     if (key === 'photo1') {
+      STATE.photo1File = file;
       STATE.photo1DataUrl = dataUrl;
       document.getElementById('photo1-img').src = dataUrl;
       document.getElementById('photo1-preview').style.display = 'block';
@@ -1073,6 +1170,7 @@ function handlePhoto(event, key) {
       document.getElementById('cam-btn-1').classList.add('taken');
       document.getElementById('btn-next1').disabled = false;
     } else {
+      STATE.photo2File = file;
       STATE.photo2DataUrl = dataUrl;
       document.getElementById('photo2-img').src = dataUrl;
       document.getElementById('photo2-preview').style.display = 'block';
@@ -1084,46 +1182,76 @@ function handlePhoto(event, key) {
   reader.readAsDataURL(file);
 }
 
-function submitReceipt() {
-  var now = new Date();
-  var to = 'FutureConstructionTeam@gmail.com';
-  var subject = encodeURIComponent('Recibo - ' + STATE.jobSite + ' - ' + STATE.currentDate);
-  var bodyLines = [
-    'ENVIO DE RECIBO - FCD',
-    '===================================',
-    '',
-    'Trabajador: ' + STATE.workerName,
-    'Sitio:      ' + STATE.jobSite,
-    'Fecha:      ' + STATE.currentDate,
-    'Hora:       ' + formatTime(now),
-    '',
-    'Fotos tomadas: 2',
-    '  - Foto 1: Tienda / Proveedor',
-    '  - Foto 2: Recibo de compra',
-    '',
-    'NOTA PARA TIEN:',
-    'Las fotos estan guardadas en el telefono del trabajador.',
-    'Si necesitas las imagenes, pide a ' + STATE.workerName,
-    'que las mande por mensaje de texto.',
-    '',
-    '-----------------------------------',
-    'Enviado desde la app FCD Worker Receipt'
-  ];
-  var body = encodeURIComponent(bodyLines.join('\n'));
-  var mailtoLink = 'mailto:' + to + '?subject=' + subject + '&body=' + body;
-  window.location.href = mailtoLink;
-  setTimeout(function() {
+// ── NETLIFY FORM SUBMISSION ──
+async function submitToNetlify(workerName, jobSite, date, storeFile, receiptFile) {
+  var formData = new FormData();
+  formData.append('form-name', 'worker-receipt');
+  formData.append('worker_name', workerName);
+  formData.append('job_site', jobSite);
+  formData.append('submission_date', date);
+  if (storeFile) formData.append('store_photo', storeFile, 'store.jpg');
+  if (receiptFile) formData.append('receipt_photo', receiptFile, 'receipt.jpg');
+
+  var response = await fetch('/', {
+    method: 'POST',
+    body: formData
+  });
+
+  if (response.ok || response.redirected) {
+    return true;
+  } else {
+    throw new Error('Submission failed: ' + response.status);
+  }
+}
+
+function handleSubmit() {
+  var statusEl = document.getElementById('submit-status');
+  var submitBtn = document.getElementById('btn-submit');
+  var retryBtn = document.getElementById('btn-retry');
+  var fallbackEl = document.getElementById('fallback-error');
+
+  // Show loading state
+  statusEl.className = 'submit-status loading';
+  statusEl.textContent = STATE.lang === 'es' ? 'Enviando... / Sending...' : 'Sending... / Enviando...';
+  statusEl.style.display = 'block';
+  submitBtn.disabled = true;
+  retryBtn.style.display = 'none';
+  fallbackEl.style.display = 'none';
+
+  submitToNetlify(
+    STATE.workerName,
+    STATE.jobSite,
+    STATE.currentDate,
+    STATE.photo1File,
+    STATE.photo2File
+  ).then(function() {
     showScreen('screen-success');
-  }, 1500);
+  }).catch(function(err) {
+    console.error('Submit error:', err);
+    statusEl.className = 'submit-status error-msg';
+    statusEl.textContent = STATE.lang === 'es'
+      ? 'Error. Intenta de nuevo / Error. Try again'
+      : 'Error. Try again / Error. Intenta de nuevo';
+    statusEl.style.display = 'block';
+    submitBtn.disabled = false;
+    retryBtn.style.display = 'flex';
+    fallbackEl.style.display = 'block';
+  });
 }
 
 function resetApp() {
   STATE.workerName = '';
   STATE.jobSite = '';
+  STATE.photo1File = null;
   STATE.photo1DataUrl = null;
+  STATE.photo2File = null;
   STATE.photo2DataUrl = null;
 
-  document.getElementById('worker-name').value = '';
+  document.getElementById('phone-last4').value = '';
+  document.getElementById('worker-greeting').style.display = 'none';
+  document.getElementById('worker-greeting').textContent = '';
+  document.getElementById('worker-error').style.display = 'none';
+  document.getElementById('worker-error').textContent = '';
   document.getElementById('btn-start').disabled = true;
 
   document.getElementById('photo1-preview').style.display = 'none';
@@ -1167,7 +1295,7 @@ function updateCheckinClock() {
   document.getElementById('ci-date').textContent = formatDateLong(now);
   var siteName = STATE.jobSite || (STATE.lang === 'es' ? '(Sitio no seleccionado)' : '(No site selected)');
   document.getElementById('ci-site').textContent = siteName;
-  var nameVal = STATE.workerName || document.getElementById('worker-name').value.trim() || (STATE.lang === 'es' ? '(Sin nombre)' : '(No name)');
+  var nameVal = STATE.workerName || (STATE.lang === 'es' ? '(Sin nombre)' : '(No name)');
   document.getElementById('ci-name').textContent = nameVal;
 }
 
@@ -1233,11 +1361,13 @@ if ('serviceWorker' in navigator) {
 
 // Init
 window.addEventListener('DOMContentLoaded', function() {
-  // Restore language preference
   try {
     var savedLang = localStorage.getItem('fcd_worker_lang');
     if (savedLang === 'en' || savedLang === 'es') STATE.lang = savedLang;
   } catch(e) {}
+
+  // Attach phone input listener
+  document.getElementById('phone-last4').addEventListener('input', handlePhoneLast4);
 
   showScreen('screen-welcome');
   applyLang();
