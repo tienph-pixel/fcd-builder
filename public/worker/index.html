@@ -1,0 +1,1248 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="FCD Recibo">
+  <meta name="theme-color" content="#E87722">
+  <title>FCD - Envio de Recibo</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    :root {
+      --orange: #E87722;
+      --orange-dark: #c5611a;
+      --navy: #1C2B4A;
+      --white: #FFFFFF;
+      --gray-light: #f4f4f4;
+      --gray: #cccccc;
+      --green: #2e7d32;
+      --green-light: #e8f5e9;
+      --red: #c62828;
+    }
+
+    html, body {
+      height: 100%;
+      width: 100%;
+      overflow: hidden;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+      background: var(--white);
+      color: var(--navy);
+    }
+
+    #app {
+      height: 100vh;
+      width: 100vw;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .screen {
+      display: none;
+      position: absolute;
+      inset: 0;
+      flex-direction: column;
+      overflow-y: auto;
+      overflow-x: hidden;
+      background: var(--white);
+    }
+    .screen.active {
+      display: flex;
+    }
+
+    .header {
+      background: var(--navy);
+      color: var(--white);
+      text-align: center;
+      padding: 18px 16px 14px;
+      flex-shrink: 0;
+      position: relative;
+    }
+    .header-logo {
+      font-size: 22px;
+      font-weight: 900;
+      letter-spacing: 2px;
+      color: var(--orange);
+    }
+    .header-subtitle {
+      font-size: 13px;
+      opacity: 0.75;
+      margin-top: 2px;
+    }
+
+    /* Language toggle button */
+    .lang-toggle-btn {
+      position: absolute;
+      top: 50%;
+      right: 14px;
+      transform: translateY(-50%);
+      background: rgba(255,255,255,0.15);
+      border: 1px solid rgba(255,255,255,0.35);
+      color: var(--white);
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.2s;
+      letter-spacing: 0.5px;
+    }
+    .lang-toggle-btn:active {
+      background: rgba(255,255,255,0.3);
+    }
+
+    .content {
+      flex: 1;
+      padding: 24px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .screen-title {
+      font-size: 26px;
+      font-weight: 800;
+      color: var(--navy);
+      line-height: 1.2;
+    }
+    .instruction {
+      font-size: 19px;
+      font-weight: 600;
+      color: var(--navy);
+      line-height: 1.4;
+    }
+    .note {
+      font-size: 14px;
+      color: #666;
+      line-height: 1.5;
+    }
+
+    .field-label {
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--navy);
+      margin-bottom: 8px;
+      display: block;
+    }
+    .text-input {
+      width: 100%;
+      padding: 16px;
+      font-size: 20px;
+      font-weight: 600;
+      border: 3px solid var(--gray);
+      border-radius: 12px;
+      background: var(--white);
+      color: var(--navy);
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .text-input:focus {
+      border-color: var(--orange);
+    }
+    select.text-input {
+      appearance: none;
+      -webkit-appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24'%3E%3Cpath fill='%231C2B4A' d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 14px center;
+      background-color: var(--white);
+      padding-right: 44px;
+    }
+
+    .site-card {
+      border-radius: 14px;
+      padding: 18px 20px;
+      border: 3px solid;
+    }
+    .site-card.detected {
+      background: var(--green-light);
+      border-color: var(--green);
+    }
+    .site-card.manual-card {
+      background: #fff8e1;
+      border-color: #f9a825;
+    }
+    .site-card-label {
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 6px;
+    }
+    .site-card.detected .site-card-label { color: var(--green); }
+    .site-card.manual-card .site-card-label { color: #795548; }
+    .site-card-name {
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--navy);
+    }
+    .site-card-address {
+      font-size: 14px;
+      color: #555;
+      margin-top: 4px;
+    }
+
+    .btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      width: 100%;
+      min-height: 64px;
+      padding: 16px 20px;
+      border: none;
+      border-radius: 14px;
+      font-size: 22px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: transform 0.1s, opacity 0.1s;
+      text-decoration: none;
+      letter-spacing: 0.5px;
+    }
+    .btn:active {
+      transform: scale(0.97);
+      opacity: 0.9;
+    }
+    .btn-primary {
+      background: var(--orange);
+      color: var(--white);
+    }
+    .btn-success {
+      background: var(--green);
+      color: var(--white);
+    }
+    .btn-outline {
+      background: transparent;
+      color: var(--navy);
+      border: 3px solid var(--navy);
+      font-size: 16px;
+      min-height: 50px;
+    }
+    .btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    .camera-area {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+    }
+    .camera-btn {
+      width: 140px;
+      height: 140px;
+      border-radius: 50%;
+      background: var(--navy);
+      border: none;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: transform 0.1s, background 0.2s;
+      box-shadow: 0 6px 20px rgba(28,43,74,0.3);
+    }
+    .camera-btn:active {
+      transform: scale(0.94);
+    }
+    .camera-btn.taken {
+      background: var(--green);
+    }
+    .camera-icon {
+      font-size: 52px;
+      line-height: 1;
+    }
+    .camera-label {
+      font-size: 13px;
+      color: var(--white);
+      font-weight: 700;
+      margin-top: 6px;
+      text-align: center;
+    }
+    input[type="file"] {
+      display: none;
+    }
+
+    .photo-preview-wrap {
+      width: 100%;
+      border-radius: 14px;
+      overflow: hidden;
+      border: 3px solid var(--green);
+      background: #000;
+      position: relative;
+    }
+    .photo-preview-wrap img {
+      width: 100%;
+      max-height: 220px;
+      object-fit: cover;
+      display: block;
+    }
+    .photo-taken-badge {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: var(--green);
+      color: white;
+      font-size: 13px;
+      font-weight: 800;
+      padding: 4px 10px;
+      border-radius: 20px;
+    }
+    .retake-btn {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--orange);
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 4px 0;
+      text-decoration: underline;
+    }
+
+    .summary-row {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      padding: 16px;
+      background: var(--gray-light);
+      border-radius: 12px;
+    }
+    .summary-label {
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #888;
+    }
+    .summary-value {
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--navy);
+    }
+    .photo-pair {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    .photo-thumb {
+      border-radius: 10px;
+      overflow: hidden;
+      border: 2px solid var(--gray);
+      background: #000;
+    }
+    .photo-thumb img {
+      width: 100%;
+      height: 110px;
+      object-fit: cover;
+      display: block;
+    }
+    .photo-thumb-label {
+      font-size: 12px;
+      font-weight: 700;
+      text-align: center;
+      padding: 6px;
+      background: var(--navy);
+      color: white;
+    }
+
+    .success-body {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 24px;
+      gap: 24px;
+      text-align: center;
+    }
+    .success-icon {
+      font-size: 100px;
+      line-height: 1;
+    }
+    .success-title {
+      font-size: 36px;
+      font-weight: 900;
+      color: var(--green);
+    }
+    .success-sub {
+      font-size: 20px;
+      color: var(--navy);
+      font-weight: 600;
+    }
+
+    .checkin-card {
+      background: var(--navy);
+      border-radius: 16px;
+      padding: 28px 20px;
+      text-align: center;
+      color: white;
+    }
+    .checkin-header {
+      font-size: 15px;
+      opacity: 0.7;
+      margin-bottom: 8px;
+    }
+    .checkin-time {
+      font-size: 52px;
+      font-weight: 900;
+      letter-spacing: 2px;
+      font-variant-numeric: tabular-nums;
+    }
+    .checkin-date {
+      font-size: 17px;
+      opacity: 0.8;
+      margin-top: 6px;
+    }
+    .checkin-site {
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--orange);
+      margin-top: 16px;
+    }
+    .checkin-name {
+      font-size: 18px;
+      opacity: 0.9;
+      margin-top: 8px;
+    }
+    .checkin-stamp {
+      background: var(--orange);
+      color: white;
+      font-size: 14px;
+      font-weight: 800;
+      padding: 8px 20px;
+      border-radius: 30px;
+      margin-top: 16px;
+      display: inline-block;
+      letter-spacing: 1px;
+    }
+    .screenshot-note {
+      background: #fff8e1;
+      border: 2px solid #f9a825;
+      border-radius: 10px;
+      padding: 14px;
+      font-size: 15px;
+      font-weight: 600;
+      color: #5d4037;
+      text-align: center;
+    }
+
+    .step-bar {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 12px 20px;
+      background: var(--gray-light);
+      flex-shrink: 0;
+    }
+    .step-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--gray);
+      transition: background 0.3s;
+    }
+    .step-dot.active {
+      background: var(--orange);
+      width: 14px;
+      height: 14px;
+    }
+    .step-dot.done {
+      background: var(--green);
+    }
+
+    .footer-links {
+      padding: 12px 20px 20px;
+      text-align: center;
+      flex-shrink: 0;
+    }
+    .footer-link {
+      font-size: 15px;
+      color: var(--orange);
+      font-weight: 700;
+      background: none;
+      border: none;
+      cursor: pointer;
+      text-decoration: underline;
+    }
+
+    .gps-loading {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 14px 18px;
+      background: var(--gray-light);
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 600;
+      color: #555;
+    }
+    .spinner {
+      width: 22px;
+      height: 22px;
+      border: 3px solid var(--gray);
+      border-top-color: var(--orange);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      flex-shrink: 0;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .call-bar {
+      background: #fff3e0;
+      border-top: 2px solid var(--orange);
+      padding: 12px 20px;
+      text-align: center;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--navy);
+      flex-shrink: 0;
+    }
+    .call-bar a {
+      color: var(--orange);
+      font-weight: 800;
+      font-size: 16px;
+    }
+
+    .warn-box {
+      background: #fff3e0;
+      border-left: 4px solid var(--orange);
+      padding: 12px 14px;
+      border-radius: 8px;
+    }
+    .error-box {
+      background: #ffebee;
+      border-left: 4px solid var(--red);
+      padding: 12px 14px;
+      border-radius: 8px;
+      color: var(--red);
+      font-weight: 600;
+      font-size: 15px;
+    }
+  </style>
+</head>
+<body>
+<div id="app">
+
+  <!-- ========== SCREEN 1: WELCOME ========== -->
+  <div class="screen active" id="screen-welcome">
+    <div class="header">
+      <div class="header-logo">FCD</div>
+      <div class="header-subtitle">Future Construction &amp; Design</div>
+      <button class="lang-toggle-btn" id="lang-btn-welcome" onclick="toggleLang()">EN</button>
+    </div>
+
+    <div class="content">
+      <div>
+        <div class="screen-title" data-es="Envio de Recibo" data-en="Receipt Submission">Envio de Recibo</div>
+        <p class="note" style="margin-top:6px;" data-es="Completa los pasos para enviar tu recibo de compra." data-en="Complete the steps to submit your purchase receipt.">Completa los pasos para enviar tu recibo de compra.</p>
+      </div>
+
+      <!-- Worker name -->
+      <div>
+        <label class="field-label" for="worker-name" data-es="Tu nombre:" data-en="Your name:">Tu nombre:</label>
+        <input
+          class="text-input"
+          type="text"
+          id="worker-name"
+          placeholder="Escribe tu nombre completo"
+          data-ph-es="Escribe tu nombre completo"
+          data-ph-en="Enter your full name"
+          autocomplete="given-name"
+          autocorrect="off"
+          autocapitalize="words"
+        >
+      </div>
+
+      <!-- GPS detection area -->
+      <div>
+        <div class="gps-loading" id="gps-loading">
+          <div class="spinner"></div>
+          <span id="gps-loading-text" data-es="Detectando ubicacion con GPS..." data-en="Detecting location with GPS...">Detectando ubicacion con GPS...</span>
+        </div>
+        <div id="gps-result" style="display:none;"></div>
+        <div id="manual-select-wrap" style="display:none;">
+          <label class="field-label" for="manual-site" data-es="Selecciona el sitio de trabajo:" data-en="Select the job site:">Selecciona el sitio de trabajo:</label>
+          <select class="text-input" id="manual-site">
+            <option value="" data-es="-- Selecciona --" data-en="-- Select --">-- Selecciona --</option>
+            <option value="Daisy Ave - Fountain Valley">Daisy Ave - Fountain Valley</option>
+            <option value="Mak - Anaheim">Mak - Anaheim</option>
+          </select>
+        </div>
+      </div>
+
+      <button class="btn btn-primary" id="btn-start" disabled onclick="goToScreen2()">
+        <span data-es="INICIAR" data-en="START">INICIAR</span>
+      </button>
+    </div>
+
+    <div class="footer-links">
+      <button class="footer-link" onclick="showCheckin()">
+        <span data-es="Marcar Asistencia (Check-In)" data-en="Check-In (Attendance)">Marcar Asistencia (Check-In)</span>
+      </button>
+    </div>
+    <div class="call-bar">
+      <span data-es="Problemas? Llama a Tien:" data-en="Problems? Call Tien:">Problemas? Llama a Tien:</span> <a href="tel:3106342157">310-634-2157</a>
+    </div>
+  </div>
+
+  <!-- ========== SCREEN 2: PHOTO 1 (STORE) ========== -->
+  <div class="screen" id="screen-photo1">
+    <div class="header">
+      <div class="header-logo">FCD</div>
+      <div class="header-subtitle" data-es="Paso 1 de 2 - Foto de la Tienda" data-en="Step 1 of 2 - Store Photo">Paso 1 de 2 - Foto de la Tienda</div>
+      <button class="lang-toggle-btn" onclick="toggleLang()">EN</button>
+    </div>
+    <div class="step-bar">
+      <div class="step-dot done"></div>
+      <div class="step-dot active"></div>
+      <div class="step-dot"></div>
+      <div class="step-dot"></div>
+    </div>
+
+    <div class="content">
+      <div class="instruction" data-es="FOTO 1: Toma una foto de la tienda donde compraste" data-en="PHOTO 1: Take a photo of the store where you bought">FOTO 1: Toma una foto de la tienda donde compraste</div>
+      <p class="note" data-es="Apunta la camara al letrero o fachada de la tienda (Home Depot, Lowes, etc.)" data-en="Point the camera at the store sign or front (Home Depot, Lowes, etc.)">Apunta la camara al letrero o fachada de la tienda (Home Depot, Lowes, etc.)</p>
+
+      <div class="camera-area">
+        <button class="camera-btn" id="cam-btn-1" onclick="triggerCamera('photo1-input')">
+          <span class="camera-icon">&#128247;</span>
+          <span class="camera-label" data-es="TOMAR FOTO" data-en="TAKE PHOTO">TOMAR FOTO</span>
+        </button>
+        <input type="file" id="photo1-input" accept="image/*" capture="environment" onchange="handlePhoto(event,'photo1')">
+      </div>
+
+      <div id="photo1-preview" style="display:none;" class="photo-preview-wrap">
+        <img id="photo1-img" src="" alt="Foto tienda">
+        <div class="photo-taken-badge" data-es="Tomada OK" data-en="Taken OK">Tomada OK</div>
+      </div>
+      <button class="retake-btn" id="retake1" style="display:none;" onclick="triggerCamera('photo1-input')" data-es="Volver a tomar foto" data-en="Retake photo">Volver a tomar foto</button>
+
+      <button class="btn btn-primary" id="btn-next1" disabled onclick="goToScreen3()">
+        <span data-es="SIGUIENTE →" data-en="NEXT →">SIGUIENTE →</span>
+      </button>
+    </div>
+    <div class="call-bar">
+      <span data-es="Ayuda? Llama a Tien:" data-en="Help? Call Tien:">Ayuda? Llama a Tien:</span> <a href="tel:3106342157">310-634-2157</a>
+    </div>
+  </div>
+
+  <!-- ========== SCREEN 3: PHOTO 2 (RECEIPT) ========== -->
+  <div class="screen" id="screen-photo2">
+    <div class="header">
+      <div class="header-logo">FCD</div>
+      <div class="header-subtitle" data-es="Paso 2 de 2 - Foto del Recibo" data-en="Step 2 of 2 - Receipt Photo">Paso 2 de 2 - Foto del Recibo</div>
+      <button class="lang-toggle-btn" onclick="toggleLang()">EN</button>
+    </div>
+    <div class="step-bar">
+      <div class="step-dot done"></div>
+      <div class="step-dot done"></div>
+      <div class="step-dot active"></div>
+      <div class="step-dot"></div>
+    </div>
+
+    <div class="content">
+      <div class="instruction" data-es="FOTO 2: Toma una foto del recibo" data-en="PHOTO 2: Take a photo of the receipt">FOTO 2: Toma una foto del recibo</div>
+      <p class="note" data-es="Asegurate que se vea el total y los articulos en el recibo." data-en="Make sure the total and items on the receipt are visible.">Asegurate que se vea el total y los articulos en el recibo.</p>
+
+      <div class="camera-area">
+        <button class="camera-btn" id="cam-btn-2" onclick="triggerCamera('photo2-input')">
+          <span class="camera-icon">&#128247;</span>
+          <span class="camera-label" data-es="TOMAR FOTO" data-en="TAKE PHOTO">TOMAR FOTO</span>
+        </button>
+        <input type="file" id="photo2-input" accept="image/*" capture="environment" onchange="handlePhoto(event,'photo2')">
+      </div>
+
+      <div id="photo2-preview" style="display:none;" class="photo-preview-wrap">
+        <img id="photo2-img" src="" alt="Foto recibo">
+        <div class="photo-taken-badge" data-es="Tomada OK" data-en="Taken OK">Tomada OK</div>
+      </div>
+      <button class="retake-btn" id="retake2" style="display:none;" onclick="triggerCamera('photo2-input')" data-es="Volver a tomar foto" data-en="Retake photo">Volver a tomar foto</button>
+
+      <button class="btn btn-success" id="btn-next2" disabled onclick="goToScreen4()">
+        <span data-es="ENVIAR ✓" data-en="SUBMIT ✓">ENVIAR ✓</span>
+      </button>
+    </div>
+    <div class="call-bar">
+      <span data-es="Ayuda? Llama a Tien:" data-en="Help? Call Tien:">Ayuda? Llama a Tien:</span> <a href="tel:3106342157">310-634-2157</a>
+    </div>
+  </div>
+
+  <!-- ========== SCREEN 4: CONFIRM ========== -->
+  <div class="screen" id="screen-confirm">
+    <div class="header">
+      <div class="header-logo">FCD</div>
+      <div class="header-subtitle" data-es="Confirmar y Enviar" data-en="Confirm and Send">Confirmar y Enviar</div>
+      <button class="lang-toggle-btn" onclick="toggleLang()">EN</button>
+    </div>
+    <div class="step-bar">
+      <div class="step-dot done"></div>
+      <div class="step-dot done"></div>
+      <div class="step-dot done"></div>
+      <div class="step-dot active"></div>
+    </div>
+
+    <div class="content">
+      <div class="instruction" data-es="Revisa y confirma:" data-en="Review and confirm:">Revisa y confirma:</div>
+
+      <div class="summary-row">
+        <span class="summary-label" data-es="Trabajador" data-en="Worker">Trabajador</span>
+        <span class="summary-value" id="confirm-name">-</span>
+      </div>
+
+      <div class="summary-row">
+        <span class="summary-label" data-es="Sitio de Trabajo" data-en="Job Site">Sitio de Trabajo</span>
+        <span class="summary-value" id="confirm-site">-</span>
+      </div>
+
+      <div class="summary-row">
+        <span class="summary-label" data-es="Fecha" data-en="Date">Fecha</span>
+        <span class="summary-value" id="confirm-date">-</span>
+      </div>
+
+      <div>
+        <span class="summary-label" style="display:block;margin-bottom:10px;" data-es="Fotos" data-en="Photos">Fotos</span>
+        <div class="photo-pair">
+          <div class="photo-thumb">
+            <img id="thumb1" src="" alt="Tienda">
+            <div class="photo-thumb-label" data-es="Tienda" data-en="Store">Tienda</div>
+          </div>
+          <div class="photo-thumb">
+            <img id="thumb2" src="" alt="Recibo">
+            <div class="photo-thumb-label" data-es="Recibo" data-en="Receipt">Recibo</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="warn-box">
+        <p class="note" data-es='Al tocar "CONFIRMAR Y ENVIAR", se abrira tu app de correo. Presiona <strong>Enviar</strong> ahi tambien para completar.' data-en='Tapping "CONFIRM AND SEND" will open your email app. Press <strong>Send</strong> there too to complete.'>Al tocar "CONFIRMAR Y ENVIAR", se abrira tu app de correo. Presiona <strong>Enviar</strong> ahi tambien para completar.</p>
+      </div>
+      <div class="error-box" data-es="Si no se abre el correo, llama a Tien: <strong>310-634-2157</strong>" data-en="If email doesn't open, call Tien: <strong>310-634-2157</strong>">
+        Si no se abre el correo, llama a Tien: <strong>310-634-2157</strong>
+      </div>
+
+      <button class="btn btn-success" onclick="submitReceipt()">
+        <span data-es="CONFIRMAR Y ENVIAR" data-en="CONFIRM AND SEND">CONFIRMAR Y ENVIAR</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- ========== SCREEN 5: SUCCESS ========== -->
+  <div class="screen" id="screen-success">
+    <div class="header">
+      <div class="header-logo">FCD</div>
+      <div class="header-subtitle" data-es="Recibo Enviado" data-en="Receipt Submitted">Recibo Enviado</div>
+      <button class="lang-toggle-btn" onclick="toggleLang()">EN</button>
+    </div>
+
+    <div class="success-body">
+      <div class="success-icon">&#10003;</div>
+      <div class="success-title" data-es="Enviado!" data-en="Sent!">Enviado!</div>
+      <div class="success-sub" data-es="Gracias, tu recibo fue enviado correctamente." data-en="Thank you, your receipt was submitted successfully.">Gracias, tu recibo fue enviado correctamente.</div>
+      <p class="note" data-es='Asegurate de haber presionado <strong>Enviar</strong> en tu app de correo.' data-en='Make sure you pressed <strong>Send</strong> in your email app.'>Asegurate de haber presionado <strong>Enviar</strong> en tu app de correo.</p>
+
+      <button class="btn btn-primary" onclick="resetApp()" style="margin-top:20px;">
+        <span data-es="Enviar Otro Recibo" data-en="Submit Another Receipt">Enviar Otro Recibo</span>
+      </button>
+      <button class="btn btn-outline" onclick="showCheckin()" style="margin-top:8px;">
+        <span data-es="Marcar Asistencia" data-en="Check-In">Marcar Asistencia</span>
+      </button>
+    </div>
+    <div class="call-bar">
+      <span data-es="Problemas? Llama a Tien:" data-en="If email didn't open, call Tien:">Problemas? Llama a Tien:</span> <a href="tel:3106342157">310-634-2157</a>
+    </div>
+  </div>
+
+  <!-- ========== SCREEN: CHECK-IN ========== -->
+  <div class="screen" id="screen-checkin">
+    <div class="header">
+      <div class="header-logo">FCD</div>
+      <div class="header-subtitle" data-es="Registro de Asistencia" data-en="Attendance Check-In">Registro de Asistencia</div>
+      <button class="lang-toggle-btn" onclick="toggleLang()">EN</button>
+    </div>
+
+    <div class="content">
+      <div class="instruction" data-es="CHECK-IN - Prueba de Asistencia" data-en="CHECK-IN - Attendance Proof">CHECK-IN - Prueba de Asistencia</div>
+
+      <div class="checkin-card" id="checkin-card">
+        <div class="checkin-header">Future Construction &amp; Design</div>
+        <div class="checkin-time" id="ci-time">--:--:--</div>
+        <div class="checkin-date" id="ci-date">--</div>
+        <div class="checkin-site" id="ci-site">--</div>
+        <div class="checkin-name" id="ci-name">--</div>
+        <div class="checkin-stamp" data-es="REGISTRADO" data-en="CHECKED IN">REGISTRADO</div>
+      </div>
+
+      <div class="screenshot-note" data-es="Toma una captura de pantalla de esta tarjeta como prueba de asistencia." data-en="Take a screenshot of this card as proof of attendance.">
+        Toma una captura de pantalla de esta tarjeta como prueba de asistencia.
+      </div>
+
+      <p class="note" data-es="La hora se actualiza cada segundo. Muestra esta pantalla como comprobante de que estas en el trabajo." data-en="The time updates every second. Show this screen as proof that you are at work.">La hora se actualiza cada segundo. Muestra esta pantalla como comprobante de que estas en el trabajo.</p>
+
+      <button class="btn btn-primary" onclick="goBackFromCheckin()">
+        <span data-es="Volver" data-en="Back">Volver</span>
+      </button>
+    </div>
+    <div class="call-bar">
+      <span data-es="Problemas? Llama a Tien:" data-en="Problems? Call Tien:">Problemas? Llama a Tien:</span> <a href="tel:3106342157">310-634-2157</a>
+    </div>
+  </div>
+
+</div>
+
+<script>
+var STATE = {
+  workerName: '',
+  jobSite: '',
+  photo1DataUrl: null,
+  photo2DataUrl: null,
+  currentDate: '',
+  checkinInterval: null,
+  previousScreen: 'screen-welcome',
+  lang: 'es'
+};
+
+var JOB_SITES = [
+  {
+    name: 'Daisy Ave - Fountain Valley',
+    address: '16781 Daisy Ave, Fountain Valley, CA',
+    lat: 33.7175,
+    lng: -117.9531
+  },
+  {
+    name: 'Mak - Anaheim',
+    address: '1551 W Edithia Ave, Anaheim, CA',
+    lat: 33.8366,
+    lng: -117.9143
+  }
+];
+
+var GEOFENCE_METERS = 500;
+
+// ── LANGUAGE TOGGLE ──
+function toggleLang() {
+  STATE.lang = STATE.lang === 'es' ? 'en' : 'es';
+  // Persist
+  try { localStorage.setItem('fcd_worker_lang', STATE.lang); } catch(e) {}
+  applyLang();
+}
+
+function applyLang() {
+  var lang = STATE.lang;
+  var opposite = lang === 'es' ? 'EN' : 'ES';
+
+  // Update all lang toggle buttons
+  var langBtns = document.querySelectorAll('.lang-toggle-btn');
+  for (var i = 0; i < langBtns.length; i++) {
+    langBtns[i].textContent = opposite;
+  }
+
+  // Update html lang attr
+  document.documentElement.lang = lang;
+
+  // Apply text to all elements with data-es / data-en
+  var els = document.querySelectorAll('[data-es][data-en]');
+  for (var j = 0; j < els.length; j++) {
+    var el = els[j];
+    var tagName = el.tagName;
+    // Skip inputs/selects — handle via placeholder
+    if (tagName === 'INPUT' || tagName === 'SELECT' || tagName === 'TEXTAREA') continue;
+    // For elements that contain HTML (warn-box notes, error-box)
+    var val = el.getAttribute('data-' + lang);
+    if (val !== null) {
+      el.innerHTML = val;
+    }
+  }
+
+  // Placeholders
+  var phEls = document.querySelectorAll('[data-ph-es][data-ph-en]');
+  for (var k = 0; k < phEls.length; k++) {
+    phEls[k].placeholder = phEls[k].getAttribute('data-ph-' + lang);
+  }
+
+  // Select options
+  var opts = document.querySelectorAll('select option[data-es][data-en]');
+  for (var m = 0; m < opts.length; m++) {
+    var optVal = opts[m].getAttribute('data-' + lang);
+    if (optVal) opts[m].textContent = optVal;
+  }
+
+  // GPS detected site card override text if visible
+  refreshGpsCardText();
+}
+
+function refreshGpsCardText() {
+  // If gps-result is showing a detected site, update the label and override-button text
+  var gpsResult = document.getElementById('gps-result');
+  if (gpsResult && gpsResult.style.display !== 'none' && STATE.jobSite) {
+    var label = gpsResult.querySelector('.site-card-label');
+    if (label) label.textContent = STATE.lang === 'es' ? 'GPS Detectado' : 'GPS Detected';
+    var overrideBtn = gpsResult.querySelector('.retake-btn');
+    if (overrideBtn) overrideBtn.textContent = STATE.lang === 'es' ? 'No es correcto - cambiar sitio' : 'Not correct - change site';
+  }
+}
+
+function haversineDistance(lat1, lon1, lat2, lon2) {
+  var R = 6371000;
+  var toRad = function(d) { return d * Math.PI / 180; };
+  var dLat = toRad(lat2 - lat1);
+  var dLon = toRad(lon2 - lon1);
+  var a = Math.sin(dLat/2)*Math.sin(dLat/2) +
+    Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
+    Math.sin(dLon/2)*Math.sin(dLon/2);
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+}
+
+function pad(n) { return String(n).padStart(2,'0'); }
+
+function formatDateShort(d) {
+  return pad(d.getMonth()+1) + '/' + pad(d.getDate()) + '/' + d.getFullYear();
+}
+
+function formatDateLong(d) {
+  var daysEs = ['Domingo','Lunes','Martes','Miercoles','Jueves','Viernes','Sabado'];
+  var daysEn = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  var monthsEs = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+  var monthsEn = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  if (STATE.lang === 'en') {
+    return daysEn[d.getDay()] + ', ' + monthsEn[d.getMonth()] + ' ' + d.getDate() + ', ' + d.getFullYear();
+  }
+  return daysEs[d.getDay()] + ', ' + d.getDate() + ' de ' + monthsEs[d.getMonth()] + ' de ' + d.getFullYear();
+}
+
+function formatTime(d) {
+  return pad(d.getHours()) + ':' + pad(d.getMinutes()) + ':' + pad(d.getSeconds());
+}
+
+function showScreen(id) {
+  var screens = document.querySelectorAll('.screen');
+  for (var i = 0; i < screens.length; i++) {
+    screens[i].classList.remove('active');
+  }
+  var el = document.getElementById(id);
+  if (el) {
+    el.classList.add('active');
+    el.scrollTop = 0;
+  }
+}
+
+function checkStartReady() {
+  var name = document.getElementById('worker-name').value.trim();
+  var btn = document.getElementById('btn-start');
+  btn.disabled = !(name.length > 0 && STATE.jobSite.length > 0);
+}
+
+function initGPS() {
+  if (!navigator.geolocation) {
+    showManualSelect(STATE.lang === 'es' ? 'GPS no disponible en este dispositivo.' : 'GPS not available on this device.');
+    return;
+  }
+  navigator.geolocation.getCurrentPosition(
+    function(pos) {
+      var lat = pos.coords.latitude;
+      var lng = pos.coords.longitude;
+      var closest = null;
+      var minDist = Infinity;
+      for (var i = 0; i < JOB_SITES.length; i++) {
+        var d = haversineDistance(lat, lng, JOB_SITES[i].lat, JOB_SITES[i].lng);
+        if (d < minDist) {
+          minDist = d;
+          closest = JOB_SITES[i];
+        }
+      }
+      if (minDist <= GEOFENCE_METERS) {
+        setDetectedSite(closest);
+      } else {
+        showManualSelect(STATE.lang === 'es'
+          ? 'No estas cerca de ningun sitio registrado. Selecciona manualmente:'
+          : 'You are not near any registered site. Select manually:');
+      }
+    },
+    function(err) {
+      showManualSelect(STATE.lang === 'es'
+        ? 'No se pudo obtener el GPS. Selecciona el sitio:'
+        : 'Could not get GPS. Select the site:');
+    },
+    { timeout: 8000, maximumAge: 60000, enableHighAccuracy: true }
+  );
+}
+
+function setDetectedSite(site) {
+  STATE.jobSite = site.name;
+  var gpsLoading = document.getElementById('gps-loading');
+  var gpsResult = document.getElementById('gps-result');
+  gpsLoading.style.display = 'none';
+  gpsResult.style.display = 'block';
+  gpsResult.innerHTML =
+    '<div class="site-card detected">' +
+    '<div class="site-card-label">' + (STATE.lang === 'es' ? 'GPS Detectado' : 'GPS Detected') + '</div>' +
+    '<div class="site-card-name">' + site.name + '</div>' +
+    '<div class="site-card-address">' + site.address + '</div>' +
+    '</div>' +
+    '<button class="retake-btn" style="margin-top:10px;" onclick="overrideSite()">' +
+    (STATE.lang === 'es' ? 'No es correcto - cambiar sitio' : 'Not correct - change site') +
+    '</button>';
+  checkStartReady();
+}
+
+function showManualSelect(reason) {
+  document.getElementById('gps-loading').style.display = 'none';
+  document.getElementById('gps-result').style.display = 'none';
+  var wrap = document.getElementById('manual-select-wrap');
+  wrap.style.display = 'block';
+  if (reason) {
+    var existing = wrap.querySelector('.gps-note');
+    if (!existing) {
+      var info = document.createElement('p');
+      info.className = 'note gps-note';
+      info.style.marginBottom = '10px';
+      info.style.color = '#795548';
+      info.textContent = reason;
+      wrap.insertBefore(info, wrap.firstChild);
+    } else {
+      existing.textContent = reason;
+    }
+  }
+  document.getElementById('manual-site').onchange = function() {
+    STATE.jobSite = this.value;
+    checkStartReady();
+  };
+}
+
+function overrideSite() {
+  STATE.jobSite = '';
+  document.getElementById('gps-result').style.display = 'none';
+  showManualSelect(null);
+  checkStartReady();
+}
+
+document.getElementById('worker-name').addEventListener('input', function() {
+  STATE.workerName = this.value.trim();
+  checkStartReady();
+});
+
+function goToScreen2() {
+  STATE.workerName = document.getElementById('worker-name').value.trim();
+  if (!STATE.workerName || !STATE.jobSite) return;
+  STATE.currentDate = formatDateShort(new Date());
+  showScreen('screen-photo1');
+}
+
+function goToScreen3() {
+  if (!STATE.photo1DataUrl) return;
+  showScreen('screen-photo2');
+}
+
+function goToScreen4() {
+  if (!STATE.photo2DataUrl) return;
+  document.getElementById('confirm-name').textContent = STATE.workerName;
+  document.getElementById('confirm-site').textContent = STATE.jobSite;
+  document.getElementById('confirm-date').textContent = STATE.currentDate;
+  document.getElementById('thumb1').src = STATE.photo1DataUrl;
+  document.getElementById('thumb2').src = STATE.photo2DataUrl;
+  showScreen('screen-confirm');
+}
+
+function triggerCamera(inputId) {
+  document.getElementById(inputId).click();
+}
+
+function handlePhoto(event, key) {
+  var file = event.target.files[0];
+  if (!file) return;
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    var dataUrl = e.target.result;
+    if (key === 'photo1') {
+      STATE.photo1DataUrl = dataUrl;
+      document.getElementById('photo1-img').src = dataUrl;
+      document.getElementById('photo1-preview').style.display = 'block';
+      document.getElementById('retake1').style.display = 'block';
+      document.getElementById('cam-btn-1').classList.add('taken');
+      document.getElementById('btn-next1').disabled = false;
+    } else {
+      STATE.photo2DataUrl = dataUrl;
+      document.getElementById('photo2-img').src = dataUrl;
+      document.getElementById('photo2-preview').style.display = 'block';
+      document.getElementById('retake2').style.display = 'block';
+      document.getElementById('cam-btn-2').classList.add('taken');
+      document.getElementById('btn-next2').disabled = false;
+    }
+  };
+  reader.readAsDataURL(file);
+}
+
+function submitReceipt() {
+  var now = new Date();
+  var to = 'FutureConstructionTeam@gmail.com';
+  var subject = encodeURIComponent('Recibo - ' + STATE.jobSite + ' - ' + STATE.currentDate);
+  var bodyLines = [
+    'ENVIO DE RECIBO - FCD',
+    '===================================',
+    '',
+    'Trabajador: ' + STATE.workerName,
+    'Sitio:      ' + STATE.jobSite,
+    'Fecha:      ' + STATE.currentDate,
+    'Hora:       ' + formatTime(now),
+    '',
+    'Fotos tomadas: 2',
+    '  - Foto 1: Tienda / Proveedor',
+    '  - Foto 2: Recibo de compra',
+    '',
+    'NOTA PARA TIEN:',
+    'Las fotos estan guardadas en el telefono del trabajador.',
+    'Si necesitas las imagenes, pide a ' + STATE.workerName,
+    'que las mande por mensaje de texto.',
+    '',
+    '-----------------------------------',
+    'Enviado desde la app FCD Worker Receipt'
+  ];
+  var body = encodeURIComponent(bodyLines.join('\n'));
+  var mailtoLink = 'mailto:' + to + '?subject=' + subject + '&body=' + body;
+  window.location.href = mailtoLink;
+  setTimeout(function() {
+    showScreen('screen-success');
+  }, 1500);
+}
+
+function resetApp() {
+  STATE.workerName = '';
+  STATE.jobSite = '';
+  STATE.photo1DataUrl = null;
+  STATE.photo2DataUrl = null;
+
+  document.getElementById('worker-name').value = '';
+  document.getElementById('btn-start').disabled = true;
+
+  document.getElementById('photo1-preview').style.display = 'none';
+  document.getElementById('retake1').style.display = 'none';
+  document.getElementById('cam-btn-1').classList.remove('taken');
+  document.getElementById('btn-next1').disabled = true;
+  document.getElementById('photo1-input').value = '';
+
+  document.getElementById('photo2-preview').style.display = 'none';
+  document.getElementById('retake2').style.display = 'none';
+  document.getElementById('cam-btn-2').classList.remove('taken');
+  document.getElementById('btn-next2').disabled = true;
+  document.getElementById('photo2-input').value = '';
+
+  document.getElementById('gps-loading').style.display = 'flex';
+  document.getElementById('gps-result').style.display = 'none';
+  document.getElementById('gps-result').innerHTML = '';
+
+  var wrap = document.getElementById('manual-select-wrap');
+  wrap.style.display = 'none';
+  var notes = wrap.querySelectorAll('.gps-note');
+  for (var i = 0; i < notes.length; i++) { notes[i].remove(); }
+  document.getElementById('manual-site').value = '';
+
+  showScreen('screen-welcome');
+  setTimeout(initGPS, 300);
+}
+
+function showCheckin() {
+  var active = document.querySelector('.screen.active');
+  STATE.previousScreen = active ? active.id : 'screen-welcome';
+  updateCheckinClock();
+  if (STATE.checkinInterval) clearInterval(STATE.checkinInterval);
+  STATE.checkinInterval = setInterval(updateCheckinClock, 1000);
+  showScreen('screen-checkin');
+}
+
+function updateCheckinClock() {
+  var now = new Date();
+  document.getElementById('ci-time').textContent = formatTime(now);
+  document.getElementById('ci-date').textContent = formatDateLong(now);
+  var siteName = STATE.jobSite || (STATE.lang === 'es' ? '(Sitio no seleccionado)' : '(No site selected)');
+  document.getElementById('ci-site').textContent = siteName;
+  var nameVal = STATE.workerName || document.getElementById('worker-name').value.trim() || (STATE.lang === 'es' ? '(Sin nombre)' : '(No name)');
+  document.getElementById('ci-name').textContent = nameVal;
+}
+
+function goBackFromCheckin() {
+  if (STATE.checkinInterval) {
+    clearInterval(STATE.checkinInterval);
+    STATE.checkinInterval = null;
+  }
+  showScreen(STATE.previousScreen || 'screen-welcome');
+}
+
+// Service Worker for offline
+if ('serviceWorker' in navigator) {
+  var swCode = [
+    "var CACHE = 'fcd-receipt-v1';",
+    "self.addEventListener('install', function(e) { self.skipWaiting(); });",
+    "self.addEventListener('activate', function(e) { e.waitUntil(clients.claim()); });",
+    "self.addEventListener('fetch', function(e) {",
+    "  e.respondWith(caches.match(e.request).then(function(cached) {",
+    "    return cached || fetch(e.request).catch(function() {",
+    "      return new Response('Offline', {status: 503});",
+    "    });",
+    "  }));",
+    "});"
+  ].join('\n');
+  try {
+    var swBlob = new Blob([swCode], { type: 'application/javascript' });
+    var swUrl = URL.createObjectURL(swBlob);
+    navigator.serviceWorker.register(swUrl).catch(function(err) {
+      console.log('SW registration failed:', err);
+    });
+  } catch(e) {
+    console.log('SW setup error:', e);
+  }
+}
+
+// PWA Manifest
+(function() {
+  try {
+    var manifest = {
+      name: 'FCD - Envio de Recibo',
+      short_name: 'FCD Recibo',
+      description: 'App para trabajadores de FCD',
+      start_url: './',
+      display: 'standalone',
+      orientation: 'portrait',
+      background_color: '#FFFFFF',
+      theme_color: '#E87722',
+      icons: [{
+        src: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%231C2B4A'/%3E%3Ctext y='72' font-size='58' text-anchor='middle' x='50' fill='%23E87722' font-family='Arial' font-weight='bold'%3EF%3C/text%3E%3C/svg%3E",
+        sizes: 'any',
+        type: 'image/svg+xml'
+      }]
+    };
+    var mBlob = new Blob([JSON.stringify(manifest)], { type: 'application/json' });
+    var mUrl = URL.createObjectURL(mBlob);
+    var link = document.createElement('link');
+    link.rel = 'manifest';
+    link.href = mUrl;
+    document.head.appendChild(link);
+  } catch(e) {}
+})();
+
+// Init
+window.addEventListener('DOMContentLoaded', function() {
+  // Restore language preference
+  try {
+    var savedLang = localStorage.getItem('fcd_worker_lang');
+    if (savedLang === 'en' || savedLang === 'es') STATE.lang = savedLang;
+  } catch(e) {}
+
+  showScreen('screen-welcome');
+  applyLang();
+  initGPS();
+});
+</script>
+</body>
+</html>

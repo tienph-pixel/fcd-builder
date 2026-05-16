@@ -1,0 +1,1915 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="FCD Receipt">
+<meta name="theme-color" content="#E87722">
+<title>FCD Cash Receipt</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --orange: #E87722;
+    --orange-dark: #c9621a;
+    --navy: #1C2B4A;
+    --navy-light: #2d3f61;
+    --white: #ffffff;
+    --gray-light: #f5f5f5;
+    --gray: #e0e0e0;
+    --gray-mid: #999;
+    --gray-dark: #555;
+    --text: #222;
+    --error: #d32f2f;
+    --success: #2e7d32;
+    --radius: 10px;
+    --shadow: 0 2px 8px rgba(0,0,0,0.12);
+  }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: var(--gray-light);
+    color: var(--text);
+    min-height: 100vh;
+    font-size: 16px;
+  }
+
+  /* ── TOP BAR ── */
+  .top-bar {
+    background: var(--navy);
+    color: var(--white);
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+  }
+  .top-bar-left { display: flex; align-items: center; gap: 12px; }
+  .logo-box {
+    background: var(--orange);
+    color: var(--white);
+    font-weight: 900;
+    font-size: 18px;
+    width: 44px; height: 44px;
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 6px;
+    letter-spacing: 1px;
+  }
+  .app-title { font-size: 14px; font-weight: 600; line-height: 1.3; }
+  .app-title small { display: block; font-weight: 400; font-size: 11px; opacity: 0.75; }
+  .lang-btn {
+    background: rgba(255,255,255,0.15);
+    border: 1px solid rgba(255,255,255,0.3);
+    color: var(--white);
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .lang-btn:hover { background: rgba(255,255,255,0.25); }
+
+  /* ── MAIN CONTAINER ── */
+  .container { max-width: 560px; margin: 0 auto; padding: 16px; }
+
+  /* ── CARD ── */
+  .card {
+    background: var(--white);
+    border-radius: var(--radius);
+    padding: 20px;
+    margin-bottom: 14px;
+    box-shadow: var(--shadow);
+  }
+  .card-title {
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: var(--orange);
+    margin-bottom: 14px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid var(--orange);
+  }
+
+  /* ── RECEIPT HEADER CARD ── */
+  .receipt-header-card {
+    background: var(--navy);
+    color: var(--white);
+    border-radius: var(--radius);
+    padding: 20px;
+    margin-bottom: 14px;
+    box-shadow: var(--shadow);
+  }
+  .receipt-header-top {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 16px;
+  }
+  .receipt-logo {
+    background: var(--orange);
+    color: var(--white);
+    font-weight: 900;
+    font-size: 22px;
+    width: 56px; height: 56px;
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 8px;
+    letter-spacing: 1px;
+    flex-shrink: 0;
+  }
+  .receipt-company { flex: 1; }
+  .receipt-company-name { font-size: 15px; font-weight: 700; line-height: 1.2; }
+  .receipt-company-sub { font-size: 11px; opacity: 0.7; margin-top: 2px; }
+  .receipt-title-text {
+    font-size: 18px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--orange);
+    margin-bottom: 12px;
+  }
+  .receipt-meta-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  .receipt-meta-item label {
+    display: block;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    opacity: 0.6;
+    margin-bottom: 4px;
+  }
+  .receipt-meta-item input {
+    background: rgba(255,255,255,0.12);
+    border: 1px solid rgba(255,255,255,0.25);
+    color: var(--white);
+    padding: 8px 10px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    width: 100%;
+  }
+  .receipt-meta-item input::placeholder { color: rgba(255,255,255,0.4); }
+  .receipt-meta-item input:focus { outline: none; border-color: var(--orange); }
+
+  /* ── FORM FIELDS ── */
+  .field { margin-bottom: 14px; }
+  .field:last-child { margin-bottom: 0; }
+  label.field-label {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--gray-dark);
+    margin-bottom: 6px;
+  }
+  input[type="text"],
+  input[type="tel"],
+  input[type="email"],
+  input[type="number"],
+  select,
+  textarea {
+    width: 100%;
+    padding: 12px 14px;
+    border: 2px solid var(--gray);
+    border-radius: var(--radius);
+    font-size: 16px;
+    color: var(--text);
+    background: var(--white);
+    transition: border-color 0.2s;
+    appearance: none;
+    -webkit-appearance: none;
+  }
+  input:focus, select:focus, textarea:focus {
+    outline: none;
+    border-color: var(--orange);
+  }
+  input.error, select.error, textarea.error { border-color: var(--error); }
+  .error-msg {
+    color: var(--error);
+    font-size: 12px;
+    margin-top: 4px;
+    display: none;
+  }
+  .error-msg.visible { display: block; }
+
+  /* Select arrow */
+  .select-wrap { position: relative; }
+  .select-wrap::after {
+    content: '▼';
+    position: absolute;
+    right: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 10px;
+    color: var(--gray-dark);
+    pointer-events: none;
+  }
+
+  /* ── AMOUNT FIELD ── */
+  .amount-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+  .amount-prefix {
+    position: absolute;
+    left: 14px;
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--gray-mid);
+    pointer-events: none;
+  }
+  #amount {
+    padding-left: 34px;
+    font-size: 32px;
+    font-weight: 800;
+    color: var(--navy);
+    border: 3px solid var(--gray);
+    letter-spacing: -0.5px;
+  }
+  #amount:focus { border-color: var(--orange); }
+
+  /* ── CONTACT AUTOCOMPLETE ── */
+  .autocomplete-wrap { position: relative; }
+  .autocomplete-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0; right: 0;
+    background: var(--white);
+    border: 2px solid var(--orange);
+    border-top: none;
+    border-radius: 0 0 var(--radius) var(--radius);
+    z-index: 200;
+    max-height: 200px;
+    overflow-y: auto;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    display: none;
+  }
+  .autocomplete-dropdown.open { display: block; }
+  .autocomplete-item {
+    padding: 12px 14px;
+    cursor: pointer;
+    border-bottom: 1px solid var(--gray-light);
+    font-size: 15px;
+  }
+  .autocomplete-item:hover, .autocomplete-item.highlighted { background: var(--gray-light); }
+  .autocomplete-item .item-sub { font-size: 12px; color: var(--gray-dark); margin-top: 2px; }
+  .autocomplete-item.add-new { color: var(--orange); font-weight: 600; }
+
+  /* New contact mini-form */
+  .new-contact-form {
+    background: var(--gray-light);
+    border-radius: var(--radius);
+    padding: 14px;
+    margin-top: 10px;
+    display: none;
+    border: 2px dashed var(--orange);
+  }
+  .new-contact-form.visible { display: block; }
+  .new-contact-form .field { margin-bottom: 10px; }
+  .new-contact-form input { font-size: 15px; padding: 10px 12px; }
+  .save-contact-btn {
+    background: var(--orange);
+    color: var(--white);
+    border: none;
+    padding: 10px 18px;
+    border-radius: var(--radius);
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 6px;
+  }
+  .save-contact-btn:hover { background: var(--orange-dark); }
+
+  /* ── PAYMENT METHOD TOGGLE ── */
+  .method-group {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 8px;
+  }
+  .method-btn {
+    border: 2px solid var(--gray);
+    background: var(--white);
+    border-radius: var(--radius);
+    padding: 14px 8px;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.18s;
+    color: var(--gray-dark);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+  }
+  .method-btn .method-icon { font-size: 22px; }
+  .method-btn:hover { border-color: var(--orange); color: var(--orange); }
+  .method-btn.active {
+    border-color: var(--orange);
+    background: var(--orange);
+    color: var(--white);
+  }
+  .method-btn.error-border { border-color: var(--error); }
+
+  /* ── SIGNATURE CANVAS ── */
+  .sig-container {
+    border: 2px solid var(--gray);
+    border-radius: var(--radius);
+    overflow: hidden;
+    background: var(--white);
+    position: relative;
+    cursor: crosshair;
+  }
+  .sig-container.error { border-color: var(--error); }
+  #sig-canvas {
+    display: block;
+    width: 100%;
+    height: 200px;
+    touch-action: none;
+  }
+  .sig-instruction {
+    position: absolute;
+    bottom: 10px;
+    left: 0; right: 0;
+    text-align: center;
+    font-size: 12px;
+    color: var(--gray-mid);
+    pointer-events: none;
+    font-style: italic;
+  }
+  .sig-watermark {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 13px;
+    color: var(--gray);
+    pointer-events: none;
+    white-space: nowrap;
+    font-style: italic;
+  }
+  .sig-actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 8px;
+  }
+  .clear-sig-btn {
+    background: none;
+    border: 1.5px solid var(--gray-mid);
+    color: var(--gray-dark);
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .clear-sig-btn:hover { border-color: var(--error); color: var(--error); }
+
+  /* ── SUBMIT BUTTONS ── */
+  .submit-btn {
+    width: 100%;
+    background: var(--orange);
+    color: var(--white);
+    border: none;
+    padding: 18px;
+    border-radius: var(--radius);
+    font-size: 20px;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    margin-top: 6px;
+    transition: background 0.2s, transform 0.1s;
+    box-shadow: 0 4px 14px rgba(232,119,34,0.4);
+  }
+  .submit-btn:hover { background: var(--orange-dark); }
+  .submit-btn:active { transform: scale(0.98); }
+
+  .send-sig-btn {
+    width: 100%;
+    background: var(--navy);
+    color: var(--white);
+    border: none;
+    padding: 16px;
+    border-radius: var(--radius);
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+    cursor: pointer;
+    margin-top: 10px;
+    transition: background 0.2s, transform 0.1s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+  .send-sig-btn:hover { background: var(--navy-light); }
+  .send-sig-btn:active { transform: scale(0.98); }
+
+  /* ── RECEIPT VIEW ── */
+  #receipt-view { display: none; }
+  .receipt-view-inner {
+    background: var(--white);
+    border-radius: var(--radius);
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    margin-bottom: 16px;
+  }
+  .rv-header {
+    background: var(--navy);
+    color: var(--white);
+    padding: 20px;
+  }
+  .rv-header-top {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 12px;
+  }
+  .rv-logo {
+    background: var(--orange);
+    color: var(--white);
+    font-weight: 900;
+    font-size: 22px;
+    width: 56px; height: 56px;
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 8px;
+    letter-spacing: 1px;
+    flex-shrink: 0;
+  }
+  .rv-company-name { font-size: 15px; font-weight: 700; }
+  .rv-company-contact { font-size: 11px; opacity: 0.7; margin-top: 3px; line-height: 1.6; }
+  .rv-title {
+    font-size: 20px;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--orange);
+    border-top: 1px solid rgba(255,255,255,0.15);
+    padding-top: 12px;
+  }
+  .rv-meta {
+    display: flex;
+    gap: 20px;
+    margin-top: 8px;
+    font-size: 13px;
+    opacity: 0.8;
+  }
+  .rv-meta span { font-weight: 600; color: var(--white); }
+
+  .rv-body { padding: 20px; }
+  .rv-amount-block {
+    background: var(--orange);
+    color: var(--white);
+    border-radius: var(--radius);
+    padding: 16px 20px;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .rv-amount-label { font-size: 12px; font-weight: 600; text-transform: uppercase; opacity: 0.85; }
+  .rv-amount-value { font-size: 36px; font-weight: 900; letter-spacing: -1px; }
+  .rv-method-badge {
+    background: rgba(255,255,255,0.25);
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 700;
+  }
+
+  .rv-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--gray-light);
+    font-size: 14px;
+  }
+  .rv-row:last-child { border-bottom: none; }
+  .rv-row-label { color: var(--gray-dark); font-weight: 600; flex-shrink: 0; margin-right: 12px; }
+  .rv-row-value { color: var(--text); font-weight: 500; text-align: right; }
+
+  .rv-sig-section {
+    margin-top: 20px;
+    padding-top: 16px;
+    border-top: 2px solid var(--gray);
+  }
+  .rv-sig-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    color: var(--gray-dark);
+    margin-bottom: 8px;
+    font-weight: 600;
+  }
+  .rv-sig-img {
+    max-width: 100%;
+    height: 100px;
+    object-fit: contain;
+    display: block;
+    border: 1px solid var(--gray);
+    border-radius: 6px;
+    background: var(--white);
+  }
+  .rv-footer {
+    background: var(--navy);
+    color: rgba(255,255,255,0.7);
+    padding: 12px 20px;
+    text-align: center;
+    font-size: 11px;
+    line-height: 1.8;
+  }
+  .rv-footer strong { color: var(--white); }
+
+  /* ── RECEIPT ACTION BUTTONS ── */
+  .receipt-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+  .action-btn {
+    border: none;
+    padding: 14px 10px;
+    border-radius: var(--radius);
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    transition: opacity 0.2s, transform 0.1s;
+  }
+  .action-btn:active { transform: scale(0.97); }
+  .btn-email { background: var(--navy); color: var(--white); }
+  .btn-print { background: var(--gray-dark); color: var(--white); }
+  .btn-new {
+    grid-column: 1 / -1;
+    background: var(--orange);
+    color: var(--white);
+    font-size: 16px;
+    padding: 16px;
+  }
+  .btn-new:hover { background: var(--orange-dark); }
+
+  /* ── TOAST ── */
+  .toast {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%) translateY(100px);
+    background: var(--navy);
+    color: var(--white);
+    padding: 12px 24px;
+    border-radius: 24px;
+    font-size: 14px;
+    font-weight: 600;
+    z-index: 999;
+    transition: transform 0.3s ease;
+    white-space: nowrap;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+  .toast.success { background: var(--success); }
+  .toast.error-toast { background: var(--error); }
+
+  /* ── SIGNATURE REQUEST MODE ── */
+  #sign-mode { display: none; }
+  .sign-mode-header {
+    background: var(--navy);
+    color: var(--white);
+    padding: 20px;
+    text-align: center;
+    margin-bottom: 0;
+  }
+  .sign-mode-logo {
+    background: var(--orange);
+    color: var(--white);
+    font-weight: 900;
+    font-size: 22px;
+    width: 56px; height: 56px;
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 8px;
+    letter-spacing: 1px;
+    margin: 0 auto 12px;
+  }
+  .sign-mode-title {
+    font-size: 18px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--orange);
+    margin-bottom: 4px;
+  }
+  .sign-mode-sub {
+    font-size: 12px;
+    opacity: 0.7;
+  }
+  .sign-amount-block {
+    background: var(--orange);
+    color: var(--white);
+    padding: 20px;
+    text-align: center;
+    margin-bottom: 14px;
+  }
+  .sign-amount-label {
+    font-size: 12px;
+    text-transform: uppercase;
+    opacity: 0.85;
+    margin-bottom: 4px;
+  }
+  .sign-amount-value {
+    font-size: 48px;
+    font-weight: 900;
+    letter-spacing: -1px;
+  }
+  .sign-method-badge {
+    background: rgba(255,255,255,0.25);
+    display: inline-block;
+    padding: 4px 14px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 700;
+    margin-top: 6px;
+  }
+  .sign-detail-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--gray-light);
+    font-size: 14px;
+  }
+  .sign-detail-label { color: var(--gray-dark); font-weight: 600; }
+  .sign-detail-value { font-weight: 500; text-align: right; }
+  .sign-instruction {
+    background: #fff3e0;
+    border-left: 4px solid var(--orange);
+    padding: 12px 14px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--navy);
+    margin-bottom: 14px;
+  }
+  .sign-submit-btn {
+    width: 100%;
+    background: var(--orange);
+    color: var(--white);
+    border: none;
+    padding: 20px;
+    border-radius: var(--radius);
+    font-size: 22px;
+    font-weight: 900;
+    cursor: pointer;
+    margin-top: 10px;
+    box-shadow: 0 4px 14px rgba(232,119,34,0.4);
+    transition: background 0.2s, transform 0.1s;
+  }
+  .sign-submit-btn:active { transform: scale(0.98); }
+  .sign-submit-btn:hover { background: var(--orange-dark); }
+
+  /* ── PRINT STYLES ── */
+  @media print {
+    body { background: white; }
+    .top-bar,
+    #form-view,
+    .receipt-actions,
+    .toast { display: none !important; }
+    #receipt-view { display: block !important; }
+    .container { padding: 0; max-width: 100%; }
+    .receipt-view-inner { box-shadow: none; }
+    .rv-header { background: #1C2B4A !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .rv-amount-block { background: #E87722 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .rv-footer { background: #1C2B4A !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+</style>
+</head>
+<body>
+
+<!-- TOP BAR (hidden in sign mode) -->
+<div class="top-bar" id="main-top-bar">
+  <div class="top-bar-left">
+    <div class="logo-box">FCD</div>
+    <div class="app-title">
+      <span data-en="Cash Payment Receipt" data-es="Recibo de Pago">Cash Payment Receipt</span>
+      <small>Future Construction &amp; Design</small>
+    </div>
+  </div>
+  <button class="lang-btn" id="lang-toggle" onclick="toggleLang()">ES</button>
+</div>
+
+<!-- MAIN -->
+<div class="container" id="main-container">
+
+  <!-- ═══ FORM VIEW ═══ -->
+  <div id="form-view">
+
+    <!-- Receipt Header Card -->
+    <div class="receipt-header-card">
+      <div class="receipt-header-top">
+        <div class="receipt-logo">FCD</div>
+        <div class="receipt-company">
+          <div class="receipt-company-name">Future Construction &amp; Design</div>
+          <div class="receipt-company-sub">310-634-2157 · FutureConstructionTeam@gmail.com</div>
+        </div>
+      </div>
+      <div class="receipt-title-text" data-en="CASH PAYMENT RECEIPT" data-es="RECIBO DE PAGO EN EFECTIVO">CASH PAYMENT RECEIPT</div>
+      <div class="receipt-meta-row">
+        <div class="receipt-meta-item">
+          <label data-en="Receipt #" data-es="Recibo #">Receipt #</label>
+          <input type="text" id="receipt-num" placeholder="Auto / today-XX" readonly style="cursor:default;">
+        </div>
+        <div class="receipt-meta-item">
+          <label data-en="Date" data-es="Fecha">Date</label>
+          <input type="text" id="receipt-date" placeholder="05/16/2026">
+        </div>
+      </div>
+    </div>
+
+    <!-- Payee Card -->
+    <div class="card">
+      <div class="card-title" data-en="Payee Information" data-es="Información del Pagado">Payee Information</div>
+
+      <div class="field">
+        <label class="field-label" data-en="Payee Type" data-es="Tipo de Pagado">Payee Type</label>
+        <div class="select-wrap">
+          <select id="payee-type">
+            <option value="" data-en="Select type..." data-es="Seleccionar tipo...">Select type...</option>
+            <option value="Subcontractor" data-en="Subcontractor" data-es="Subcontratista">Subcontractor</option>
+            <option value="Worker" data-en="Worker" data-es="Trabajador">Worker</option>
+            <option value="PM" data-en="PM (Project Manager)" data-es="PM (Gerente de Proyecto)">PM (Project Manager)</option>
+            <option value="Superintendent" data-en="Superintendent" data-es="Superintendente">Superintendent</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="field-label" data-en="Name" data-es="Nombre">Name</label>
+        <div class="autocomplete-wrap">
+          <input type="text" id="payee-name" placeholder="Search or type name..." autocomplete="off"
+            data-ph-en="Search or type name..." data-ph-es="Buscar o escribir nombre...">
+          <div class="autocomplete-dropdown" id="name-dropdown"></div>
+        </div>
+        <div class="error-msg" id="err-name" data-en="Name is required." data-es="El nombre es requerido.">Name is required.</div>
+        <!-- New contact mini-form -->
+        <div class="new-contact-form" id="new-contact-form">
+          <div class="field">
+            <label class="field-label" data-en="Full Name" data-es="Nombre Completo">Full Name</label>
+            <input type="text" id="nc-name" placeholder="Full name">
+          </div>
+          <div class="field">
+            <label class="field-label" data-en="Phone" data-es="Teléfono">Phone</label>
+            <input type="tel" id="nc-phone" placeholder="(714) 000-0000">
+          </div>
+          <div class="field">
+            <label class="field-label" data-en="Email (optional)" data-es="Email (opcional)">Email (optional)</label>
+            <input type="email" id="nc-email" placeholder="email@example.com">
+          </div>
+          <button class="save-contact-btn" onclick="saveNewContact()" data-en="Save Contact" data-es="Guardar Contacto">Save Contact</button>
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="field-label" data-en="Phone" data-es="Teléfono">Phone</label>
+        <input type="tel" id="payee-phone" placeholder="(714) 000-0000" data-ph-en="(714) 000-0000" data-ph-es="(714) 000-0000">
+      </div>
+
+      <div class="field">
+        <label class="field-label" data-en="Email (optional)" data-es="Email (opcional)">Email (optional)</label>
+        <input type="email" id="payee-email" placeholder="payee@email.com" data-ph-en="payee@email.com" data-ph-es="pagado@email.com">
+      </div>
+    </div>
+
+    <!-- Job Card -->
+    <div class="card">
+      <div class="card-title" data-en="Job Site" data-es="Proyecto">Job Site</div>
+      <div class="field">
+        <div class="select-wrap">
+          <select id="job-site">
+            <option value="" data-en="Select job site..." data-es="Seleccionar proyecto...">Select job site...</option>
+            <option value="Daisy - 16781 Daisy Ave, Fountain Valley">Daisy – 16781 Daisy Ave, Fountain Valley</option>
+            <option value="Mak - 1551 W Edithia Ave, Anaheim">Mak – 1551 W Edithia Ave, Anaheim</option>
+          </select>
+        </div>
+        <div class="error-msg" id="err-job" data-en="Please select a job site." data-es="Por favor seleccione un proyecto.">Please select a job site.</div>
+      </div>
+    </div>
+
+    <!-- Payment Details Card -->
+    <div class="card">
+      <div class="card-title" data-en="Payment Details" data-es="Detalles de Pago">Payment Details</div>
+
+      <div class="field">
+        <label class="field-label" data-en="Amount" data-es="Monto">Amount</label>
+        <div class="amount-wrap">
+          <span class="amount-prefix">$</span>
+          <input type="number" id="amount" placeholder="0" min="0" step="0.01" inputmode="decimal">
+        </div>
+        <div class="error-msg" id="err-amount" data-en="Enter a valid amount greater than $0." data-es="Ingrese un monto válido mayor a $0.">Enter a valid amount greater than $0.</div>
+      </div>
+
+      <div class="field">
+        <label class="field-label" data-en="Payment Method" data-es="Método de Pago">Payment Method</label>
+        <div class="method-group" id="method-group">
+          <button class="method-btn" data-method="CASH" onclick="selectMethod('CASH')">
+            <span class="method-icon">💵</span>
+            <span data-en="CASH" data-es="EFECTIVO">CASH</span>
+          </button>
+          <button class="method-btn" data-method="ZELLE" onclick="selectMethod('ZELLE')">
+            <span class="method-icon">📲</span>
+            <span>ZELLE</span>
+          </button>
+          <button class="method-btn" data-method="CHECK" onclick="selectMethod('CHECK')">
+            <span class="method-icon">🗒️</span>
+            <span data-en="CHECK" data-es="CHEQUE">CHECK</span>
+          </button>
+        </div>
+        <div class="error-msg" id="err-method" data-en="Please select a payment method." data-es="Por favor seleccione un método de pago.">Please select a payment method.</div>
+      </div>
+
+      <div class="field">
+        <label class="field-label" data-en="Category" data-es="Categoría">Category</label>
+        <div class="select-wrap">
+          <select id="category">
+            <option value="" data-en="Select category..." data-es="Seleccionar categoría...">Select category...</option>
+            <option value="Labor" data-en="Labor" data-es="Mano de Obra">Labor</option>
+            <option value="Materials" data-en="Materials" data-es="Materiales">Materials</option>
+            <option value="Equipment" data-en="Equipment" data-es="Equipo">Equipment</option>
+            <option value="Dump / Hauling" data-en="Dump / Hauling" data-es="Acarreo / Escombro">Dump / Hauling</option>
+            <option value="Subcontractor" data-en="Subcontractor" data-es="Subcontratista">Subcontractor</option>
+            <option value="Permits" data-en="Permits" data-es="Permisos">Permits</option>
+            <option value="Miscellaneous" data-en="Miscellaneous" data-es="Misceláneo">Miscellaneous</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="field-label" data-en="Description (optional)" data-es="Descripción (opcional)">Description (optional)</label>
+        <input type="text" id="description" placeholder='For: ____________' data-ph-en="For: ____________" data-ph-es="Para: ____________">
+      </div>
+
+      <div class="field">
+        <label class="field-label">1099</label>
+        <div class="select-wrap">
+          <select id="field-1099">
+            <option value="">— (not set)</option>
+            <option value="Yes">Yes</option>
+            <option value="No">No</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- Signature Card -->
+    <div class="card">
+      <div class="card-title" data-en="Recipient Signature" data-es="Firma del Receptor">Recipient Signature</div>
+      <div class="sig-container" id="sig-container">
+        <canvas id="sig-canvas"></canvas>
+        <div class="sig-watermark" id="sig-watermark" data-en="Sign here / Firme aquí" data-es="Firme aquí">Sign here / Firme aquí</div>
+        <div class="sig-instruction" data-en="Sign above · Firme arriba" data-es="Firme arriba">Sign above · Firme arriba</div>
+      </div>
+      <div class="sig-actions">
+        <button class="clear-sig-btn" onclick="clearSig()" data-en="✕ Clear / Borrar" data-es="✕ Borrar / Clear">✕ Clear / Borrar</button>
+      </div>
+      <div class="error-msg" id="err-sig" data-en="Signature is required." data-es="La firma es requerida.">Signature is required.</div>
+    </div>
+
+    <!-- Submit + Send for Signature buttons -->
+    <button class="submit-btn" onclick="generateReceipt()">
+      <span data-en="GENERATE RECEIPT" data-es="GENERAR RECIBO">GENERATE RECEIPT</span>
+    </button>
+    <button class="send-sig-btn" onclick="sendForSignature()">
+      📨 <span data-en="SEND FOR SIGNATURE / ENVIAR PARA FIRMA" data-es="ENVIAR PARA FIRMA / SEND FOR SIGNATURE">SEND FOR SIGNATURE / ENVIAR PARA FIRMA</span>
+    </button>
+    <div style="height:24px"></div>
+
+  </div><!-- /form-view -->
+
+  <!-- ═══ RECEIPT VIEW ═══ -->
+  <div id="receipt-view">
+    <div class="receipt-view-inner" id="receipt-printable">
+      <div class="rv-header">
+        <div class="rv-header-top">
+          <div class="rv-logo">FCD</div>
+          <div>
+            <div class="rv-company-name">Future Construction &amp; Design</div>
+            <div class="rv-company-contact">
+              310-634-2157<br>
+              FutureConstructionTeam@gmail.com
+            </div>
+          </div>
+        </div>
+        <div class="rv-title" id="rv-title">CASH PAYMENT RECEIPT</div>
+        <div class="rv-meta">
+          <div>Receipt # <span id="rv-num">—</span></div>
+          <div>Date: <span id="rv-date">—</span></div>
+        </div>
+      </div>
+
+      <div class="rv-body">
+        <div class="rv-amount-block">
+          <div>
+            <div class="rv-amount-label" data-en="Total Paid" data-es="Total Pagado">Total Paid</div>
+            <div class="rv-amount-value" id="rv-amount">$0.00</div>
+          </div>
+          <div class="rv-method-badge" id="rv-method">CASH</div>
+        </div>
+
+        <div class="rv-row">
+          <span class="rv-row-label" data-en="Paid To" data-es="Pagado A">Paid To</span>
+          <span class="rv-row-value" id="rv-name">—</span>
+        </div>
+        <div class="rv-row" id="rv-phone-row">
+          <span class="rv-row-label" data-en="Phone" data-es="Teléfono">Phone</span>
+          <span class="rv-row-value" id="rv-phone">—</span>
+        </div>
+        <div class="rv-row" id="rv-email-row">
+          <span class="rv-row-label">Email</span>
+          <span class="rv-row-value" id="rv-email">—</span>
+        </div>
+        <div class="rv-row">
+          <span class="rv-row-label" data-en="Payee Type" data-es="Tipo">Payee Type</span>
+          <span class="rv-row-value" id="rv-type">—</span>
+        </div>
+        <div class="rv-row">
+          <span class="rv-row-label" data-en="Job Site" data-es="Proyecto">Job Site</span>
+          <span class="rv-row-value" id="rv-job">—</span>
+        </div>
+        <div class="rv-row">
+          <span class="rv-row-label" data-en="Category" data-es="Categoría">Category</span>
+          <span class="rv-row-value" id="rv-category">—</span>
+        </div>
+        <div class="rv-row" id="rv-desc-row">
+          <span class="rv-row-label" data-en="Description" data-es="Descripción">Description</span>
+          <span class="rv-row-value" id="rv-desc">—</span>
+        </div>
+        <div class="rv-row" id="rv-1099-row">
+          <span class="rv-row-label">1099</span>
+          <span class="rv-row-value" id="rv-1099">—</span>
+        </div>
+
+        <div class="rv-sig-section">
+          <div class="rv-sig-label" data-en="Recipient Signature / Firma del Receptor" data-es="Firma del Receptor / Recipient Signature">Recipient Signature / Firma del Receptor</div>
+          <img id="rv-sig-img" class="rv-sig-img" src="" alt="Signature">
+        </div>
+      </div>
+
+      <div class="rv-footer">
+        <strong>Future Construction &amp; Design</strong><br>
+        310-634-2157 · FutureConstructionTeam@gmail.com
+      </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="receipt-actions">
+      <button class="action-btn btn-email" onclick="emailReceipt()">
+        📧 <span data-en="Email Receipt" data-es="Enviar por Email">Email Receipt</span>
+      </button>
+      <button class="action-btn btn-print" onclick="window.print()">
+        🖨️ <span data-en="Print / Save PDF" data-es="Guardar PDF">Print / Save PDF</span>
+      </button>
+      <button class="action-btn btn-new" onclick="newReceipt()">
+        🔄 <span data-en="New Receipt" data-es="Nuevo Recibo">New Receipt</span>
+      </button>
+    </div>
+    <div style="height:24px"></div>
+
+  </div><!-- /receipt-view -->
+
+</div><!-- /container -->
+
+<!-- ═══ SIGNATURE REQUEST MODE ═══ -->
+<div id="sign-mode">
+  <div class="sign-mode-header">
+    <div class="sign-mode-logo">FCD</div>
+    <div class="sign-mode-title">FCD Payment Receipt / Recibo de Pago FCD</div>
+    <div class="sign-mode-sub">Future Construction &amp; Design · 310-634-2157</div>
+  </div>
+
+  <div class="sign-amount-block">
+    <div class="sign-amount-label">Amount / Monto</div>
+    <div class="sign-amount-value" id="sm-amount">$0.00</div>
+    <div class="sign-method-badge" id="sm-method">CASH</div>
+  </div>
+
+  <div class="container" style="padding-top:0;">
+    <div class="card" style="margin-bottom:10px;">
+      <div id="sm-details">
+        <!-- filled dynamically -->
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Recipient Signature / Firma del Receptor</div>
+      <div class="sign-instruction">
+        Please review and sign below / Por favor revise y firme abajo
+      </div>
+      <div class="sig-container" id="sm-sig-container">
+        <canvas id="sm-sig-canvas"></canvas>
+        <div class="sig-watermark" id="sm-sig-watermark">Sign here / Firme aquí</div>
+        <div class="sig-instruction">Sign above · Firme arriba</div>
+      </div>
+      <div class="sig-actions">
+        <button class="clear-sig-btn" onclick="clearSignModeSig()">✕ Clear / Borrar</button>
+      </div>
+      <div class="error-msg" id="sm-err-sig" style="margin-top:8px;">Signature is required. / La firma es requerida.</div>
+    </div>
+
+    <button class="sign-submit-btn" onclick="submitSignMode()">
+      SIGN &amp; SUBMIT / FIRMAR Y ENVIAR
+    </button>
+    <div style="height:32px;"></div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ══════════════════════════════════════════════
+//  STATE
+// ══════════════════════════════════════════════
+let currentLang = 'en';
+let selectedMethod = '';
+let sigHasData = false;
+
+// ══════════════════════════════════════════════
+//  DEFAULT CONTACTS
+// ══════════════════════════════════════════════
+const DEFAULT_CONTACTS = [
+  { name: 'Juan Hernesto', phone: '714-561-8677', email: '', type: 'Worker' },
+  { name: 'KT Electrical Heating and Air Conditioning', phone: '714-595-4276', email: 'ktehvac@gmail.com', type: 'Subcontractor' }
+];
+
+function getContacts() {
+  try {
+    const stored = JSON.parse(localStorage.getItem('fcd_contacts') || '[]');
+    const names = stored.map(c => c.name.toLowerCase());
+    const merged = [...stored];
+    for (const d of DEFAULT_CONTACTS) {
+      if (!names.includes(d.name.toLowerCase())) merged.unshift(d);
+    }
+    return merged;
+  } catch(e) { return [...DEFAULT_CONTACTS]; }
+}
+
+function saveContacts(contacts) {
+  const userContacts = contacts.filter(c =>
+    !DEFAULT_CONTACTS.some(d => d.name.toLowerCase() === c.name.toLowerCase())
+  );
+  localStorage.setItem('fcd_contacts', JSON.stringify(userContacts));
+}
+
+// ══════════════════════════════════════════════
+//  RECEIPT NUMBER — generates on submit, not on load
+// ══════════════════════════════════════════════
+function getTodayStr() {
+  const d = new Date();
+  const yy = String(d.getFullYear()).slice(2);
+  const mm = String(d.getMonth()+1).padStart(2,'0');
+  const dd = String(d.getDate()).padStart(2,'0');
+  return yy+mm+dd;
+}
+
+function peekNextReceiptNum() {
+  // Returns what the next number WILL be, without saving
+  const today = getTodayStr();
+  const key = 'fcd_receipt_' + today;
+  const last = parseInt(localStorage.getItem(key) || '0');
+  return today + '-' + String(last + 1).padStart(2,'0');
+}
+
+function generateAndSaveReceiptNum() {
+  // Increments the counter, saves it, returns the number
+  const today = getTodayStr();
+  const key = 'fcd_receipt_' + today;
+  const last = parseInt(localStorage.getItem(key) || '0');
+  const next = last + 1;
+  localStorage.setItem(key, next);
+  return today + '-' + String(next).padStart(2,'0');
+}
+
+function saveReceiptNum(num) {
+  const parts = num.split('-');
+  const dateStr = parts[0];
+  const seq = parseInt(parts[1]);
+  localStorage.setItem('fcd_receipt_' + dateStr, seq);
+}
+
+function getTodayFormatted() {
+  const d = new Date();
+  return (d.getMonth()+1).toString().padStart(2,'0') + '/' +
+         d.getDate().toString().padStart(2,'0') + '/' +
+         d.getFullYear();
+}
+
+// ══════════════════════════════════════════════
+//  SIGN MODE — detect ?sign= in URL
+// ══════════════════════════════════════════════
+function checkSignMode() {
+  const params = new URLSearchParams(window.location.search);
+  const signData = params.get('sign');
+  if (!signData) return false;
+
+  try {
+    const json = atob(signData);
+    const data = JSON.parse(json);
+    showSignMode(data);
+    return true;
+  } catch(e) {
+    console.error('Invalid sign data:', e);
+    return false;
+  }
+}
+
+function showSignMode(data) {
+  // Hide normal UI
+  document.getElementById('main-top-bar').style.display = 'none';
+  document.getElementById('main-container').style.display = 'none';
+  // Show sign mode
+  document.getElementById('sign-mode').style.display = 'block';
+
+  // Fill amount + method
+  const amount = parseFloat(data.amount || 0);
+  document.getElementById('sm-amount').textContent = '$' + amount.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  document.getElementById('sm-method').textContent = data.method || '—';
+
+  // Fill details
+  const rows = [
+    ['Paid To / Pagado A', data.name],
+    ['Job Site / Proyecto', data.jobSite],
+    ['Category / Categoría', data.category],
+    ['Date / Fecha', data.date],
+    data.description ? ['Description / Descripción', data.description] : null,
+    data.payeeType ? ['Type / Tipo', data.payeeType] : null,
+  ].filter(Boolean);
+
+  const detailsEl = document.getElementById('sm-details');
+  detailsEl.innerHTML = rows.map(([label, val]) =>
+    `<div class="sign-detail-row"><span class="sign-detail-label">${label}</span><span class="sign-detail-value">${escHtml(val || '—')}</span></div>`
+  ).join('');
+
+  // Store data for submit
+  window._signModeData = data;
+
+  // Init signature canvas
+  initSignModeCanvas();
+}
+
+function initSignModeCanvas() {
+  const canvas = document.getElementById('sm-sig-canvas');
+  const container = document.getElementById('sm-sig-container');
+  const ctx = canvas.getContext('2d');
+  let drawing = false;
+  let lastX = 0, lastY = 0;
+
+  function resize() {
+    const w = container.clientWidth;
+    const h = 200;
+    const ratio = window.devicePixelRatio || 1;
+    canvas.width = w * ratio;
+    canvas.height = h * ratio;
+    canvas.style.width = w + 'px';
+    canvas.style.height = h + 'px';
+    ctx.scale(ratio, ratio);
+    ctx.strokeStyle = '#111';
+    ctx.lineWidth = 2.5;
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  function getPos(e) {
+    const rect = canvas.getBoundingClientRect();
+    if (e.touches) return { x: e.touches[0].clientX - rect.left, y: e.touches[0].clientY - rect.top };
+    return { x: e.clientX - rect.left, y: e.clientY - rect.top };
+  }
+
+  function startDraw(e) {
+    e.preventDefault();
+    drawing = true;
+    const pos = getPos(e);
+    lastX = pos.x; lastY = pos.y;
+    ctx.beginPath();
+    ctx.moveTo(lastX, lastY);
+  }
+  function draw(e) {
+    if (!drawing) return;
+    e.preventDefault();
+    const pos = getPos(e);
+    ctx.lineTo(pos.x, pos.y);
+    ctx.stroke();
+    lastX = pos.x; lastY = pos.y;
+    document.getElementById('sm-sig-watermark').style.display = 'none';
+    document.getElementById('sm-err-sig').classList.remove('visible');
+    document.getElementById('sm-sig-container').classList.remove('error');
+  }
+  function endDraw() { drawing = false; ctx.beginPath(); }
+
+  canvas.addEventListener('mousedown', startDraw);
+  canvas.addEventListener('mousemove', draw);
+  canvas.addEventListener('mouseup', endDraw);
+  canvas.addEventListener('mouseleave', endDraw);
+  canvas.addEventListener('touchstart', startDraw, { passive: false });
+  canvas.addEventListener('touchmove', draw, { passive: false });
+  canvas.addEventListener('touchend', endDraw);
+}
+
+function clearSignModeSig() {
+  const canvas = document.getElementById('sm-sig-canvas');
+  const ctx = canvas.getContext('2d');
+  const ratio = window.devicePixelRatio || 1;
+  ctx.clearRect(0, 0, canvas.width / ratio, canvas.height / ratio);
+  document.getElementById('sm-sig-watermark').style.display = '';
+}
+
+function isSmSigBlank() {
+  const canvas = document.getElementById('sm-sig-canvas');
+  const ctx = canvas.getContext('2d');
+  const data = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
+  for (let i = 3; i < data.length; i += 4) { if (data[i] > 0) return false; }
+  return true;
+}
+
+function submitSignMode() {
+  if (isSmSigBlank()) {
+    document.getElementById('sm-err-sig').classList.add('visible');
+    document.getElementById('sm-sig-container').classList.add('error');
+    return;
+  }
+
+  const data = window._signModeData || {};
+  const canvas = document.getElementById('sm-sig-canvas');
+  const sigData = canvas.toDataURL('image/png');
+  const now = new Date();
+  const dateStr = now.toLocaleDateString('en-US');
+  const timeStr = now.toLocaleTimeString('en-US');
+
+  const amount = parseFloat(data.amount || 0);
+  const amountStr = '$' + amount.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  const receiptNum = data.receiptNum || '(pending)';
+
+  const subject = `Signed Receipt ${receiptNum} – ${data.name || ''} – ${amountStr} – ${data.date || dateStr}`;
+
+  let body = `SIGNED CASH PAYMENT RECEIPT\n`;
+  body += `Future Construction & Design\n`;
+  body += `310-634-2157 | FutureConstructionTeam@gmail.com\n\n`;
+  body += `Receipt #: ${receiptNum}\n`;
+  body += `Date: ${data.date || dateStr}\n\n`;
+  body += `Paid To: ${data.name || '—'}${data.phone ? ' | ' + data.phone : ''}\n`;
+  if (data.payeeType) body += `Type: ${data.payeeType}\n`;
+  body += `Job Site: ${data.jobSite || '—'}\n\n`;
+  body += `Amount: ${amountStr}\n`;
+  body += `Method: ${data.method || '—'}\n`;
+  if (data.category) body += `Category: ${data.category}\n`;
+  if (data.description) body += `Description: ${data.description}\n`;
+  body += `\n— Signature captured on payee's device —\n`;
+  body += `Signed: ${dateStr} at ${timeStr}\n`;
+  body += `\nThis receipt was signed remotely via FCD Receipt App.\n`;
+
+  const mailto = `mailto:FutureConstructionTeam@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+  window.location.href = mailto;
+
+  // Show confirmation
+  setTimeout(() => {
+    document.getElementById('sign-mode').innerHTML =
+      `<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:80vh;padding:40px;text-align:center;gap:20px;">
+        <div style="font-size:80px;">✅</div>
+        <div style="font-size:28px;font-weight:900;color:#2e7d32;">Signed &amp; Submitted!</div>
+        <div style="font-size:18px;color:#1C2B4A;font-weight:600;">Firmado y Enviado</div>
+        <div style="font-size:14px;color:#666;max-width:300px;">Your signature has been sent to FCD. Thank you! / Su firma ha sido enviada a FCD. ¡Gracias!</div>
+      </div>`;
+  }, 1500);
+}
+
+// ══════════════════════════════════════════════
+//  SEND FOR SIGNATURE
+// ══════════════════════════════════════════════
+function sendForSignature() {
+  // Validate all fields EXCEPT signature
+  let valid = true;
+
+  const name = document.getElementById('payee-name').value.trim();
+  if (!name) {
+    showError('err-name');
+    document.getElementById('payee-name').classList.add('error');
+    valid = false;
+  } else {
+    hideError('err-name');
+    document.getElementById('payee-name').classList.remove('error');
+  }
+
+  const jobSite = document.getElementById('job-site').value;
+  if (!jobSite) {
+    showError('err-job');
+    document.getElementById('job-site').classList.add('error');
+    valid = false;
+  } else {
+    hideError('err-job');
+    document.getElementById('job-site').classList.remove('error');
+  }
+
+  const amount = parseFloat(document.getElementById('amount').value);
+  if (!amount || amount <= 0) {
+    showError('err-amount');
+    document.getElementById('amount').classList.add('error');
+    valid = false;
+  } else {
+    hideError('err-amount');
+    document.getElementById('amount').classList.remove('error');
+  }
+
+  if (!selectedMethod) {
+    showError('err-method');
+    document.querySelectorAll('.method-btn').forEach(b => b.classList.add('error-border'));
+    valid = false;
+  } else {
+    hideError('err-method');
+  }
+
+  if (!valid) {
+    showToast(currentLang === 'en' ? 'Please fix the errors above.' : 'Por favor corrija los errores.', 'error');
+    return;
+  }
+
+  // Build data payload — use a pending receipt # (not saved yet)
+  const receiptNum = peekNextReceiptNum();
+  const receiptDate = document.getElementById('receipt-date').value.trim();
+
+  const payload = {
+    receiptNum: receiptNum,
+    date: receiptDate,
+    name: name,
+    phone: document.getElementById('payee-phone').value.trim(),
+    email: document.getElementById('payee-email').value.trim(),
+    payeeType: document.getElementById('payee-type').value,
+    jobSite: jobSite,
+    amount: document.getElementById('amount').value,
+    method: selectedMethod,
+    category: document.getElementById('category').value,
+    description: document.getElementById('description').value.trim(),
+    f1099: document.getElementById('field-1099').value
+  };
+
+  const base64 = btoa(JSON.stringify(payload));
+  const pageUrl = window.location.origin + window.location.pathname;
+  const signUrl = pageUrl + '?sign=' + encodeURIComponent(base64);
+
+  const phone = document.getElementById('payee-phone').value.trim();
+  const amountStr = '$' + parseFloat(payload.amount).toFixed(2);
+  const message = `Please sign your payment receipt from FCD (${amountStr}): ${signUrl}`;
+
+  if (phone) {
+    // Clean phone to digits only for WhatsApp
+    const cleanPhone = phone.replace(/\D/g, '');
+    const waUrl = `https://wa.me/${cleanPhone}?text=${encodeURIComponent(message)}`;
+    window.open(waUrl, '_blank');
+    showToast(currentLang === 'en' ? 'Opening WhatsApp...' : 'Abriendo WhatsApp...', 'success');
+  } else {
+    // No phone — copy link to clipboard
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(signUrl).then(() => {
+        showToast(currentLang === 'en' ? 'Signature link copied! Share it with the payee.' : '¡Enlace copiado! Compártalo con el receptor.', 'success');
+      }).catch(() => {
+        prompt('Copy this link and send it to the payee:', signUrl);
+      });
+    } else {
+      prompt('Copy this link and send it to the payee:', signUrl);
+    }
+  }
+}
+
+// ══════════════════════════════════════════════
+//  INIT
+// ══════════════════════════════════════════════
+document.addEventListener('DOMContentLoaded', function() {
+  // Check if we're in signature request mode
+  if (checkSignMode()) return;
+
+  // Normal mode: set date, leave receipt# as placeholder
+  document.getElementById('receipt-date').value = getTodayFormatted();
+  // Show placeholder with today's pattern
+  document.getElementById('receipt-num').placeholder = 'Auto / ' + getTodayStr() + '-XX';
+
+  // Restore last job site
+  const lastJob = localStorage.getItem('fcd_last_job');
+  if (lastJob) document.getElementById('job-site').value = lastJob;
+
+  initSignatureCanvas();
+  initNameAutocomplete();
+  registerSW();
+  injectManifest();
+});
+
+// ══════════════════════════════════════════════
+//  LANGUAGE TOGGLE
+// ══════════════════════════════════════════════
+function toggleLang() {
+  currentLang = currentLang === 'en' ? 'es' : 'en';
+  document.getElementById('lang-toggle').textContent = currentLang === 'en' ? 'ES' : 'EN';
+  applyLang();
+}
+
+function applyLang() {
+  const lang = currentLang;
+  document.querySelectorAll('[data-en]').forEach(el => {
+    const val = el.getAttribute('data-' + lang);
+    if (val) {
+      if (el.tagName === 'INPUT' || el.tagName === 'SELECT' || el.tagName === 'TEXTAREA') {
+        // handled via placeholder
+      } else {
+        el.textContent = val;
+      }
+    }
+  });
+  // Placeholders
+  document.querySelectorAll('[data-ph-' + lang + ']').forEach(el => {
+    el.placeholder = el.getAttribute('data-ph-' + lang);
+  });
+  // Select options
+  document.querySelectorAll('select option[data-' + lang + ']').forEach(opt => {
+    opt.textContent = opt.getAttribute('data-' + lang);
+  });
+}
+
+// ══════════════════════════════════════════════
+//  PAYMENT METHOD
+// ══════════════════════════════════════════════
+function selectMethod(method) {
+  selectedMethod = method;
+  document.querySelectorAll('.method-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.method === method);
+    btn.classList.remove('error-border');
+  });
+  hideError('err-method');
+}
+
+// ══════════════════════════════════════════════
+//  SIGNATURE CANVAS
+// ══════════════════════════════════════════════
+function initSignatureCanvas() {
+  const canvas = document.getElementById('sig-canvas');
+  const container = document.getElementById('sig-container');
+  const ctx = canvas.getContext('2d');
+  let drawing = false;
+  let lastX = 0, lastY = 0;
+
+  function resize() {
+    const w = container.clientWidth;
+    const h = 200;
+    const ratio = window.devicePixelRatio || 1;
+    canvas.width = w * ratio;
+    canvas.height = h * ratio;
+    canvas.style.width = w + 'px';
+    canvas.style.height = h + 'px';
+    ctx.scale(ratio, ratio);
+    ctx.strokeStyle = '#111';
+    ctx.lineWidth = 2.5;
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  function getPos(e) {
+    const rect = canvas.getBoundingClientRect();
+    if (e.touches) {
+      return { x: e.touches[0].clientX - rect.left, y: e.touches[0].clientY - rect.top };
+    }
+    return { x: e.clientX - rect.left, y: e.clientY - rect.top };
+  }
+
+  function startDraw(e) {
+    e.preventDefault();
+    drawing = true;
+    const pos = getPos(e);
+    lastX = pos.x; lastY = pos.y;
+    ctx.beginPath();
+    ctx.moveTo(lastX, lastY);
+  }
+
+  function draw(e) {
+    if (!drawing) return;
+    e.preventDefault();
+    const pos = getPos(e);
+    ctx.lineTo(pos.x, pos.y);
+    ctx.stroke();
+    lastX = pos.x; lastY = pos.y;
+    if (!sigHasData) {
+      sigHasData = true;
+      document.getElementById('sig-watermark').style.display = 'none';
+      hideError('err-sig');
+      document.getElementById('sig-container').classList.remove('error');
+    }
+  }
+
+  function endDraw(e) {
+    drawing = false;
+    ctx.beginPath();
+  }
+
+  canvas.addEventListener('mousedown', startDraw);
+  canvas.addEventListener('mousemove', draw);
+  canvas.addEventListener('mouseup', endDraw);
+  canvas.addEventListener('mouseleave', endDraw);
+  canvas.addEventListener('touchstart', startDraw, { passive: false });
+  canvas.addEventListener('touchmove', draw, { passive: false });
+  canvas.addEventListener('touchend', endDraw);
+}
+
+function clearSig() {
+  const canvas = document.getElementById('sig-canvas');
+  const ctx = canvas.getContext('2d');
+  const ratio = window.devicePixelRatio || 1;
+  ctx.clearRect(0, 0, canvas.width / ratio, canvas.height / ratio);
+  sigHasData = false;
+  document.getElementById('sig-watermark').style.display = '';
+}
+
+function isSigBlank() {
+  const canvas = document.getElementById('sig-canvas');
+  const ctx = canvas.getContext('2d');
+  const data = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
+  for (let i = 3; i < data.length; i += 4) {
+    if (data[i] > 0) return false;
+  }
+  return true;
+}
+
+// ══════════════════════════════════════════════
+//  AUTOCOMPLETE / CONTACTS
+// ══════════════════════════════════════════════
+function initNameAutocomplete() {
+  const input = document.getElementById('payee-name');
+  const dropdown = document.getElementById('name-dropdown');
+
+  input.addEventListener('input', function() {
+    const q = this.value.trim().toLowerCase();
+    const contacts = getContacts();
+    if (q.length === 0) {
+      showDropdown(contacts, dropdown, input);
+    } else {
+      const filtered = contacts.filter(c => c.name.toLowerCase().includes(q));
+      showDropdown(filtered, dropdown, input, q);
+    }
+  });
+
+  input.addEventListener('focus', function() {
+    const contacts = getContacts();
+    showDropdown(contacts, dropdown, input);
+  });
+
+  document.addEventListener('click', function(e) {
+    if (!e.target.closest('.autocomplete-wrap')) {
+      dropdown.classList.remove('open');
+    }
+  });
+}
+
+function showDropdown(contacts, dropdown, input, query) {
+  dropdown.innerHTML = '';
+  contacts.forEach(c => {
+    const item = document.createElement('div');
+    item.className = 'autocomplete-item';
+    item.innerHTML = '<strong>' + escHtml(c.name) + '</strong>' +
+      '<div class="item-sub">' + (c.phone || '') + (c.email ? ' · ' + c.email : '') + '</div>';
+    item.addEventListener('click', function() {
+      selectContact(c);
+      dropdown.classList.remove('open');
+    });
+    dropdown.appendChild(item);
+  });
+
+  const addItem = document.createElement('div');
+  addItem.className = 'autocomplete-item add-new';
+  addItem.textContent = '+ Add new contact';
+  addItem.addEventListener('click', function() {
+    dropdown.classList.remove('open');
+    document.getElementById('new-contact-form').classList.add('visible');
+    document.getElementById('nc-name').value = input.value;
+    document.getElementById('nc-name').focus();
+  });
+  dropdown.appendChild(addItem);
+  dropdown.classList.add('open');
+}
+
+function selectContact(contact) {
+  document.getElementById('payee-name').value = contact.name;
+  document.getElementById('payee-phone').value = contact.phone || '';
+  document.getElementById('payee-email').value = contact.email || '';
+  if (contact.type) document.getElementById('payee-type').value = contact.type;
+  document.getElementById('new-contact-form').classList.remove('visible');
+  hideError('err-name');
+  document.getElementById('payee-name').classList.remove('error');
+}
+
+function saveNewContact() {
+  const name = document.getElementById('nc-name').value.trim();
+  const phone = document.getElementById('nc-phone').value.trim();
+  const email = document.getElementById('nc-email').value.trim();
+  if (!name) { showToast('Please enter a name.', 'error'); return; }
+
+  const contacts = getContacts();
+  const newC = { name, phone, email, type: document.getElementById('payee-type').value || 'Worker' };
+  contacts.unshift(newC);
+  saveContacts(contacts);
+
+  selectContact(newC);
+  document.getElementById('new-contact-form').classList.remove('visible');
+  showToast(currentLang === 'en' ? 'Contact saved!' : '¡Contacto guardado!', 'success');
+}
+
+// ══════════════════════════════════════════════
+//  VALIDATION HELPERS
+// ══════════════════════════════════════════════
+function showError(id) {
+  const el = document.getElementById(id);
+  if (el) el.classList.add('visible');
+}
+function hideError(id) {
+  const el = document.getElementById(id);
+  if (el) el.classList.remove('visible');
+}
+function escHtml(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ══════════════════════════════════════════════
+//  GENERATE RECEIPT — receipt # created HERE
+// ══════════════════════════════════════════════
+function generateReceipt() {
+  let valid = true;
+
+  const name = document.getElementById('payee-name').value.trim();
+  if (!name) {
+    showError('err-name');
+    document.getElementById('payee-name').classList.add('error');
+    valid = false;
+  } else {
+    hideError('err-name');
+    document.getElementById('payee-name').classList.remove('error');
+  }
+
+  const jobSite = document.getElementById('job-site').value;
+  if (!jobSite) {
+    showError('err-job');
+    document.getElementById('job-site').classList.add('error');
+    valid = false;
+  } else {
+    hideError('err-job');
+    document.getElementById('job-site').classList.remove('error');
+    localStorage.setItem('fcd_last_job', jobSite);
+  }
+
+  const amount = parseFloat(document.getElementById('amount').value);
+  if (!amount || amount <= 0) {
+    showError('err-amount');
+    document.getElementById('amount').classList.add('error');
+    valid = false;
+  } else {
+    hideError('err-amount');
+    document.getElementById('amount').classList.remove('error');
+  }
+
+  if (!selectedMethod) {
+    showError('err-method');
+    document.querySelectorAll('.method-btn').forEach(b => b.classList.add('error-border'));
+    valid = false;
+  } else {
+    hideError('err-method');
+  }
+
+  if (isSigBlank()) {
+    showError('err-sig');
+    document.getElementById('sig-container').classList.add('error');
+    valid = false;
+  } else {
+    hideError('err-sig');
+    document.getElementById('sig-container').classList.remove('error');
+  }
+
+  if (!valid) {
+    showToast(currentLang === 'en' ? 'Please fix the errors above.' : 'Por favor corrija los errores.', 'error');
+    return;
+  }
+
+  // Generate and save receipt number NOW (on submit)
+  const receiptNum = generateAndSaveReceiptNum();
+  document.getElementById('receipt-num').value = receiptNum;
+
+  buildReceiptView();
+}
+
+function buildReceiptView() {
+  const receiptNum = document.getElementById('receipt-num').value.trim();
+  const receiptDate = document.getElementById('receipt-date').value.trim();
+  const name = document.getElementById('payee-name').value.trim();
+  const phone = document.getElementById('payee-phone').value.trim();
+  const email = document.getElementById('payee-email').value.trim();
+  const payeeType = document.getElementById('payee-type').value;
+  const jobSite = document.getElementById('job-site').value;
+  const amount = parseFloat(document.getElementById('amount').value);
+  const category = document.getElementById('category').value;
+  const description = document.getElementById('description').value.trim();
+  const f1099 = document.getElementById('field-1099').value;
+
+  const isEs = currentLang === 'es';
+
+  document.getElementById('rv-title').textContent = isEs ? 'RECIBO DE PAGO EN EFECTIVO' : 'CASH PAYMENT RECEIPT';
+  document.getElementById('rv-num').textContent = receiptNum;
+  document.getElementById('rv-date').textContent = receiptDate;
+  document.getElementById('rv-amount').textContent = '$' + amount.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  document.getElementById('rv-method').textContent = selectedMethod;
+  document.getElementById('rv-name').textContent = name;
+
+  if (phone) {
+    document.getElementById('rv-phone').textContent = phone;
+    document.getElementById('rv-phone-row').style.display = '';
+  } else {
+    document.getElementById('rv-phone-row').style.display = 'none';
+  }
+
+  if (email) {
+    document.getElementById('rv-email').textContent = email;
+    document.getElementById('rv-email-row').style.display = '';
+  } else {
+    document.getElementById('rv-email-row').style.display = 'none';
+  }
+
+  document.getElementById('rv-type').textContent = payeeType || '—';
+  document.getElementById('rv-job').textContent = jobSite;
+  document.getElementById('rv-category').textContent = category || '—';
+
+  if (description) {
+    document.getElementById('rv-desc').textContent = description;
+    document.getElementById('rv-desc-row').style.display = '';
+  } else {
+    document.getElementById('rv-desc-row').style.display = 'none';
+  }
+
+  if (f1099) {
+    document.getElementById('rv-1099').textContent = f1099;
+    document.getElementById('rv-1099-row').style.display = '';
+  } else {
+    document.getElementById('rv-1099-row').style.display = 'none';
+  }
+
+  const canvas = document.getElementById('sig-canvas');
+  document.getElementById('rv-sig-img').src = canvas.toDataURL('image/png');
+
+  applyLang();
+
+  document.getElementById('form-view').style.display = 'none';
+  document.getElementById('receipt-view').style.display = 'block';
+  window.scrollTo(0, 0);
+}
+
+// ══════════════════════════════════════════════
+//  EMAIL RECEIPT
+// ══════════════════════════════════════════════
+function emailReceipt() {
+  const receiptNum = document.getElementById('receipt-num').value.trim();
+  const receiptDate = document.getElementById('receipt-date').value.trim();
+  const amount = parseFloat(document.getElementById('amount').value);
+  const amountStr = '$' + amount.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  const email = document.getElementById('payee-email').value.trim();
+  const name = document.getElementById('payee-name').value.trim();
+  const jobSite = document.getElementById('job-site').value;
+  const category = document.getElementById('category').value;
+  const description = document.getElementById('description').value.trim();
+  const f1099 = document.getElementById('field-1099').value;
+  const payeeType = document.getElementById('payee-type').value;
+  const phone = document.getElementById('payee-phone').value.trim();
+
+  const subject = `Receipt ${receiptNum} – ${receiptDate} – ${amountStr} – ${selectedMethod}`;
+
+  let body = `CASH PAYMENT RECEIPT\n`;
+  body += `Future Construction & Design\n`;
+  body += `310-634-2157 | FutureConstructionTeam@gmail.com\n\n`;
+  body += `Receipt #: ${receiptNum}\n`;
+  body += `Date: ${receiptDate}\n\n`;
+  body += `Paid To: ${name}${phone ? ' | ' + phone : ''}\n`;
+  if (payeeType) body += `Type: ${payeeType}\n`;
+  body += `Job Site: ${jobSite}\n\n`;
+  body += `Amount: ${amountStr}\n`;
+  body += `Method: ${selectedMethod}\n`;
+  if (category) body += `Category: ${category}\n`;
+  if (description) body += `Description: ${description}\n`;
+  if (f1099) body += `1099: ${f1099}\n`;
+  body += `\nThis receipt was generated by Future Construction & Design.\n`;
+
+  const mailto = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+  window.location.href = mailto;
+}
+
+// ══════════════════════════════════════════════
+//  NEW RECEIPT
+// ══════════════════════════════════════════════
+function newReceipt() {
+  // Reset receipt # to placeholder (new number will generate on next submit)
+  document.getElementById('receipt-num').value = '';
+  document.getElementById('receipt-num').placeholder = 'Auto / ' + getTodayStr() + '-XX';
+  document.getElementById('receipt-date').value = getTodayFormatted();
+
+  document.getElementById('payee-name').value = '';
+  document.getElementById('payee-phone').value = '';
+  document.getElementById('payee-email').value = '';
+  document.getElementById('amount').value = '';
+  document.getElementById('category').value = '';
+  document.getElementById('description').value = '';
+  document.getElementById('field-1099').value = '';
+  document.getElementById('new-contact-form').classList.remove('visible');
+
+  selectedMethod = '';
+  document.querySelectorAll('.method-btn').forEach(b => {
+    b.classList.remove('active', 'error-border');
+  });
+
+  clearSig();
+  sigHasData = false;
+
+  document.querySelectorAll('.error-msg').forEach(e => e.classList.remove('visible'));
+  document.querySelectorAll('input, select').forEach(e => e.classList.remove('error'));
+  document.getElementById('sig-container').classList.remove('error');
+
+  document.getElementById('receipt-view').style.display = 'none';
+  document.getElementById('form-view').style.display = '';
+  window.scrollTo(0, 0);
+}
+
+// ══════════════════════════════════════════════
+//  TOAST
+// ══════════════════════════════════════════════
+function showToast(msg, type) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast' + (type ? ' ' + (type === 'error' ? 'error-toast' : type) : '');
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+// ══════════════════════════════════════════════
+//  PWA — SERVICE WORKER via blob
+// ══════════════════════════════════════════════
+function registerSW() {
+  if (!('serviceWorker' in navigator)) return;
+  const swCode = `
+    const CACHE = 'fcd-receipt-v1';
+    self.addEventListener('install', e => {
+      e.waitUntil(caches.open(CACHE).then(c => c.addAll(['/'])));
+      self.skipWaiting();
+    });
+    self.addEventListener('activate', e => {
+      e.waitUntil(clients.claim());
+    });
+    self.addEventListener('fetch', e => {
+      e.respondWith(
+        caches.match(e.request).then(r => r || fetch(e.request).catch(() => r))
+      );
+    });
+  `;
+  const blob = new Blob([swCode], { type: 'application/javascript' });
+  const swUrl = URL.createObjectURL(blob);
+  navigator.serviceWorker.register(swUrl).catch(() => {});
+}
+
+// ══════════════════════════════════════════════
+//  PWA — MANIFEST via blob
+// ══════════════════════════════════════════════
+function injectManifest() {
+  const manifest = {
+    name: 'FCD Cash Receipt',
+    short_name: 'FCD Receipt',
+    start_url: '/',
+    display: 'standalone',
+    background_color: '#1C2B4A',
+    theme_color: '#E87722',
+    icons: [{
+      src: 'data:image/svg+xml,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" rx="16" fill="#E87722"/><text x="50" y="68" font-size="44" font-weight="900" font-family="sans-serif" fill="white" text-anchor="middle">FCD</text></svg>'),
+      sizes: '192x192',
+      type: 'image/svg+xml'
+    }]
+  };
+  const blob = new Blob([JSON.stringify(manifest)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('link');
+  link.rel = 'manifest';
+  link.href = url;
+  document.head.appendChild(link);
+}
+</script>
+</body>
+</html>
