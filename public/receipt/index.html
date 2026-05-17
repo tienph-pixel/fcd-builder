@@ -6,6 +6,8 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="FCD Receipt">
+<link rel="apple-touch-icon" href="/fcd-logo-mobile-white.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/fcd-logo-mobile-white.png">
 <meta name="theme-color" content="#E87722">
 <title>FCD Cash Receipt</title>
 <style>
@@ -1107,9 +1109,15 @@
 
   <div class="container" style="padding-top:0;">
     <div class="card" style="margin-bottom:10px;">
-      <div id="sm-details">
-        <!-- filled dynamically -->
-      </div>
+      <details id="sm-details-toggle" style="cursor:pointer;">
+        <summary style="font-weight:700;font-size:14px;color:#1C2B4A;padding:4px 0;list-style:none;display:flex;align-items:center;justify-content:space-between;">
+          <span>&#128203; Receipt Details / Detalles del Recibo</span>
+          <span style="font-size:12px;color:#888;">Tap to view ▾</span>
+        </summary>
+        <div id="sm-details" style="margin-top:10px;">
+          <!-- filled dynamically -->
+        </div>
+      </details>
     </div>
 
     <div class="card">
@@ -1276,6 +1284,12 @@ function showSignMode(data) {
 
   // Init signature canvas
   initSignModeCanvas();
+
+  // Auto-scroll to signature pad immediately — details card stays collapsed
+  setTimeout(() => {
+    const sigEl = document.getElementById('sm-sig-container');
+    if (sigEl) sigEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }, 350);
 }
 
 function initSignModeCanvas() {
@@ -1443,7 +1457,10 @@ function downloadSignedReceipt() {
     <style>
       @media print {
         body > *:not(#rcpt-print-view) { display:none!important; }
-        #rcpt-print-view { position:static!important; overflow:visible!important; }
+        #rcpt-print-view { position:static!important; overflow:visible!important; font-size:15px; }
+        #rcpt-print-view div[style*="font-size:14px"] { font-size:15px!important; }
+        #rcpt-print-view div[style*="font-size:13px"] { font-size:14px!important; }
+        #rcpt-print-view div[style*="font-size:34px"] { font-size:38px!important; }
         .no-print { display:none!important; }
       }
     </style>
@@ -1489,6 +1506,10 @@ function downloadSignedReceipt() {
 
       <!-- Buttons -->
       <div class="no-print" style="margin-top:28px;display:flex;flex-direction:column;gap:10px;">
+        <div style="background:#e8f4ff;border-radius:9px;padding:9px 13px;font-size:12px;color:#1565c0;text-align:center;line-height:1.5;">
+          💡 <strong>Print tip:</strong> Set scale to <strong>120%</strong> for best size<br>
+          <span style="opacity:0.8;">En la impresora, elige escala al 120%</span>
+        </div>
         <button onclick="window.print()" style="padding:14px;background:#1C2B4A;color:#fff;border:none;border-radius:12px;font-size:15px;font-weight:700;cursor:pointer;">
           🖨 Print / Save as PDF
         </button>

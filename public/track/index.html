@@ -5,6 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#1C2B4A">
 <title>FCD Dashboard</title>
+<link rel="apple-touch-icon" href="/fcd-logo-mobile-white.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/fcd-logo-mobile-white.png">
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   :root {
@@ -750,11 +752,10 @@ function registerPWA() {
     display: 'standalone',
     background_color: '#1C2B4A',
     theme_color: '#1C2B4A',
-    icons: [{
-      src: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="12" fill="%23E87722"/><text x="50%" y="58%" dominant-baseline="middle" text-anchor="middle" font-family="Arial Black,sans-serif" font-weight="900" font-size="28" fill="white">FCD</text></svg>',
-      sizes: '192x192',
-      type: 'image/svg+xml'
-    }]
+    icons: [
+      { src: '/fcd-logo-mobile-white.png', sizes: '192x192', type: 'image/png' },
+      { src: '/fcd-logo-mobile-white.png', sizes: '512x512', type: 'image/png' }
+    ]
   };
   const blob = new Blob([JSON.stringify(manifest)], {type: 'application/manifest+json'});
   const url = URL.createObjectURL(blob);
@@ -955,7 +956,10 @@ function updateStats() {
 async function loadQBDisplay() {
   const qb = lsj('fcd_qb_sync');
   if (qb && qb.synced_at) {
-    document.getElementById('qb-last-sync').textContent = 'Last synced: ' + fmtDate(qb.synced_at);
+    // Zero out spent while we fetch fresh — prevents stale cached amounts from showing
+    lsj('fcd_qb_sync', { ...qb, daisy_spent: 0, mak_spent: 0 });
+    document.getElementById('qb-last-sync').textContent = 'Refreshing…';
+    updateStats();
   }
   // Auto-fetch on load (silent, no spinner)
   await loadQBFromGitHub(false);
