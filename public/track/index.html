@@ -43,12 +43,9 @@
   }
   #topbar .brand { display: flex; align-items: center; gap: 10px; }
   #topbar .logo {
-    background: #fff;
-    border-radius: 6px; padding: 3px 8px;
-    display: flex; align-items: center;
-  }
-  #topbar .logo img {
-    height: 26px; width: auto; display: block;
+    background: var(--orange); color: #fff;
+    font-weight: 800; font-size: 15px; letter-spacing: 1px;
+    border-radius: 6px; padding: 4px 9px;
   }
   #topbar .title { color: #fff; font-size: 16px; font-weight: 600; letter-spacing: 0.3px; }
   #topbar .actions { display: flex; align-items: center; gap: 10px; }
@@ -358,7 +355,7 @@
 <!-- TOP BAR -->
 <div id="topbar">
   <div class="brand">
-    <div class="logo"><img src="/fcd-logo.png" alt="FCD"></div>
+    <div class="logo">FCD</div>
     <span class="title">Dashboard</span>
   </div>
   <div class="actions">
@@ -516,12 +513,13 @@ function showLoginError(msg) {
   const err = document.getElementById('login-error');
   err.textContent = '✕ ' + msg;
   err.style.display = 'block';
-  // Shake the card
+  // Shake: remove first, then re-add after a tick (safe on iOS)
   const card = document.querySelector('.login-card');
   card.classList.remove('shake');
-  void card.offsetWidth; // force reflow to restart animation
-  card.classList.add('shake');
-  setTimeout(() => card.classList.remove('shake'), 500);
+  setTimeout(() => {
+    card.classList.add('shake');
+    setTimeout(() => card.classList.remove('shake'), 500);
+  }, 20);
 }
 
 function doLogin() {
@@ -573,7 +571,6 @@ function doLogin() {
         showLoginError(`Incorrect username or password. ${remaining} attempt${remaining > 1 ? 's' : ''} remaining.`);
       }
       document.getElementById('login-pw').value = '';
-      document.getElementById('login-pw').focus();
     }
   }, 400); // small delay feels more real
 }
