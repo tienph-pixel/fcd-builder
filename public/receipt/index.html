@@ -1225,8 +1225,17 @@ function checkSignMode() {
   if (!signData) return false;
 
   try {
-    const json = atob(signData);
-    const data = JSON.parse(json);
+    const json = decodeURIComponent(escape(atob(signData)));
+    let data = JSON.parse(json);
+    // Expand compressed keys if needed (new short-key format)
+    if (data.n !== undefined && data.name === undefined) {
+      data = {
+        receiptNum: data.r, date: data.d,      name: data.n,
+        phone:      data.p, email: data.e,     payeeType: data.t,
+        jobSite:    data.j, amount: data.a,    method: data.m,
+        category:   data.c, description: data.x, f1099: data.f
+      };
+    }
     showSignMode(data);
     return true;
   } catch(e) {
@@ -1345,7 +1354,7 @@ function isSmSigBlank() {
   return true;
 }
 
-function submitSignMode() {
+async function submitSignMode() {
   if (isSmSigBlank()) {
     document.getElementById('sm-err-sig').classList.add('visible');
     document.getElementById('sm-sig-container').classList.add('error');
@@ -1363,37 +1372,103 @@ function submitSignMode() {
   const amountStr = '$' + amount.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
   const receiptNum = data.receiptNum || '(pending)';
 
-  const subject = `Signed Receipt ${receiptNum} – ${data.name || ''} – ${amountStr} – ${data.date || dateStr}`;
+  // ── 1. Submit to Netlify Forms → shows up in App 0 Dashboard ────────────
+  try {
+    await fetch('/receipt', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams({
+        'form-name':      'cash-receipt',
+        'receipt_num':    receiptNum,
+        'receipt_date':   data.date || dateStr,
+        'payee_name':     data.name || '',
+        'payee_type':     data.payeeType || '',
+        'payee_phone':    data.phone || '',
+        'payee_email':    data.email || '',
+        'job_site':       data.jobSite || '',
+        'amount':         String(data.amount || '0'),
+        'payment_method': data.method || 'CASH',
+        'category':       data.category || '',
+        'description':    (data.description || '') + ` — Signature captured on payee's device — Signed: ${dateStr} at ${timeStr}`,
+        'field_1099':     data.f1099 || ''
+      }).toString()
+    });
+  } catch(e) {
+    console.error('Netlify Forms submit error:', e);
+  }
 
-  let body = `SIGNED CASH PAYMENT RECEIPT\n`;
-  body += `Future Construction & Design\n`;
-  body += `310-634-2157 | FutureConstructionTeam@gmail.com\n\n`;
-  body += `Receipt #: ${receiptNum}\n`;
-  body += `Date: ${data.date || dateStr}\n\n`;
-  body += `Paid To: ${data.name || '—'}${data.phone ? ' | ' + data.phone : ''}\n`;
-  if (data.payeeType) body += `Type: ${data.payeeType}\n`;
-  body += `Job Site: ${data.jobSite || '—'}\n\n`;
-  body += `Amount: ${amountStr}\n`;
-  body += `Method: ${data.method || '—'}\n`;
-  if (data.category) body += `Category: ${data.category}\n`;
-  if (data.description) body += `Description: ${data.description}\n`;
-  body += `\n— Signature captured on payee's device —\n`;
-  body += `Signed: ${dateStr} at ${timeStr}\n`;
-  body += `\nThis receipt was signed remotely via FCD Receipt App.\n`;
+  // ── 2. Store for download ────────────────────────────────────────────────
+  window._signedReceiptData = { ...data, signed_at: `${dateStr} at ${timeStr}`, signatureImage: sigData, amountStr };
 
-  const mailto = `mailto:FutureConstructionTeam@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-  window.location.href = mailto;
+  // ── 3. Show confirmation + download button (no Gmail popup) ──────────────
+  document.getElementById('sign-mode').innerHTML =
+    `<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:80vh;padding:40px;text-align:center;gap:16px;">
+      <div style="font-size:72px;">✅</div>
+      <div style="font-size:26px;font-weight:900;color:#2e7d32;">Signed &amp; Submitted!</div>
+      <div style="font-size:17px;color:#1C2B4A;font-weight:600;">Firmado y Enviado</div>
+      <div style="font-size:13px;color:#666;max-width:300px;line-height:1.5;">
+        Your signature has been sent to FCD. Thank you!<br>
+        Su firma ha sido enviada a FCD. ¡Gracias!
+      </div>
+      <button onclick="downloadSignedReceipt()" style="margin-top:8px;padding:14px 0;background:#E87722;color:#fff;border:none;border-radius:12px;font-size:15px;font-weight:700;cursor:pointer;width:260px;">
+        ⬇ Download Receipt / Descargar
+      </button>
+    </div>`;
+}
 
-  // Show confirmation
-  setTimeout(() => {
-    document.getElementById('sign-mode').innerHTML =
-      `<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:80vh;padding:40px;text-align:center;gap:20px;">
-        <div style="font-size:80px;">✅</div>
-        <div style="font-size:28px;font-weight:900;color:#2e7d32;">Signed &amp; Submitted!</div>
-        <div style="font-size:18px;color:#1C2B4A;font-weight:600;">Firmado y Enviado</div>
-        <div style="font-size:14px;color:#666;max-width:300px;">Your signature has been sent to FCD. Thank you! / Su firma ha sido enviada a FCD. ¡Gracias!</div>
-      </div>`;
-  }, 1500);
+function downloadSignedReceipt() {
+  const d = window._signedReceiptData || {};
+  const amountStr = d.amountStr || ('$' + parseFloat(d.amount||0).toFixed(2));
+  const html = `<!DOCTYPE html><html><head><meta charset="UTF-8">
+<title>Receipt ${d.receiptNum||''} – ${d.name||''}</title>
+<style>
+  body{font-family:Arial,sans-serif;max-width:480px;margin:36px auto;padding:20px;color:#222;}
+  .hdr{text-align:center;margin-bottom:18px;}
+  .logo{font-size:24px;font-weight:900;color:#E87722;letter-spacing:1px;}
+  .co{font-size:12px;color:#666;margin-top:2px;}
+  hr{border:none;border-top:2px solid #e0e0e0;margin:14px 0;}
+  .row{display:flex;justify-content:space-between;padding:5px 0;font-size:13px;}
+  .lbl{color:#888;} .val{font-weight:600;text-align:right;max-width:60%;}
+  .amt{background:#f5f5f5;border-radius:8px;padding:14px;text-align:center;margin:14px 0;}
+  .amt-n{font-size:30px;font-weight:900;color:#1C2B4A;}
+  .sig-sec{text-align:center;margin-top:18px;}
+  .sig-img{max-width:200px;border:1px solid #ddd;border-radius:6px;margin:6px auto;display:block;}
+  .sig-note{font-size:11px;color:#999;margin-top:4px;}
+  @media print{button{display:none!important;}}
+</style></head><body>
+<div class="hdr">
+  <div class="logo">FCD</div>
+  <div class="co">Future Construction &amp; Design</div>
+  <div class="co">310-634-2157 · FutureConstructionTeam@gmail.com</div>
+</div>
+<div style="text-align:center;font-size:16px;font-weight:800;letter-spacing:.5px;">CASH PAYMENT RECEIPT</div>
+<hr>
+<div class="row"><span class="lbl">Receipt #</span><span class="val">${d.receiptNum||'—'}</span></div>
+<div class="row"><span class="lbl">Date</span><span class="val">${d.date||'—'}</span></div>
+<div class="row"><span class="lbl">Paid To</span><span class="val">${d.name||'—'}</span></div>
+${d.phone?`<div class="row"><span class="lbl">Phone</span><span class="val">${d.phone}</span></div>`:''}
+${d.payeeType?`<div class="row"><span class="lbl">Type</span><span class="val">${d.payeeType}</span></div>`:''}
+<div class="row"><span class="lbl">Job Site</span><span class="val">${d.jobSite||'—'}</span></div>
+<hr>
+<div class="amt">
+  <div style="font-size:11px;color:#888;text-transform:uppercase;letter-spacing:1px;">Amount Paid</div>
+  <div class="amt-n">${amountStr}</div>
+  <div style="font-size:13px;color:#666;margin-top:2px;">${d.method||'CASH'}</div>
+</div>
+${d.category?`<div class="row"><span class="lbl">Category</span><span class="val">${d.category}</span></div>`:''}
+${d.description?`<div class="row"><span class="lbl">Description</span><span class="val">${d.description}</span></div>`:''}
+<div class="sig-sec">
+  <div style="font-size:12px;color:#666;font-weight:600;">Payee Signature / Firma</div>
+  <img class="sig-img" src="${d.signatureImage||''}" alt="Signature">
+  <div class="sig-note">Signed digitally: ${d.signed_at||'—'}</div>
+  <div class="sig-note">Via FCD Receipt App · fcdteam.com</div>
+</div>
+<button onclick="window.print()" style="margin-top:20px;width:100%;padding:12px;background:#E87722;color:#fff;border:none;border-radius:8px;font-size:15px;font-weight:700;cursor:pointer;">
+  🖨 Print / Save as PDF
+</button>
+</body></html>`;
+  const blob = new Blob([html], { type: 'text/html' });
+  window.open(URL.createObjectURL(blob), '_blank');
 }
 
 // ══════════════════════════════════════════════
@@ -1465,9 +1540,16 @@ function sendForSignature() {
     f1099: document.getElementById('field-1099').value
   };
 
-  const base64 = btoa(JSON.stringify(payload));
+  // Compress keys → ~40% shorter URL
+  const compressed = {
+    r: payload.receiptNum, d: payload.date,     n: payload.name,
+    p: payload.phone,      e: payload.email,    t: payload.payeeType,
+    j: payload.jobSite,    a: payload.amount,   m: payload.method,
+    c: payload.category,   x: payload.description, f: payload.f1099
+  };
+  const base64 = btoa(unescape(encodeURIComponent(JSON.stringify(compressed))));
   const pageUrl = window.location.origin + window.location.pathname;
-  const signUrl = pageUrl + '?sign=' + encodeURIComponent(base64);
+  const signUrl = pageUrl + '?sign=' + base64;
 
   const amountStr = '$' + parseFloat(payload.amount).toFixed(2);
 
