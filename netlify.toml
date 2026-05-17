@@ -2,6 +2,9 @@
   command = "npm run build"
   publish = "dist"
 
+[functions]
+  directory = "netlify/functions"
+
 # Internal apps — serve directly, bypass Astro catch-all
 [[redirects]]
   from = "/hub"

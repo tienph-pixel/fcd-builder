@@ -537,10 +537,14 @@
 
   <!-- QB SYNC -->
   <div class="qb-card">
-    <h3>QuickBooks Totals</h3>
-    <div class="last-sync" id="qb-last-sync">Last synced: Loading…</div>
-    <div style="display:flex;gap:8px;margin-top:8px;">
-      <button class="btn-save" id="qb-refresh-btn" onclick="loadQBFromGitHub(true)">&#8635; Refresh QB</button>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:2px;">
+      <h3>QuickBooks</h3>
+      <span id="qb-status-badge" style="font-size:11px;font-weight:700;padding:3px 9px;border-radius:99px;background:#e8f5e9;color:#2e7d32;display:none;">&#10003; Connected</span>
+    </div>
+    <div class="last-sync" id="qb-last-sync">Checking connection…</div>
+    <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap;align-items:center;">
+      <button class="btn-save" id="qb-refresh-btn" onclick="loadQBFromGitHub(true)">&#8635; Refresh Totals</button>
+      <button class="btn-save" id="qb-connect-btn" onclick="connectQB()" style="display:none;background:#2e7d32;">&#128279; Connect QB</button>
       <div class="qb-save-msg" id="qb-save-msg" style="display:none;align-self:center;">&#10003; Updated!</div>
       <div class="qb-err-msg" id="qb-err-msg" style="display:none;align-self:center;">Could not load QB data.</div>
     </div>
@@ -579,6 +583,12 @@
 const BUDGETS = { daisy: 148000, mak: 14000 };
 let currentTab = 'all';
 let allSubmissions = []; // [{type:'worker'|'cash', id, data, created_at}]
+
+// ─── QB API CONFIG ──────────────────────────────────────────────────────────
+const FCD_SECRET   = 'eae51dc81f797c80cd843ce53c9b8be7aac6f107a3374db7';
+const QB_CREATE_URL = '/.netlify/functions/qb-create';
+const QB_VOID_URL   = '/.netlify/functions/qb-void';
+const QB_AUTH_URL   = '/.netlify/functions/qb-auth';
 
 // ─── AUTH ──────────────────────────────────────────────────────────────────
 const AUTH_USER   = 'tienpham';
@@ -706,7 +716,23 @@ document.addEventListener('DOMContentLoaded', () => {
   ls('fcd_netlify_token',   'nfp_CCK6pGsrx82ANUwhHWZQpi16s6bgGe4w3ef1');
   ls('fcd_netlify_site_id', '873eb10a-fd02-4d4e-94d6-0e2ae12edff7');
 
+  // Handle QB OAuth callback result
+  const urlParams = new URLSearchParams(window.location.search);
+  const qbResult = urlParams.get('qb');
+  if (qbResult) {
+    history.replaceState({}, '', '/track'); // clean URL
+    if (qbResult === 'connected') {
+      ls('fcd_qb_connected', '1');
+      showToast('✓ QuickBooks connected!', 3000);
+    } else if (qbResult === 'denied') {
+      showToast('QB connection cancelled.', 3000);
+    } else {
+      showToast('QB connection failed: ' + qbResult, 4000);
+    }
+  }
+
   if (checkAuth()) {
+    checkQBConnection();
     loadQBDisplay();
     loadFromCacheOrFetch();
   } else {
@@ -1192,37 +1218,83 @@ function closeLogModal() {
   _logModalId = null;
 }
 
-function confirmLog() {
+async function confirmLog() {
   const id  = _logModalId;
   if (!id) return;
   const amount = parseFloat(document.getElementById('log-modal-amount').value) || 0;
   const job    = _logModalJob || 'other';
+  const s      = allSubmissions.find(x => x.id === id);
 
-  // Confirm button → green
   const confirmBtn = document.getElementById('log-modal-confirm-btn');
   confirmBtn.disabled = true;
-  confirmBtn.classList.add('confirming');
-  confirmBtn.textContent = '✓ Logged!';
 
-  // Save to logged IDs
+  const isQBConnected = ls('fcd_qb_connected') === '1';
+
+  if (isQBConnected) {
+    confirmBtn.textContent = '⏳ Sending to QB…';
+    // Call QB create function
+    try {
+      const res = await fetch(QB_CREATE_URL, {
+        method: 'POST',
+        headers: { 'Authorization': 'Bearer ' + FCD_SECRET, 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          amount,
+          category:     s && s.data.items_bought ? s.data.items_bought : (s && (s.data.category || 'other')),
+          name:         s && (s.data.worker_name || s.data.payee_name || ''),
+          job_site:     s && (s.data.job_site || ''),
+          description:  s && (s.data.items_bought || s.data.description || ''),
+          items_bought: s && s.data.items_bought,
+          type:         s && s.type,
+          date:         s && s.created_at
+        })
+      });
+      const result = await res.json();
+      if (result.success && result.qb_id) {
+        // Store QB transaction ID for later void
+        const entries = lsj('fcd_logged_entries') || [];
+        const idx = entries.findIndex(e => e.id === id);
+        const entry = { id, amount, job, qb_id: result.qb_id, sync_token: result.sync_token, confirmed_at: new Date().toISOString() };
+        if (idx >= 0) entries[idx] = entry; else entries.push(entry);
+        lsj('fcd_logged_entries', entries);
+        confirmBtn.classList.add('confirming');
+        confirmBtn.textContent = '✓ Sent to QB!';
+      } else {
+        throw new Error(result.error || 'QB error');
+      }
+    } catch (e) {
+      confirmBtn.textContent = '✓ Confirm & Log';
+      confirmBtn.disabled = false;
+      showToast('QB error: ' + e.message + ' — saved locally only.', 5000);
+      // Fall through to local save anyway
+      saveLogLocally(id, amount, job);
+    }
+  } else {
+    confirmBtn.classList.add('confirming');
+    confirmBtn.textContent = '✓ Logged locally!';
+    saveLogLocally(id, amount, job);
+  }
+
+  // Save to logged IDs regardless
   const logged = lsj('fcd_logged_ids') || [];
   if (!logged.includes(id)) logged.push(id);
   lsj('fcd_logged_ids', logged);
 
-  // Save entry with amount + job for budget tracking
-  const entries = lsj('fcd_logged_entries') || [];
-  const idx = entries.findIndex(e => e.id === id);
-  const entry = { id, amount, job, confirmed_at: new Date().toISOString() };
-  if (idx >= 0) entries[idx] = entry; else entries.push(entry);
-  lsj('fcd_logged_entries', entries);
+  if (!isQBConnected) {
+    const entries = lsj('fcd_logged_entries') || [];
+    const idx = entries.findIndex(e => e.id === id);
+    const entry = { id, amount, job, confirmed_at: new Date().toISOString() };
+    if (idx >= 0) entries[idx] = entry; else entries.push(entry);
+    lsj('fcd_logged_entries', entries);
+  }
 
-  // Update submission in memory
-  const sub = allSubmissions.find(s => s.id === id);
+  const sub = allSubmissions.find(x => x.id === id);
   if (sub) { sub.logged = true; sub.confirmed_amount = amount; }
 
   setTimeout(() => {
     closeLogModal();
-    // Update card visuals
+    confirmBtn.classList.remove('confirming');
+    confirmBtn.disabled = false;
+    confirmBtn.textContent = '✓ Confirm & Log';
     const card = document.getElementById('card-' + id);
     if (card) {
       card.classList.add('logged');
@@ -1234,10 +1306,18 @@ function confirmLog() {
       if (body) body.style.background = 'var(--green-bg)';
     }
     updateStats();
-  }, 700);
+  }, 900);
 }
 
-function hideCard(id) {
+function saveLogLocally(id, amount, job) {
+  const entries = lsj('fcd_logged_entries') || [];
+  const idx = entries.findIndex(e => e.id === id);
+  const entry = { id, amount, job, confirmed_at: new Date().toISOString() };
+  if (idx >= 0) entries[idx] = entry; else entries.push(entry);
+  lsj('fcd_logged_entries', entries);
+}
+
+async function hideCard(id) {
   const sub = allSubmissions.find(s => s.id === id);
   if (!sub) return;
 
@@ -1247,11 +1327,40 @@ function hideCard(id) {
     lsj('fcd_hidden_ids', hidden);
     sub.hidden = false;
   } else {
-    // Hide
+    // Check if this card was logged to QB
+    const entries = lsj('fcd_logged_entries') || [];
+    const entry = entries.find(e => e.id === id);
+    const hasQbEntry = entry && entry.qb_id;
+
+    let voidQB = false;
+    if (hasQbEntry && ls('fcd_qb_connected') === '1') {
+      voidQB = confirm('This receipt was logged to QuickBooks.\n\nAlso void the QB transaction?');
+    }
+
+    // Hide locally first
     const hidden = lsj('fcd_hidden_ids') || [];
     if (!hidden.includes(id)) hidden.push(id);
     lsj('fcd_hidden_ids', hidden);
     sub.hidden = true;
+
+    // Void in QB if confirmed
+    if (voidQB && entry && entry.qb_id) {
+      try {
+        const res = await fetch(QB_VOID_URL, {
+          method: 'POST',
+          headers: { 'Authorization': 'Bearer ' + FCD_SECRET, 'Content-Type': 'application/json' },
+          body: JSON.stringify({ qb_id: entry.qb_id, sync_token: entry.sync_token })
+        });
+        const result = await res.json();
+        if (result.success) {
+          showToast('✓ Voided in QuickBooks', 3000);
+        } else {
+          showToast('QB void failed: ' + (result.error || 'Unknown error'), 5000);
+        }
+      } catch (e) {
+        showToast('QB void error: ' + e.message, 5000);
+      }
+    }
   }
 
   // Update "show hidden" button
@@ -1334,6 +1443,61 @@ async function sharePhoto() {
   } else {
     // Desktop: open full-size in new tab
     window.open(_lightboxUrl, '_blank');
+  }
+}
+
+// ─── TOAST ─────────────────────────────────────────────────────────────────
+function showToast(msg, duration) {
+  let toast = document.getElementById('fcd-toast');
+  if (!toast) {
+    toast = document.createElement('div');
+    toast.id = 'fcd-toast';
+    toast.style.cssText = [
+      'position:fixed', 'bottom:28px', 'left:50%', 'transform:translateX(-50%)',
+      'background:#222', 'color:#fff', 'border-radius:10px', 'padding:12px 22px',
+      'font-size:14px', 'font-weight:600', 'z-index:9999', 'opacity:0',
+      'transition:opacity 0.2s', 'pointer-events:none', 'max-width:90vw', 'text-align:center',
+      'box-shadow:0 4px 16px rgba(0,0,0,0.35)'
+    ].join(';');
+    document.body.appendChild(toast);
+  }
+  toast.textContent = msg;
+  toast.style.opacity = '1';
+  clearTimeout(toast._timer);
+  toast._timer = setTimeout(() => { toast.style.opacity = '0'; }, duration || 3000);
+}
+
+// ─── QB CONNECTION ─────────────────────────────────────────────────────────
+function checkQBConnection() {
+  const connected = ls('fcd_qb_connected') === '1';
+  const badge      = document.getElementById('qb-status-badge');
+  const connectBtn = document.getElementById('qb-connect-btn');
+  if (badge)      badge.style.display      = connected ? 'inline' : 'none';
+  if (connectBtn) connectBtn.style.display = connected ? 'none'   : 'inline-block';
+  if (connected) {
+    const syncEl = document.getElementById('qb-last-sync');
+    if (syncEl && syncEl.textContent.startsWith('Checking')) {
+      syncEl.textContent = 'QB connected — live expense logging enabled';
+    }
+  }
+}
+
+async function connectQB() {
+  const btn = document.getElementById('qb-connect-btn');
+  if (btn) { btn.disabled = true; btn.textContent = '⏳ Connecting…'; }
+  try {
+    const res = await fetch(QB_AUTH_URL + '?action=url', {
+      headers: { 'Authorization': 'Bearer ' + FCD_SECRET }
+    });
+    const data = await res.json();
+    if (data.url) {
+      window.location.href = data.url;
+    } else {
+      throw new Error(data.error || 'Could not get QB auth URL');
+    }
+  } catch (e) {
+    showToast('QB connect error: ' + e.message, 5000);
+    if (btn) { btn.disabled = false; btn.textContent = '🔗 Connect QB'; }
   }
 }
 
