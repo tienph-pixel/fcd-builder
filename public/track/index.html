@@ -364,6 +364,78 @@
   }
   #lightbox-actions button:hover { background: rgba(255,255,255,0.28); }
 
+  /* DELETE BUTTON */
+  .btn-delete {
+    background: none; border: 1.5px solid var(--gray2); color: #ccc;
+    border-radius: 6px; padding: 5px 9px; font-size: 13px; cursor: pointer;
+    margin-left: auto; transition: all 0.15s; line-height: 1;
+  }
+  .btn-delete:hover { border-color: var(--red); color: var(--red); background: var(--red-bg); }
+
+  /* LOG QB MODAL (bottom sheet) */
+  #log-modal-overlay {
+    display: none; position: fixed; inset: 0; z-index: 600;
+    background: rgba(0,0,0,0.55); align-items: flex-end; justify-content: center;
+  }
+  #log-modal-overlay.active { display: flex; }
+  .log-modal {
+    background: #fff; border-radius: 20px 20px 0 0;
+    padding: 24px 20px 36px; width: 100%; max-width: 540px;
+    box-shadow: 0 -8px 32px rgba(0,0,0,0.2);
+    animation: slideUp 0.22s ease;
+  }
+  @keyframes slideUp {
+    from { transform: translateY(100%); }
+    to   { transform: translateY(0); }
+  }
+  .log-modal-handle {
+    width: 40px; height: 4px; background: var(--gray2); border-radius: 99px;
+    margin: 0 auto 20px;
+  }
+  .log-modal-title { font-size: 17px; font-weight: 800; color: var(--navy); margin-bottom: 3px; }
+  .log-modal-sub { font-size: 13px; color: var(--muted); margin-bottom: 16px; }
+  .log-modal-row {
+    display: flex; justify-content: space-between; padding: 7px 0;
+    border-bottom: 1px solid var(--gray); font-size: 13px;
+  }
+  .log-modal-label { color: var(--muted); font-weight: 600; }
+  .log-modal-value { font-weight: 500; text-align: right; max-width: 65%; }
+  .log-modal-section-label {
+    font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.7px;
+    color: var(--navy); margin: 16px 0 8px;
+  }
+  .log-modal-amount-input {
+    width: 100%; border: 2px solid var(--orange); border-radius: 10px;
+    padding: 12px 14px; font-size: 24px; font-weight: 800; color: var(--navy);
+    text-align: center; outline: none; box-sizing: border-box; background: #fff8f4;
+  }
+  .log-modal-amount-input:focus { border-color: var(--navy); background: #fff; }
+  .log-modal-job-row { display: flex; gap: 8px; }
+  .job-pill {
+    flex: 1; padding: 10px 6px; border-radius: 10px; border: 2px solid var(--gray2);
+    background: #fff; cursor: pointer; font-size: 13px; font-weight: 700;
+    color: var(--muted); text-align: center; transition: all 0.15s;
+  }
+  .job-pill.active { border-color: var(--orange); background: #fff3e8; color: var(--orange); }
+  .log-modal-actions { display: flex; gap: 10px; margin-top: 18px; }
+  .btn-log-cancel {
+    flex: 1; background: var(--gray); border: none; border-radius: 10px;
+    padding: 14px; font-size: 15px; font-weight: 700; color: var(--muted); cursor: pointer;
+  }
+  .btn-log-confirm {
+    flex: 2; background: var(--orange); border: none; border-radius: 10px;
+    padding: 14px; font-size: 15px; font-weight: 700; color: #fff; cursor: pointer;
+    transition: background 0.2s;
+  }
+  .btn-log-confirm:hover { background: #cf6710; }
+  .btn-log-confirm.confirming { background: var(--green); }
+
+  /* SHOW HIDDEN TOGGLE */
+  .show-hidden-btn {
+    background: none; border: none; color: var(--muted); font-size: 12px;
+    cursor: pointer; padding: 4px 0; text-decoration: underline;
+  }
+
   @media (max-width: 480px) {
     .stats-grid { grid-template-columns: 1fr 1fr; }
     #main { padding: 10px 8px 80px; }
@@ -403,6 +475,24 @@
     </label>
     <div class="login-error" id="login-error">&#10005; Incorrect username or password.</div>
     <button class="btn-primary" id="login-btn" onclick="doLogin()">Sign In &#8594;</button>
+  </div>
+</div>
+
+<!-- LOG QB MODAL -->
+<div id="log-modal-overlay" onclick="if(event.target===this)closeLogModal()">
+  <div class="log-modal">
+    <div class="log-modal-handle"></div>
+    <div class="log-modal-title">&#128197; Log to QuickBooks</div>
+    <div class="log-modal-sub" id="log-modal-sub"></div>
+    <div id="log-modal-details"></div>
+    <div class="log-modal-section-label">Confirm Amount (edit if photo differs)</div>
+    <input type="number" class="log-modal-amount-input" id="log-modal-amount" placeholder="0.00" step="0.01" min="0">
+    <div class="log-modal-section-label" style="margin-top:14px;">Assign to Job</div>
+    <div class="log-modal-job-row" id="log-modal-jobs"></div>
+    <div class="log-modal-actions">
+      <button class="btn-log-cancel" onclick="closeLogModal()">Cancel</button>
+      <button class="btn-log-confirm" id="log-modal-confirm-btn" onclick="confirmLog()">&#10003; Confirm &amp; Log</button>
+    </div>
   </div>
 </div>
 
@@ -462,6 +552,7 @@
     <button class="tab-pill" data-tab="worker" onclick="setTab('worker', this)">Worker</button>
     <button class="tab-pill" data-tab="cash" onclick="setTab('cash', this)">Cash</button>
     <button class="tab-pill" data-tab="pending" onclick="setTab('pending', this)">&#9888; Pending QB</button>
+    <button class="show-hidden-btn" id="show-hidden-btn" onclick="toggleShowHidden()" style="display:none"></button>
   </div>
 
   <!-- FEED -->
@@ -764,19 +855,32 @@ function processAndRender(data) {
   // Sort newest first
   allSubmissions.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
 
+  // Mark hidden
+  const hiddenSet = new Set(lsj('fcd_hidden_ids') || []);
+  allSubmissions.forEach(s => { s.hidden = hiddenSet.has(s.id); });
+
+  // Show/hide the "show hidden" button
+  const hiddenCount = allSubmissions.filter(s => s.hidden).length;
+  const showHiddenBtn = document.getElementById('show-hidden-btn');
+  if (hiddenCount > 0) {
+    showHiddenBtn.style.display = 'inline';
+    showHiddenBtn.textContent = _showHidden ? `Hide deleted (${hiddenCount})` : `Show deleted (${hiddenCount})`;
+  } else {
+    showHiddenBtn.style.display = 'none';
+  }
+
   updateStats();
   renderFeed();
 }
 
 // ─── STATS ─────────────────────────────────────────────────────────────────
 function updateStats() {
-  const loggedIds = new Set(lsj('fcd_logged_ids') || []);
   const today = new Date().toDateString();
 
   let pending = 0;
   let todaySpend = 0;
 
-  allSubmissions.forEach(s => {
+  allSubmissions.filter(s => !s.hidden).forEach(s => {
     if (!s.logged) pending++;
     const d = new Date(s.created_at);
     if (d.toDateString() === today) {
@@ -792,20 +896,32 @@ function updateStats() {
 
   document.getElementById('stat-today').textContent = fmtMoney(todaySpend);
 
-  // QB sync stats
+  // Budget: local confirmed entries (from Log to QB modal) + QB sync baseline
+  // Take the higher of the two to avoid double-counting
+  const entries = lsj('fcd_logged_entries') || [];
   const qb = lsj('fcd_qb_sync');
-  if (qb) {
-    const daisy = qb.daisy_spent || 0;
-    const mak = qb.mak_spent || 0;
-    document.getElementById('stat-daisy').textContent = fmtMoney(daisy);
-    document.getElementById('stat-mak').textContent = fmtMoney(mak);
-    document.getElementById('bar-daisy').style.width = Math.min(100, (daisy / BUDGETS.daisy * 100)).toFixed(1) + '%';
-    document.getElementById('bar-mak').style.width = Math.min(100, (mak / BUDGETS.mak * 100)).toFixed(1) + '%';
-  } else {
-    ['stat-daisy', 'stat-mak'].forEach(id => {
-      document.getElementById(id).innerHTML = '<span style="font-size:13px;color:var(--muted)">Sync needed</span>';
-    });
-  }
+  const qbBase = { daisy: qb ? (qb.daisy_spent || 0) : 0, mak: qb ? (qb.mak_spent || 0) : 0 };
+
+  const localSpent = { daisy: 0, mak: 0 };
+  entries.forEach(e => {
+    if (e.job === 'daisy') localSpent.daisy += (e.amount || 0);
+    else if (e.job === 'mak') localSpent.mak += (e.amount || 0);
+  });
+
+  const daisy = Math.max(qbBase.daisy, localSpent.daisy);
+  const mak   = Math.max(qbBase.mak,   localSpent.mak);
+
+  const daisyCount = entries.filter(e => e.job === 'daisy').length;
+  const makCount   = entries.filter(e => e.job === 'mak').length;
+
+  document.getElementById('stat-daisy').textContent = fmtMoney(daisy);
+  document.getElementById('stat-mak').textContent   = fmtMoney(mak);
+  document.getElementById('stat-daisy-sub').textContent = daisyCount > 0
+    ? `${daisyCount} logged · / $148,000` : '/ $148,000 budget';
+  document.getElementById('stat-mak-sub').textContent = makCount > 0
+    ? `${makCount} logged · / $14,000` : '/ $14,000 budget';
+  document.getElementById('bar-daisy').style.width = Math.min(100, (daisy / BUDGETS.daisy * 100)).toFixed(1) + '%';
+  document.getElementById('bar-mak').style.width   = Math.min(100, (mak   / BUDGETS.mak   * 100)).toFixed(1) + '%';
 }
 
 async function loadQBDisplay() {
@@ -873,9 +989,10 @@ function renderFeed() {
   hideStates();
 
   let filtered = allSubmissions.filter(s => {
+    if (!_showHidden && s.hidden) return false;
     if (currentTab === 'worker') return s.type === 'worker';
     if (currentTab === 'cash') return s.type === 'cash';
-    if (currentTab === 'pending') return !s.logged;
+    if (currentTab === 'pending') return !s.logged && !s.hidden;
     return true;
   });
 
@@ -965,11 +1082,13 @@ function buildCard(s) {
 
   const logBtnHtml = isLogged
     ? `<button class="btn-log success" disabled>&#10003; Logged QB</button>`
-    : `<button class="btn-log" id="logbtn-${s.id}" onclick="markLogged('${s.id}')">&#128197; Log to QB</button>`;
+    : `<button class="btn-log" id="logbtn-${s.id}" onclick="openLogModal('${s.id}')">&#128197; Log to QB</button>`;
+
+  const hiddenStyle = s.hidden ? ' style="opacity:0.45;border:2px dashed var(--gray2);"' : '';
 
   card.innerHTML = `
     <div class="card-header">
-      <div>${headerBadge}</div>
+      <div>${headerBadge}${s.hidden ? ' <span style="font-size:11px;color:var(--muted)">(deleted)</span>' : ''}</div>
       <div>${badge1099}${statusBadge}</div>
     </div>
     <div class="card-body">
@@ -979,13 +1098,15 @@ function buildCard(s) {
     </div>
     <div class="card-actions">
       <button class="btn-expand" onclick="toggleExpand('${s.id}', this)">&#9660; Details</button>
-      ${logBtnHtml}
+      ${s.hidden ? '' : logBtnHtml}
+      <button class="btn-delete" onclick="hideCard('${s.id}')" title="${s.hidden ? 'Restore' : 'Delete / Hide'}">${s.hidden ? '&#8635;' : '&#128465;'}</button>
     </div>
     <div class="card-expand" id="expand-${s.id}">
       ${details}
       ${photosHtml}
     </div>
   `;
+  if (s.hidden) card.style.opacity = '0.5';
   return card;
 }
 
@@ -1003,37 +1124,152 @@ function toggleExpand(id, btn) {
   btn.textContent = open ? '▲ Details' : '▼ Details';
 }
 
-function markLogged(id) {
-  const card = document.getElementById('card-' + id);
-  const logBtn = card ? card.querySelector('.btn-log') : null;
+// ─── LOG QB MODAL ──────────────────────────────────────────────────────────
+let _logModalId  = null;
+let _logModalJob = null;
+let _showHidden  = false;
 
-  // Step 1: loading spinner
-  if (logBtn) {
-    logBtn.disabled = true;
-    logBtn.classList.add('loading');
-    logBtn.innerHTML = '<span class="btn-log-spinner"></span> Logging…';
+function openLogModal(id) {
+  const s = allSubmissions.find(x => x.id === id);
+  if (!s) return;
+  const d = s.data;
+  _logModalId = id;
+
+  // Auto-detect job from site name
+  const site = (d.job_site || '').toLowerCase();
+  _logModalJob = site.includes('daisy') ? 'daisy' : site.includes('mak') ? 'mak' : Object.keys(BUDGETS)[0];
+
+  // Sub-heading
+  const name = d.worker_name || d.payee_name || 'Unknown';
+  document.getElementById('log-modal-sub').textContent = name + ' · ' + (d.job_site || '—');
+
+  // Details rows
+  const rows = [];
+  if (s.type === 'worker') {
+    if (d.items_bought) rows.push(['Items', d.items_bought]);
+    if (d.store_name)   rows.push(['Store', d.store_name]);
+  } else {
+    if (d.category)       rows.push(['Category', d.category]);
+    if (d.payment_method) rows.push(['Payment', d.payment_method]);
+    if (d.receipt_num)    rows.push(['Receipt #', d.receipt_num]);
   }
+  rows.push(['Submitted', fmtDate(s.created_at)]);
+  document.getElementById('log-modal-details').innerHTML = rows.map(([l, v]) =>
+    `<div class="log-modal-row"><span class="log-modal-label">${esc(l)}</span><span class="log-modal-value">${esc(String(v))}</span></div>`
+  ).join('');
 
-  // Step 2: after ~1.2s → success green
+  // Amount (pre-fill from submission)
+  const raw = parseFloat((d.amount || '').toString().replace(/[^0-9.]/g, '')) || '';
+  document.getElementById('log-modal-amount').value = raw;
+
+  // Job pills (all known jobs + Other)
+  const jobKeys = Object.keys(BUDGETS).concat(['other']);
+  document.getElementById('log-modal-jobs').innerHTML = jobKeys.map(j =>
+    `<button class="job-pill${_logModalJob === j ? ' active' : ''}" onclick="selectJob('${j}', this)">${j.charAt(0).toUpperCase() + j.slice(1)}</button>`
+  ).join('');
+
+  // Reset confirm button
+  const btn = document.getElementById('log-modal-confirm-btn');
+  btn.classList.remove('confirming');
+  btn.disabled = false;
+  btn.textContent = '✓ Confirm & Log';
+
+  document.getElementById('log-modal-overlay').classList.add('active');
   setTimeout(() => {
-    const logged = lsj('fcd_logged_ids') || [];
-    if (!logged.includes(id)) logged.push(id);
-    lsj('fcd_logged_ids', logged);
+    const inp = document.getElementById('log-modal-amount');
+    inp.focus(); inp.select();
+  }, 150);
+}
 
+function selectJob(job, el) {
+  _logModalJob = job;
+  document.querySelectorAll('.job-pill').forEach(p => p.classList.remove('active'));
+  el.classList.add('active');
+}
+
+function closeLogModal() {
+  document.getElementById('log-modal-overlay').classList.remove('active');
+  _logModalId = null;
+}
+
+function confirmLog() {
+  const id  = _logModalId;
+  if (!id) return;
+  const amount = parseFloat(document.getElementById('log-modal-amount').value) || 0;
+  const job    = _logModalJob || 'other';
+
+  // Confirm button → green
+  const confirmBtn = document.getElementById('log-modal-confirm-btn');
+  confirmBtn.disabled = true;
+  confirmBtn.classList.add('confirming');
+  confirmBtn.textContent = '✓ Logged!';
+
+  // Save to logged IDs
+  const logged = lsj('fcd_logged_ids') || [];
+  if (!logged.includes(id)) logged.push(id);
+  lsj('fcd_logged_ids', logged);
+
+  // Save entry with amount + job for budget tracking
+  const entries = lsj('fcd_logged_entries') || [];
+  const idx = entries.findIndex(e => e.id === id);
+  const entry = { id, amount, job, confirmed_at: new Date().toISOString() };
+  if (idx >= 0) entries[idx] = entry; else entries.push(entry);
+  lsj('fcd_logged_entries', entries);
+
+  // Update submission in memory
+  const sub = allSubmissions.find(s => s.id === id);
+  if (sub) { sub.logged = true; sub.confirmed_amount = amount; }
+
+  setTimeout(() => {
+    closeLogModal();
+    // Update card visuals
+    const card = document.getElementById('card-' + id);
     if (card) {
       card.classList.add('logged');
       const statusEl = card.querySelector('.status-badge');
       if (statusEl) { statusEl.className = 'status-badge logged-qb'; statusEl.textContent = '✓ Logged QB'; }
-      if (logBtn) {
-        logBtn.classList.remove('loading');
-        logBtn.classList.add('success');
-        logBtn.innerHTML = '&#10003; Logged QB';
-      }
+      const logBtn = card.querySelector('.btn-log');
+      if (logBtn) { logBtn.classList.add('success'); logBtn.disabled = true; logBtn.innerHTML = '&#10003; Logged QB'; }
       const body = card.querySelector('.card-body');
       if (body) body.style.background = 'var(--green-bg)';
     }
     updateStats();
-  }, 1200);
+  }, 700);
+}
+
+function hideCard(id) {
+  const sub = allSubmissions.find(s => s.id === id);
+  if (!sub) return;
+
+  if (sub.hidden) {
+    // Restore
+    const hidden = (lsj('fcd_hidden_ids') || []).filter(x => x !== id);
+    lsj('fcd_hidden_ids', hidden);
+    sub.hidden = false;
+  } else {
+    // Hide
+    const hidden = lsj('fcd_hidden_ids') || [];
+    if (!hidden.includes(id)) hidden.push(id);
+    lsj('fcd_hidden_ids', hidden);
+    sub.hidden = true;
+  }
+
+  // Update "show hidden" button
+  const hiddenCount = allSubmissions.filter(s => s.hidden).length;
+  const showBtn = document.getElementById('show-hidden-btn');
+  showBtn.style.display = hiddenCount > 0 ? 'inline' : 'none';
+  if (hiddenCount > 0) showBtn.textContent = _showHidden ? `Hide deleted (${hiddenCount})` : `Show deleted (${hiddenCount})`;
+
+  renderFeed();
+  updateStats();
+}
+
+function toggleShowHidden() {
+  _showHidden = !_showHidden;
+  const hiddenCount = allSubmissions.filter(s => s.hidden).length;
+  document.getElementById('show-hidden-btn').textContent = _showHidden
+    ? `Hide deleted (${hiddenCount})` : `Show deleted (${hiddenCount})`;
+  renderFeed();
 }
 
 // ─── UI STATES ─────────────────────────────────────────────────────────────
