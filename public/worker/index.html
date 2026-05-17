@@ -713,18 +713,18 @@
         >
       </div>
 
-      <!-- Items bought -->
+      <!-- Items bought — dropdown categories -->
       <div>
-        <label class="field-label" for="input-items" data-es="&#191;Qu&#233; compraste? / What did you buy?" data-en="What did you buy? / &#191;Qu&#233; compraste?">&#191;Qu&#233; compraste? / What did you buy?</label>
-        <input
-          class="text-input"
-          type="text"
-          id="input-items"
-          data-ph-es="Tubo, cemento, tornillos..."
-          data-ph-en="Pipe, cement, screws..."
-          placeholder="Tubo, cemento, tornillos..."
-          autocomplete="off"
-        >
+        <label class="field-label" for="input-items" data-es="&#191;Qu&#233; tipo de trabajo? / What type of work?" data-en="What type of work? / &#191;Qu&#233; tipo?">What type of work? / &#191;Qu&#233; tipo?</label>
+        <select class="text-input" id="input-items" style="appearance:auto;-webkit-appearance:auto;cursor:pointer;">
+          <option value="" data-es="-- Selecciona --" data-en="-- Select --">-- Select --</option>
+          <option value="Plumbing / Plomería"     data-es="Plomería"     data-en="Plumbing">Plumbing / Plomería</option>
+          <option value="Electrical / Electricidad" data-es="Electricidad" data-en="Electrical">Electrical / Electricidad</option>
+          <option value="Gas / Gas"               data-es="Gas"           data-en="Gas">Gas / Gas</option>
+          <option value="Bathroom / Baño"         data-es="Baño"          data-en="Bathroom">Bathroom / Baño</option>
+          <option value="Wood / Madera"            data-es="Madera"        data-en="Wood">Wood / Madera</option>
+          <option value="Other / Otro"             data-es="Otro"          data-en="Other">Other / Otro</option>
+        </select>
       </div>
 
       <div style="display:flex;gap:12px;margin-top:8px;">
@@ -861,6 +861,12 @@
       <div id="confirm-amount-row" class="summary-row" style="display:none;">
         <span class="summary-label" data-es="Monto / Amount" data-en="Amount / Monto">Monto / Amount</span>
         <span class="summary-value" id="confirm-amount">-</span>
+      </div>
+
+      <!-- Red warning when amount is present -->
+      <div id="confirm-amount-warning" style="display:none;background:#fff3f3;border:1.5px solid #e53935;border-radius:10px;padding:10px 14px;margin-bottom:10px;display:none;">
+        <span style="font-size:20px;">&#9888;</span>
+        <span style="color:#c62828;font-weight:700;font-size:13px;margin-left:6px;" data-es="¡Verifica el monto antes de enviar!" data-en="Double-check the amount before submitting!">Double-check the amount before submitting!</span>
       </div>
 
       <div id="confirm-store-row" class="summary-row" style="display:none;">
@@ -1287,11 +1293,14 @@ function goToScreen4() {
   var amountRow = document.getElementById('confirm-amount-row');
   var storeRow = document.getElementById('confirm-store-row');
   var itemsRow = document.getElementById('confirm-items-row');
+  var amountWarning = document.getElementById('confirm-amount-warning');
   if (STATE.amount) {
     document.getElementById('confirm-amount').textContent = '$' + STATE.amount;
     amountRow.style.display = 'flex';
+    amountWarning.style.display = 'block';
   } else {
     amountRow.style.display = 'none';
+    amountWarning.style.display = 'none';
   }
   if (STATE.storeName) {
     document.getElementById('confirm-store').textContent = STATE.storeName;
