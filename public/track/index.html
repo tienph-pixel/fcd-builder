@@ -923,25 +923,24 @@ function updateStats() {
 
   document.getElementById('stat-today').textContent = fmtMoney(todaySpend);
 
-  // Budget: local confirmed entries (from Log to QB modal) + QB sync baseline
-  // Take the higher of the two to avoid double-counting
-  const entries = lsj('fcd_logged_entries') || [];
-  const qb = lsj('fcd_qb_sync');
-  const qbBase = { daisy: qb ? (qb.daisy_spent || 0) : 0, mak: qb ? (qb.mak_spent || 0) : 0 };
-
+  // Budget: sum actual amounts from logged submissions (source of truth = allSubmissions, not stored modal entries)
   const hiddenSet = new Set(lsj('fcd_hidden_ids') || []);
   const localSpent = { daisy: 0, mak: 0 };
-  entries.forEach(e => {
-    if (hiddenSet.has(e.id)) return; // don't count deleted receipts
-    if (e.job === 'daisy') localSpent.daisy += (e.amount || 0);
-    else if (e.job === 'mak') localSpent.mak += (e.amount || 0);
+  let daisyCount = 0, makCount = 0;
+
+  allSubmissions.forEach(s => {
+    if (!s.logged || hiddenSet.has(s.id)) return;
+    const amt = parseFloat((s.data.amount || '').toString().replace(/[^0-9.]/g, '')) || 0;
+    const site = (s.data.job_site || '').toLowerCase();
+    if (site.includes('daisy')) { localSpent.daisy += amt; daisyCount++; }
+    else if (site.includes('mak'))  { localSpent.mak  += amt; makCount++;   }
   });
 
+  // QB sync as a floor (in case QB has more than local)
+  const qb = lsj('fcd_qb_sync');
+  const qbBase = { daisy: qb ? (qb.daisy_spent || 0) : 0, mak: qb ? (qb.mak_spent || 0) : 0 };
   const daisy = Math.max(qbBase.daisy, localSpent.daisy);
   const mak   = Math.max(qbBase.mak,   localSpent.mak);
-
-  const daisyCount = entries.filter(e => e.job === 'daisy' && !hiddenSet.has(e.id)).length;
-  const makCount   = entries.filter(e => e.job === 'mak'   && !hiddenSet.has(e.id)).length;
 
   document.getElementById('stat-daisy').textContent = fmtMoney(daisy);
   document.getElementById('stat-mak').textContent   = fmtMoney(mak);
