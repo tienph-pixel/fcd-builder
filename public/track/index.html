@@ -928,8 +928,10 @@ function updateStats() {
   const qb = lsj('fcd_qb_sync');
   const qbBase = { daisy: qb ? (qb.daisy_spent || 0) : 0, mak: qb ? (qb.mak_spent || 0) : 0 };
 
+  const hiddenSet = new Set(lsj('fcd_hidden_ids') || []);
   const localSpent = { daisy: 0, mak: 0 };
   entries.forEach(e => {
+    if (hiddenSet.has(e.id)) return; // don't count deleted receipts
     if (e.job === 'daisy') localSpent.daisy += (e.amount || 0);
     else if (e.job === 'mak') localSpent.mak += (e.amount || 0);
   });
@@ -937,8 +939,8 @@ function updateStats() {
   const daisy = Math.max(qbBase.daisy, localSpent.daisy);
   const mak   = Math.max(qbBase.mak,   localSpent.mak);
 
-  const daisyCount = entries.filter(e => e.job === 'daisy').length;
-  const makCount   = entries.filter(e => e.job === 'mak').length;
+  const daisyCount = entries.filter(e => e.job === 'daisy' && !hiddenSet.has(e.id)).length;
+  const makCount   = entries.filter(e => e.job === 'mak'   && !hiddenSet.has(e.id)).length;
 
   document.getElementById('stat-daisy').textContent = fmtMoney(daisy);
   document.getElementById('stat-mak').textContent   = fmtMoney(mak);
@@ -1125,7 +1127,11 @@ function buildCard(s) {
     <div class="card-actions">
       <button class="btn-expand" onclick="toggleExpand('${s.id}', this)">&#9660; Details</button>
       ${s.hidden ? '' : logBtnHtml}
-      <button class="btn-delete" onclick="hideCard('${s.id}')" title="${s.hidden ? 'Restore' : 'Delete / Hide'}">${s.hidden ? '&#8635;' : '&#128465;'}</button>
+      ${s.hidden
+        ? `<button class="btn-delete" onclick="hideCard('${s.id}')" title="Restore" style="color:var(--green);border-color:var(--green);">&#8635; Restore</button>
+           <button class="btn-delete" onclick="permanentDelete('${s.id}')" title="Delete Forever">&#128465; Delete</button>`
+        : `<button class="btn-delete" onclick="hideCard('${s.id}')" title="Delete / Hide">&#128465;</button>`
+      }
     </div>
     <div class="card-expand" id="expand-${s.id}">
       ${details}
@@ -1369,6 +1375,25 @@ async function hideCard(id) {
   showBtn.style.display = hiddenCount > 0 ? 'inline' : 'none';
   if (hiddenCount > 0) showBtn.textContent = _showHidden ? `Hide deleted (${hiddenCount})` : `Show deleted (${hiddenCount})`;
 
+  renderFeed();
+  updateStats();
+}
+
+function permanentDelete(id) {
+  if (!confirm('Permanently delete this record?\n\nThis removes it from the app and budget tracking. Cannot be undone.')) return;
+  // Remove from all stored arrays
+  ['fcd_logged_ids', 'fcd_hidden_ids'].forEach(key => {
+    lsj(key, (lsj(key) || []).filter(x => x !== id));
+  });
+  lsj('fcd_logged_entries', (lsj('fcd_logged_entries') || []).filter(e => e.id !== id));
+  // Remove from in-memory list
+  const idx = allSubmissions.findIndex(s => s.id === id);
+  if (idx >= 0) allSubmissions.splice(idx, 1);
+  // Update show-hidden button
+  const hiddenCount = allSubmissions.filter(s => s.hidden).length;
+  const showBtn = document.getElementById('show-hidden-btn');
+  showBtn.style.display = hiddenCount > 0 ? 'inline' : 'none';
+  if (hiddenCount > 0) showBtn.textContent = _showHidden ? `Hide deleted (${hiddenCount})` : `Show deleted (${hiddenCount})`;
   renderFeed();
   updateStats();
 }

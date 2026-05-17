@@ -51,6 +51,12 @@ exports.handler = async (event) => {
     if (!accountRef) return json(500, { error: 'Could not find QB expense account. Please check your chart of accounts.' });
   }
 
+  // Find payment account dynamically (don't hardcode ID '1' — differs per QB company)
+  let paymentAccountRef = { value: '1', name: 'Cash' };
+  try {
+    paymentAccountRef = await findPaymentAccount(accessToken, realmId);
+  } catch (e) { /* use default */ }
+
   // Build memo line
   const memo = [name, job_site, items_bought || description].filter(Boolean).join(' · ');
   const txnDate = date ? date.split('T')[0] : new Date().toISOString().split('T')[0];
@@ -58,7 +64,7 @@ exports.handler = async (event) => {
   // QB Purchase (Cash) payload
   const purchase = {
     PaymentType: 'Cash',
-    AccountRef:  { value: '1', name: 'Cash and Cash Equivalents' }, // payment from Cash
+    AccountRef:  paymentAccountRef, // payment from Cash/Checking (found dynamically)
     TxnDate:     txnDate,
     PrivateNote: memo,
     Line: [{
@@ -101,6 +107,19 @@ exports.handler = async (event) => {
   const errMsg = fault && fault.Error && fault.Error[0] ? fault.Error[0].Message : 'Unknown QB error';
   return json(500, { error: errMsg, detail: fault });
 };
+
+// ── Find payment account (checking/cash) for Purchase "paid from" ────────────
+async function findPaymentAccount(token, realmId) {
+  const query = encodeURIComponent("SELECT * FROM Account WHERE AccountType IN ('Bank', 'Other Current Asset') MAXRESULTS 30");
+  const result = await qbRequest(token, realmId, 'GET', `/query?query=${query}`, null);
+  const accounts = (result.QueryResponse && result.QueryResponse.Account) || [];
+  const prefNames = ['checking', 'cash', 'petty', 'bank'];
+  for (const pref of prefNames) {
+    const match = accounts.find(a => a.Name.toLowerCase().includes(pref));
+    if (match) return { value: match.Id, name: match.Name };
+  }
+  return accounts.length ? { value: accounts[0].Id, name: accounts[0].Name } : { value: '1', name: 'Cash' };
+}
 
 // ── Find expense account by category name, with fallback ─────────────────────
 async function findExpenseAccount(token, realmId, category) {
