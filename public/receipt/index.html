@@ -697,6 +697,21 @@
 </style>
 </head>
 <body>
+<form name="cash-receipt" netlify data-netlify="true" hidden>
+  <input type="hidden" name="form-name" value="cash-receipt">
+  <input type="text" name="receipt_num">
+  <input type="text" name="receipt_date">
+  <input type="text" name="payee_name">
+  <input type="text" name="payee_type">
+  <input type="text" name="payee_phone">
+  <input type="text" name="payee_email">
+  <input type="text" name="job_site">
+  <input type="text" name="amount">
+  <input type="text" name="payment_method">
+  <input type="text" name="category">
+  <input type="text" name="description">
+  <input type="text" name="field_1099">
+</form>
 
 <!-- TOP BAR (hidden in sign mode) -->
 <div class="top-bar" id="main-top-bar">
@@ -1368,28 +1383,59 @@ function sendForSignature() {
   const pageUrl = window.location.origin + window.location.pathname;
   const signUrl = pageUrl + '?sign=' + encodeURIComponent(base64);
 
-  const phone = document.getElementById('payee-phone').value.trim();
   const amountStr = '$' + parseFloat(payload.amount).toFixed(2);
-  const message = `Please sign your payment receipt from FCD (${amountStr}): ${signUrl}`;
 
-  if (phone) {
-    // Clean phone to digits only for WhatsApp
-    const cleanPhone = phone.replace(/\D/g, '');
-    const waUrl = `https://wa.me/${cleanPhone}?text=${encodeURIComponent(message)}`;
-    window.open(waUrl, '_blank');
-    showToast(currentLang === 'en' ? 'Opening WhatsApp...' : 'Abriendo WhatsApp...', 'success');
-  } else {
-    // No phone — copy link to clipboard
+  // Always show a copyable link popup — no auto-open WhatsApp
+  showSignLinkPopup(signUrl, name, amountStr);
+
+  if (false) {
+    // (disabled WhatsApp auto-open)
     if (navigator.clipboard) {
       navigator.clipboard.writeText(signUrl).then(() => {
-        showToast(currentLang === 'en' ? 'Signature link copied! Share it with the payee.' : '¡Enlace copiado! Compártalo con el receptor.', 'success');
+        showToast('copied', 'success');
       }).catch(() => {
-        prompt('Copy this link and send it to the payee:', signUrl);
+        prompt('Copy this link:', signUrl);
       });
     } else {
-      prompt('Copy this link and send it to the payee:', signUrl);
+      prompt('Copy this link:', signUrl);
     }
   }
+}
+
+function showSignLinkPopup(url, name, amount) {
+  // Remove old popup if any
+  var old = document.getElementById('sign-link-popup');
+  if (old) old.remove();
+
+  var overlay = document.createElement('div');
+  overlay.id = 'sign-link-popup';
+  overlay.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.6);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px;box-sizing:border-box;';
+
+  overlay.innerHTML = `
+    <div style="background:#fff;border-radius:16px;padding:28px 22px;width:100%;max-width:420px;box-shadow:0 8px 32px rgba(0,0,0,0.25);">
+      <div style="font-size:22px;font-weight:700;color:#1C2B4A;margin-bottom:4px;">Signature Link Ready</div>
+      <div style="font-size:14px;color:#666;margin-bottom:20px;">Send to <strong>${name}</strong> — <strong>${amount}</strong></div>
+
+      <div style="background:#f5f5f5;border-radius:10px;padding:12px 14px;margin-bottom:16px;word-break:break-all;font-size:12px;color:#333;line-height:1.5;">${url}</div>
+
+      <button onclick="
+        if(navigator.clipboard){navigator.clipboard.writeText('${url}').then(function(){this.textContent='✓ Copied!';this.style.background='#2e7d32';}.bind(this)).catch(function(){prompt('Copy this link:','${url}')});}
+        else{prompt('Copy this link:','${url}');}
+      " style="width:100%;padding:16px;background:#E87722;color:#fff;border:none;border-radius:12px;font-size:17px;font-weight:700;cursor:pointer;margin-bottom:10px;">
+        📋 Copy Link
+      </button>
+
+      <div style="font-size:13px;color:#888;text-align:center;margin-bottom:16px;">Paste into SMS, WhatsApp, iMessage — anywhere you want</div>
+
+      <button onclick="document.getElementById('sign-link-popup').remove();" style="width:100%;padding:13px;background:#fff;color:#1C2B4A;border:2px solid #1C2B4A;border-radius:12px;font-size:15px;font-weight:600;cursor:pointer;">
+        Close
+      </button>
+    </div>
+  `;
+
+  document.body.appendChild(overlay);
+  // Close on backdrop tap
+  overlay.addEventListener('click', function(e){ if(e.target===overlay) overlay.remove(); });
 }
 
 // ══════════════════════════════════════════════
@@ -1772,9 +1818,48 @@ function buildReceiptView() {
 
   applyLang();
 
+  postReceiptToNetlify({
+    receiptNum: receiptNum,
+    date: receiptDate,
+    name: name,
+    payeeType: payeeType,
+    phone: phone,
+    email: email,
+    jobSite: jobSite,
+    amount: amount,
+    method: selectedMethod,
+    category: category,
+    description: description,
+    f1099: f1099
+  });
+
   document.getElementById('form-view').style.display = 'none';
   document.getElementById('receipt-view').style.display = 'block';
   window.scrollTo(0, 0);
+}
+
+// ══════════════════════════════════════════════
+//  NETLIFY FORMS BACKGROUND BACKUP
+// ══════════════════════════════════════════════
+function postReceiptToNetlify(data) {
+  var formData = new FormData();
+  formData.append('form-name', 'cash-receipt');
+  formData.append('receipt_num', data.receiptNum || '');
+  formData.append('receipt_date', data.date || '');
+  formData.append('payee_name', data.name || '');
+  formData.append('payee_type', data.payeeType || '');
+  formData.append('payee_phone', data.phone || '');
+  formData.append('payee_email', data.email || '');
+  formData.append('job_site', data.jobSite || '');
+  formData.append('amount', data.amount || '');
+  formData.append('payment_method', data.method || '');
+  formData.append('category', data.category || '');
+  formData.append('description', data.description || '');
+  formData.append('field_1099', data.f1099 || '');
+
+  fetch('/', { method: 'POST', body: formData })
+    .then(function(r) { console.log('Receipt backed up to Netlify:', r.ok); })
+    .catch(function(e) { console.warn('Netlify backup failed (offline?):', e); });
 }
 
 // ══════════════════════════════════════════════
