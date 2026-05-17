@@ -806,8 +806,8 @@ async function loadQBFromGitHub(showFeedback) {
   if (btn) { btn.disabled = true; btn.textContent = '⏳ Loading…'; }
 
   try {
-    // Fetch from GitHub raw — bypasses Netlify CDN cache, no deploy needed
-    const url = 'https://raw.githubusercontent.com/tienph-pixel/fcd-builder/main/public/data/qb-sync.json?t=' + Date.now();
+    // Fetch from 'data' branch — Netlify never deploys this branch, so 0 credits per sync
+    const url = 'https://raw.githubusercontent.com/tienph-pixel/fcd-builder/data/public/data/qb-sync.json?t=' + Date.now();
     const res = await fetch(url);
     if (!res.ok) throw new Error('HTTP ' + res.status);
     const parsed = await res.json();
