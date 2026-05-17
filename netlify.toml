@@ -1,6 +1,8 @@
 [build]
   command = "npm run build"
   publish = "dist"
+  # Skip deploy if ONLY qb-sync.json changed — saves deploy credits
+  ignore = "git diff --quiet $CACHED_COMMIT_REF $COMMIT_REF -- . ':!public/data/qb-sync.json'"
 
 # Internal apps — serve directly, bypass Astro catch-all
 [[redirects]]
