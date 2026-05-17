@@ -600,7 +600,7 @@
   <!-- ========== SCREEN 1: WELCOME ========== -->
   <div class="screen active" id="screen-welcome">
     <div class="header">
-      <div class="header-logo">FCD</div>
+      <div class="header-logo" onclick="window.location.href='/hub'" style="cursor:pointer;" title="FCD Hub">FCD</div>
       <div class="header-subtitle">Future Construction &amp; Design</div>
       <button class="lang-toggle-btn" id="lang-btn-welcome" onclick="toggleLang()">EN</button>
     </div>
@@ -665,7 +665,7 @@
   <!-- ========== SCREEN 1.5: RECEIPT DETAILS (OPTIONAL) ========== -->
   <div class="screen" id="screen-receipt-details">
     <div class="header">
-      <div class="header-logo">FCD</div>
+      <div class="header-logo" onclick="window.location.href='/hub'" style="cursor:pointer;" title="FCD Hub">FCD</div>
       <div class="header-subtitle" data-es="Detalles del Recibo" data-en="Receipt Details">Detalles del Recibo</div>
       <button class="lang-toggle-btn" onclick="toggleLang()">EN</button>
     </div>
@@ -744,7 +744,7 @@
   <!-- ========== SCREEN 2: PHOTO 1 (STORE) ========== -->
   <div class="screen" id="screen-photo1">
     <div class="header">
-      <div class="header-logo">FCD</div>
+      <div class="header-logo" onclick="window.location.href='/hub'" style="cursor:pointer;" title="FCD Hub">FCD</div>
       <div class="header-subtitle" data-es="Paso 1 de 2 - Foto de la Tienda" data-en="Step 1 of 2 - Store Photo">Paso 1 de 2 - Foto de la Tienda</div>
       <button class="lang-toggle-btn" onclick="toggleLang()">EN</button>
     </div>
@@ -786,7 +786,7 @@
   <!-- ========== SCREEN 3: PHOTO 2 (RECEIPT) ========== -->
   <div class="screen" id="screen-photo2">
     <div class="header">
-      <div class="header-logo">FCD</div>
+      <div class="header-logo" onclick="window.location.href='/hub'" style="cursor:pointer;" title="FCD Hub">FCD</div>
       <div class="header-subtitle" data-es="Paso 2 de 2 - Foto del Recibo" data-en="Step 2 of 2 - Receipt Photo">Paso 2 de 2 - Foto del Recibo</div>
       <button class="lang-toggle-btn" onclick="toggleLang()">EN</button>
     </div>
@@ -828,7 +828,7 @@
   <!-- ========== SCREEN 4: CONFIRM ========== -->
   <div class="screen" id="screen-confirm">
     <div class="header">
-      <div class="header-logo">FCD</div>
+      <div class="header-logo" onclick="window.location.href='/hub'" style="cursor:pointer;" title="FCD Hub">FCD</div>
       <div class="header-subtitle" data-es="Confirmar y Enviar" data-en="Confirm and Send">Confirmar y Enviar</div>
       <button class="lang-toggle-btn" onclick="toggleLang()">EN</button>
     </div>
@@ -912,7 +912,7 @@
   <!-- ========== SCREEN 5: SUCCESS ========== -->
   <div class="screen" id="screen-success">
     <div class="header">
-      <div class="header-logo">FCD</div>
+      <div class="header-logo" onclick="window.location.href='/hub'" style="cursor:pointer;" title="FCD Hub">FCD</div>
       <div class="header-subtitle" data-es="Recibo Enviado" data-en="Receipt Submitted">Recibo Enviado</div>
       <button class="lang-toggle-btn" onclick="toggleLang()">EN</button>
     </div>
@@ -937,7 +937,7 @@
   <!-- ========== SCREEN: CHECK-IN ========== -->
   <div class="screen" id="screen-checkin">
     <div class="header">
-      <div class="header-logo">FCD</div>
+      <div class="header-logo" onclick="window.location.href='/hub'" style="cursor:pointer;" title="FCD Hub">FCD</div>
       <div class="header-subtitle" data-es="Registro de Asistencia" data-en="Attendance Check-In">Registro de Asistencia</div>
       <button class="lang-toggle-btn" onclick="toggleLang()">EN</button>
     </div>
@@ -1092,7 +1092,7 @@ function handlePhoneLast4(e) {
     var worker = lookupWorker(val);
     if (worker) {
       STATE.workerName = worker.name;
-      greetingEl.textContent = 'Hola, ' + worker.name + '!';
+      greetingEl.textContent = (STATE.lang === 'en' ? 'Hello, ' : 'Hola, ') + worker.name + '!';
       greetingEl.style.display = 'block';
     } else {
       errorEl.textContent = 'No autorizado. Llama a Tien: 310-634-2157 / Not authorized. Call Tien: 310-634-2157';
