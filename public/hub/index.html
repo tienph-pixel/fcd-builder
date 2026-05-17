@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#1C2B4A">
+<title>FCD Apps</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --orange: #E87722;
+    --navy: #1C2B4A;
+    --white: #fff;
+    --gray: #f4f5f7;
+    --muted: #666;
+    --green: #2e7d32;
+    --shadow: 0 4px 16px rgba(0,0,0,0.10);
+    --radius: 14px;
+  }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: var(--navy);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  /* HEADER */
+  .hub-header {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 40px 20px 28px;
+  }
+  .hub-logo img {
+    height: 50px;
+    width: auto;
+    filter: brightness(0) invert(1);
+    margin-bottom: 6px;
+  }
+  .hub-tagline {
+    color: rgba(255,255,255,0.55);
+    font-size: 13px;
+    letter-spacing: 0.5px;
+  }
+
+  /* CARDS */
+  .hub-grid {
+    width: 100%;
+    max-width: 480px;
+    padding: 0 16px 40px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .app-card {
+    background: var(--white);
+    border-radius: var(--radius);
+    padding: 20px 20px 18px;
+    box-shadow: var(--shadow);
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    transition: transform 0.12s, box-shadow 0.12s;
+    cursor: pointer;
+    border: none;
+    width: 100%;
+    text-align: left;
+  }
+  .app-card:active { transform: scale(0.98); }
+
+  .app-icon {
+    width: 52px; height: 52px;
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 24px;
+    flex-shrink: 0;
+  }
+  .icon-dashboard { background: #e8f0fe; }
+  .icon-worker    { background: #e8f5e9; }
+  .icon-receipt   { background: #fff3e0; }
+
+  .app-info { flex: 1; }
+  .app-name {
+    font-size: 17px; font-weight: 700; color: var(--navy);
+    margin-bottom: 3px;
+  }
+  .app-desc { font-size: 13px; color: var(--muted); line-height: 1.4; }
+  .app-tag {
+    font-size: 11px; font-weight: 700; padding: 3px 8px;
+    border-radius: 99px; display: inline-block; margin-top: 6px;
+  }
+  .tag-admin  { background: #e8f0fe; color: #1565c0; }
+  .tag-worker { background: #e8f5e9; color: #2e7d32; }
+
+  .app-arrow {
+    font-size: 20px; color: #ccc;
+    flex-shrink: 0;
+  }
+
+  /* SECTION LABEL */
+  .section-label {
+    color: rgba(255,255,255,0.4);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    padding: 0 4px;
+    margin-bottom: -4px;
+  }
+
+  /* VERSION */
+  .hub-footer {
+    color: rgba(255,255,255,0.2);
+    font-size: 11px;
+    padding-bottom: 24px;
+  }
+</style>
+</head>
+<body>
+
+<div class="hub-header">
+  <div class="hub-logo">
+    <img src="/fcd-logo.png" alt="FCD">
+  </div>
+  <div class="hub-tagline">Where Every Detail Matters</div>
+</div>
+
+<div class="hub-grid">
+
+  <div class="section-label">Admin Apps</div>
+
+  <!-- App 0: Dashboard -->
+  <a class="app-card" href="/track">
+    <div class="app-icon icon-dashboard">📊</div>
+    <div class="app-info">
+      <div class="app-name">FCD Dashboard</div>
+      <div class="app-desc">View all receipts, track job budgets, sync QuickBooks</div>
+      <span class="app-tag tag-admin">🔒 Admin Login</span>
+    </div>
+    <div class="app-arrow">›</div>
+  </a>
+
+  <!-- App 2: Cash Receipt -->
+  <a class="app-card" href="/receipt">
+    <div class="app-icon icon-receipt">🧾</div>
+    <div class="app-info">
+      <div class="app-name">Cash Receipt</div>
+      <div class="app-desc">Issue cash or Zelle payment receipts, collect signatures</div>
+      <span class="app-tag tag-admin">🔒 Admin Login</span>
+    </div>
+    <div class="app-arrow">›</div>
+  </a>
+
+  <div class="section-label" style="margin-top:6px;">Worker App</div>
+
+  <!-- App 1: Worker Receipt -->
+  <a class="app-card" href="/worker">
+    <div class="app-icon icon-worker">📷</div>
+    <div class="app-info">
+      <div class="app-name">Worker Receipt</div>
+      <div class="app-desc">Submit purchase photos and receipts from the job site</div>
+      <span class="app-tag tag-worker">👷 Worker Access</span>
+    </div>
+    <div class="app-arrow">›</div>
+  </a>
+
+</div>
+
+<div class="hub-footer">FCD · v1.0</div>
+
+</body>
+</html>
