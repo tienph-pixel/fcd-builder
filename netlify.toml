@@ -2,6 +2,26 @@
   command = "npm run build"
   publish = "dist"
 
+# Internal apps — serve directly, bypass Astro catch-all
+[[redirects]]
+  from = "/worker"
+  to = "/worker/index.html"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/receipt"
+  to = "/receipt/index.html"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/track"
+  to = "/track/index.html"
+  status = 200
+  force = true
+
+# Astro SPA fallback
 [[redirects]]
   from = "/*"
   to = "/index.html"
