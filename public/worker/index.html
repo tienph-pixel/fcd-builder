@@ -588,6 +588,9 @@
   <input type="text" name="worker_name">
   <input type="text" name="job_site">
   <input type="text" name="submission_date">
+  <input type="text" name="amount">
+  <input type="text" name="store_name">
+  <input type="text" name="items_bought">
   <input type="file" name="store_photo">
   <input type="file" name="receipt_photo">
 </form>
@@ -643,7 +646,7 @@
         </div>
       </div>
 
-      <button class="btn btn-primary" id="btn-start" disabled onclick="goToScreen2()">
+      <button class="btn btn-primary" id="btn-start" disabled onclick="goToScreen1b()">
         <span data-es="INICIAR" data-en="START">INICIAR</span>
       </button>
     </div>
@@ -658,6 +661,86 @@
     </div>
   </div>
 
+
+  <!-- ========== SCREEN 1.5: RECEIPT DETAILS (OPTIONAL) ========== -->
+  <div class="screen" id="screen-receipt-details">
+    <div class="header">
+      <div class="header-logo">FCD</div>
+      <div class="header-subtitle" data-es="Detalles del Recibo" data-en="Receipt Details">Detalles del Recibo</div>
+      <button class="lang-toggle-btn" onclick="toggleLang()">EN</button>
+    </div>
+    <div class="step-bar">
+      <div class="step-dot done"></div>
+      <div class="step-dot active"></div>
+      <div class="step-dot"></div>
+      <div class="step-dot"></div>
+      <div class="step-dot"></div>
+    </div>
+
+    <div class="content">
+      <div class="screen-title" data-es="Detalles del Recibo" data-en="Receipt Details">Detalles del Recibo</div>
+      <p class="note" data-es="Todos los campos son opcionales. Puedes omitir esta pantalla." data-en="All fields are optional. You can skip this screen.">Todos los campos son opcionales. Puedes omitir esta pantalla.</p>
+
+      <!-- Amount -->
+      <div>
+        <label class="field-label" for="input-amount" data-es="&#191;Cu&#225;nto gastaste? / How much did you spend?" data-en="How much did you spend? / &#191;Cu&#225;nto gastaste?">&#191;Cu&#225;nto gastaste? / How much did you spend?</label>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <span style="font-size:24px;font-weight:800;color:var(--navy);">$</span>
+          <input
+            class="text-input"
+            type="number"
+            id="input-amount"
+            step="0.01"
+            min="0"
+            placeholder="0.00"
+            autocomplete="off"
+            style="flex:1;"
+          >
+        </div>
+      </div>
+
+      <!-- Store -->
+      <div>
+        <label class="field-label" for="input-store" data-es="&#191;D&#243;nde compraste? / Where did you buy?" data-en="Where did you buy? / &#191;D&#243;nde compraste?">&#191;D&#243;nde compraste? / Where did you buy?</label>
+        <input
+          class="text-input"
+          type="text"
+          id="input-store"
+          data-ph-es="Home Depot, Lowe's, etc."
+          data-ph-en="Home Depot, Lowe's, etc."
+          placeholder="Home Depot, Lowe's, etc."
+          autocomplete="off"
+        >
+      </div>
+
+      <!-- Items bought -->
+      <div>
+        <label class="field-label" for="input-items" data-es="&#191;Qu&#233; compraste? / What did you buy?" data-en="What did you buy? / &#191;Qu&#233; compraste?">&#191;Qu&#233; compraste? / What did you buy?</label>
+        <input
+          class="text-input"
+          type="text"
+          id="input-items"
+          data-ph-es="Tubo, cemento, tornillos..."
+          data-ph-en="Pipe, cement, screws..."
+          placeholder="Tubo, cemento, tornillos..."
+          autocomplete="off"
+        >
+      </div>
+
+      <div style="display:flex;gap:12px;margin-top:8px;">
+        <button class="btn btn-outline" style="flex:1;" onclick="skipReceiptDetails()">
+          <span data-es="OMITIR / SKIP" data-en="SKIP / OMITIR">OMITIR / SKIP</span>
+        </button>
+        <button class="btn btn-primary" style="flex:1;" onclick="saveReceiptDetails()">
+          <span data-es="SIGUIENTE &#8594;" data-en="NEXT &#8594;">SIGUIENTE &#8594;</span>
+        </button>
+      </div>
+    </div>
+    <div class="call-bar">
+      <span data-es="Ayuda? Llama a Tien:" data-en="Help? Call Tien:">Ayuda? Llama a Tien:</span> <a href="tel:3106342157">310-634-2157</a>
+    </div>
+  </div>
+
   <!-- ========== SCREEN 2: PHOTO 1 (STORE) ========== -->
   <div class="screen" id="screen-photo1">
     <div class="header">
@@ -666,6 +749,7 @@
       <button class="lang-toggle-btn" onclick="toggleLang()">EN</button>
     </div>
     <div class="step-bar">
+      <div class="step-dot done"></div>
       <div class="step-dot done"></div>
       <div class="step-dot active"></div>
       <div class="step-dot"></div>
@@ -707,6 +791,7 @@
       <button class="lang-toggle-btn" onclick="toggleLang()">EN</button>
     </div>
     <div class="step-bar">
+      <div class="step-dot done"></div>
       <div class="step-dot done"></div>
       <div class="step-dot done"></div>
       <div class="step-dot active"></div>
@@ -751,6 +836,7 @@
       <div class="step-dot done"></div>
       <div class="step-dot done"></div>
       <div class="step-dot done"></div>
+      <div class="step-dot done"></div>
       <div class="step-dot active"></div>
     </div>
 
@@ -770,6 +856,21 @@
       <div class="summary-row">
         <span class="summary-label" data-es="Fecha" data-en="Date">Fecha</span>
         <span class="summary-value" id="confirm-date">-</span>
+      </div>
+
+      <div id="confirm-amount-row" class="summary-row" style="display:none;">
+        <span class="summary-label" data-es="Monto / Amount" data-en="Amount / Monto">Monto / Amount</span>
+        <span class="summary-value" id="confirm-amount">-</span>
+      </div>
+
+      <div id="confirm-store-row" class="summary-row" style="display:none;">
+        <span class="summary-label" data-es="Tienda / Store" data-en="Store / Tienda">Tienda / Store</span>
+        <span class="summary-value" id="confirm-store">-</span>
+      </div>
+
+      <div id="confirm-items-row" class="summary-row" style="display:none;">
+        <span class="summary-label" data-es="Articulos / Items" data-en="Items / Articulos">Articulos / Items</span>
+        <span class="summary-value" id="confirm-items">-</span>
       </div>
 
       <div>
@@ -876,6 +977,9 @@ var WORKERS = [
 var STATE = {
   workerName: '',
   jobSite: '',
+  amount: '',
+  storeName: '',
+  itemsBought: '',
   photo1File: null,
   photo1DataUrl: null,
   photo2File: null,
@@ -1126,10 +1230,38 @@ function overrideSite() {
   checkStartReady();
 }
 
-function goToScreen2() {
+function goToScreen1b() {
   if (!STATE.workerName || !STATE.jobSite) return;
   STATE.currentDate = formatDateShort(new Date());
+  // Clear detail fields on revisit
+  document.getElementById('input-amount').value = '';
+  document.getElementById('input-store').value = '';
+  document.getElementById('input-items').value = '';
+  STATE.amount = '';
+  STATE.storeName = '';
+  STATE.itemsBought = '';
+  showScreen('screen-receipt-details');
+}
+
+function goToScreen2() {
   showScreen('screen-photo1');
+}
+
+function skipReceiptDetails() {
+  STATE.amount = '';
+  STATE.storeName = '';
+  STATE.itemsBought = '';
+  goToScreen2();
+}
+
+function saveReceiptDetails() {
+  var amountVal = document.getElementById('input-amount').value.trim();
+  var storeVal = document.getElementById('input-store').value.trim();
+  var itemsVal = document.getElementById('input-items').value.trim();
+  STATE.amount = amountVal;
+  STATE.storeName = storeVal;
+  STATE.itemsBought = itemsVal;
+  goToScreen2();
 }
 
 function goToScreen3() {
@@ -1150,6 +1282,30 @@ function goToScreen4() {
   document.getElementById('confirm-date').textContent = STATE.currentDate;
   document.getElementById('thumb1').src = STATE.photo1DataUrl;
   document.getElementById('thumb2').src = STATE.photo2DataUrl;
+
+  // Show optional detail rows if filled
+  var amountRow = document.getElementById('confirm-amount-row');
+  var storeRow = document.getElementById('confirm-store-row');
+  var itemsRow = document.getElementById('confirm-items-row');
+  if (STATE.amount) {
+    document.getElementById('confirm-amount').textContent = '$' + STATE.amount;
+    amountRow.style.display = 'flex';
+  } else {
+    amountRow.style.display = 'none';
+  }
+  if (STATE.storeName) {
+    document.getElementById('confirm-store').textContent = STATE.storeName;
+    storeRow.style.display = 'flex';
+  } else {
+    storeRow.style.display = 'none';
+  }
+  if (STATE.itemsBought) {
+    document.getElementById('confirm-items').textContent = STATE.itemsBought;
+    itemsRow.style.display = 'flex';
+  } else {
+    itemsRow.style.display = 'none';
+  }
+
   showScreen('screen-confirm');
 }
 
@@ -1191,6 +1347,9 @@ async function submitToNetlify(workerName, jobSite, date, storeFile, receiptFile
   formData.append('worker_name', workerName);
   formData.append('job_site', jobSite);
   formData.append('submission_date', date);
+  formData.append('amount', STATE.amount || '');
+  formData.append('store_name', STATE.storeName || '');
+  formData.append('items_bought', STATE.itemsBought || '');
   if (storeFile) formData.append('store_photo', storeFile, 'store.jpg');
   if (receiptFile) formData.append('receipt_photo', receiptFile, 'receipt.jpg');
 
@@ -1244,6 +1403,9 @@ function handleSubmit() {
 function resetApp() {
   STATE.workerName = '';
   STATE.jobSite = '';
+  STATE.amount = '';
+  STATE.storeName = '';
+  STATE.itemsBought = '';
   STATE.photo1File = null;
   STATE.photo1DataUrl = null;
   STATE.photo2File = null;

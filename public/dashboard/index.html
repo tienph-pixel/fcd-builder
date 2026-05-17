@@ -1,0 +1,853 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#1C2B4A">
+<title>FCD Dashboard</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --orange: #E87722;
+    --navy: #1C2B4A;
+    --white: #fff;
+    --gray: #f5f5f5;
+    --gray2: #e0e0e0;
+    --text: #222;
+    --muted: #666;
+    --green: #2e7d32;
+    --green-bg: #e8f5e9;
+    --red: #c62828;
+    --red-bg: #ffebee;
+    --yellow: #f57f17;
+    --yellow-bg: #fff9c4;
+    --blue: #1565c0;
+    --blue-bg: #e3f2fd;
+    --shadow: 0 2px 8px rgba(0,0,0,0.10);
+    --radius: 10px;
+  }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: var(--gray);
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  /* TOP BAR */
+  #topbar {
+    position: sticky; top: 0; z-index: 100;
+    background: var(--navy);
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 16px; height: 52px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.25);
+  }
+  #topbar .brand { display: flex; align-items: center; gap: 10px; }
+  #topbar .logo {
+    background: var(--orange); color: #fff;
+    font-weight: 800; font-size: 15px; letter-spacing: 1px;
+    border-radius: 6px; padding: 4px 9px;
+  }
+  #topbar .title { color: #fff; font-size: 16px; font-weight: 600; letter-spacing: 0.3px; }
+  #topbar .actions { display: flex; align-items: center; gap: 10px; }
+  #topbar button {
+    background: rgba(255,255,255,0.12); border: none; color: #fff;
+    border-radius: 7px; padding: 6px 13px; font-size: 14px; cursor: pointer;
+    transition: background 0.15s;
+  }
+  #topbar button:hover { background: rgba(255,255,255,0.22); }
+  #topbar .settings-btn { font-size: 18px; padding: 5px 10px; }
+
+  /* MAIN CONTENT */
+  #main { max-width: 700px; margin: 0 auto; padding: 16px 12px 80px; }
+
+  /* SETUP SCREEN */
+  #setup-screen {
+    display: none;
+    position: fixed; inset: 0; z-index: 200;
+    background: rgba(28,43,74,0.88);
+    align-items: center; justify-content: center;
+  }
+  #setup-screen.active { display: flex; }
+  .setup-card {
+    background: #fff; border-radius: 16px;
+    padding: 32px 28px; width: 90%; max-width: 420px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.25);
+  }
+  .setup-card h2 {
+    color: var(--navy); font-size: 20px; font-weight: 700; margin-bottom: 6px;
+  }
+  .setup-card .divider {
+    border: none; border-top: 2px solid var(--gray2); margin: 10px 0 18px;
+  }
+  .setup-card p { color: var(--muted); font-size: 14px; margin-bottom: 18px; }
+  .setup-card label { font-size: 13px; font-weight: 600; color: var(--navy); display: block; margin-bottom: 5px; }
+  .setup-card input {
+    width: 100%; border: 1.5px solid var(--gray2); border-radius: 8px;
+    padding: 10px 12px; font-size: 14px; margin-bottom: 14px; outline: none;
+    transition: border 0.15s;
+  }
+  .setup-card input:focus { border-color: var(--orange); }
+  .setup-card .hint { font-size: 11.5px; color: var(--muted); margin-top: -10px; margin-bottom: 12px; }
+  .setup-card .hint a { color: var(--orange); }
+  .btn-primary {
+    background: var(--orange); color: #fff; border: none;
+    border-radius: 8px; padding: 11px 22px; font-size: 15px; font-weight: 700;
+    cursor: pointer; width: 100%; margin-top: 4px;
+    transition: background 0.15s;
+  }
+  .btn-primary:hover { background: #cf6710; }
+  .setup-error { color: var(--red); font-size: 13px; margin-top: 8px; display: none; }
+
+  /* STATS GRID */
+  .stats-grid {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 10px; margin-bottom: 14px;
+  }
+  .stat-card {
+    background: #fff; border-radius: var(--radius);
+    padding: 14px 16px; box-shadow: var(--shadow);
+  }
+  .stat-card .label { font-size: 12px; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
+  .stat-card .value { font-size: 22px; font-weight: 800; color: var(--navy); }
+  .stat-card .value .badge-red {
+    display: inline-block; background: var(--red); color: #fff;
+    border-radius: 99px; font-size: 11px; font-weight: 700;
+    padding: 1px 7px; vertical-align: middle; margin-left: 4px;
+  }
+  .stat-card .sub { font-size: 12px; color: var(--muted); margin-top: 3px; }
+  .progress-bar-wrap { background: var(--gray2); border-radius: 99px; height: 6px; margin-top: 8px; overflow: hidden; }
+  .progress-bar-fill { height: 100%; border-radius: 99px; background: var(--orange); transition: width 0.5s; }
+  .sync-needed { font-size: 12px; color: var(--muted); margin-top: 6px; }
+  .btn-small {
+    background: var(--orange); color: #fff; border: none;
+    border-radius: 6px; padding: 4px 10px; font-size: 12px; font-weight: 600;
+    cursor: pointer; margin-top: 5px;
+  }
+
+  /* QB SYNC SECTION */
+  .qb-card {
+    background: #fff; border-radius: var(--radius);
+    padding: 16px; box-shadow: var(--shadow); margin-bottom: 14px;
+  }
+  .qb-card h3 { font-size: 15px; font-weight: 700; color: var(--navy); margin-bottom: 4px; }
+  .qb-card .last-sync { font-size: 12px; color: var(--muted); margin-bottom: 10px; }
+  .qb-card p { font-size: 13px; color: var(--muted); margin-bottom: 7px; }
+  .qb-card textarea {
+    width: 100%; border: 1.5px solid var(--gray2); border-radius: 8px;
+    padding: 8px 10px; font-size: 13px; font-family: monospace;
+    resize: vertical; min-height: 60px; outline: none;
+  }
+  .qb-card textarea:focus { border-color: var(--orange); }
+  .qb-card .btn-save {
+    background: var(--navy); color: #fff; border: none;
+    border-radius: 7px; padding: 7px 16px; font-size: 13px; font-weight: 600;
+    cursor: pointer; margin-top: 8px;
+  }
+  .qb-save-msg { font-size: 12px; color: var(--green); margin-top: 5px; display: none; }
+  .qb-err-msg { font-size: 12px; color: var(--red); margin-top: 5px; display: none; }
+
+  /* FILTER TABS */
+  .filter-row {
+    display: flex; gap: 8px; margin-bottom: 14px; flex-wrap: wrap;
+  }
+  .tab-pill {
+    border: 1.5px solid var(--gray2); background: #fff; color: var(--muted);
+    border-radius: 99px; padding: 6px 16px; font-size: 13px; font-weight: 600;
+    cursor: pointer; transition: all 0.15s;
+  }
+  .tab-pill.active {
+    background: var(--navy); color: #fff; border-color: var(--navy);
+  }
+  .tab-pill:hover:not(.active) { border-color: var(--orange); color: var(--orange); }
+
+  /* TIMELINE FEED */
+  .feed { display: flex; flex-direction: column; gap: 10px; }
+
+  .receipt-card {
+    background: #fff; border-radius: var(--radius);
+    box-shadow: var(--shadow); overflow: hidden;
+    transition: opacity 0.2s;
+  }
+  .receipt-card.logged { opacity: 0.7; }
+  .receipt-card.logged .card-body { background: var(--green-bg); }
+
+  .card-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 12px 14px 0;
+  }
+  .type-badge {
+    font-size: 11px; font-weight: 700; border-radius: 5px; padding: 2px 9px;
+    letter-spacing: 0.5px; text-transform: uppercase;
+  }
+  .type-badge.worker { background: var(--blue-bg); color: var(--blue); }
+  .type-badge.cash { background: #fff3e0; color: #e65100; }
+
+  .status-badge {
+    font-size: 11px; font-weight: 700; border-radius: 5px; padding: 2px 9px;
+  }
+  .status-badge.pending { background: #fff3e0; color: var(--orange); }
+  .status-badge.logged-qb { background: var(--green-bg); color: var(--green); }
+  .status-badge.awaiting { background: var(--blue-bg); color: var(--blue); }
+  .badge-1099 {
+    font-size: 11px; font-weight: 700; border-radius: 5px; padding: 2px 9px;
+    background: var(--yellow-bg); color: var(--yellow); margin-left: 4px;
+  }
+
+  .card-body { padding: 10px 14px 12px; }
+  .card-name { font-size: 15px; font-weight: 700; color: var(--navy); }
+  .card-site { font-size: 13px; color: var(--muted); }
+  .card-meta {
+    display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; align-items: center;
+  }
+  .meta-chip {
+    background: var(--gray); border-radius: 5px; padding: 2px 8px;
+    font-size: 12px; color: var(--muted);
+  }
+  .meta-chip.amount { font-weight: 700; color: var(--navy); background: #f0f4fa; }
+
+  .card-expand { padding: 0 14px 12px; display: none; }
+  .card-expand.open { display: block; }
+  .expand-detail { font-size: 13px; color: var(--text); margin-bottom: 4px; }
+  .expand-detail span { font-weight: 600; }
+
+  .photos-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px; }
+  .photo-thumb {
+    width: 80px; height: 60px; border-radius: 6px; object-fit: cover;
+    border: 2px solid var(--gray2); cursor: pointer;
+  }
+  .photo-link {
+    display: inline-block; background: var(--gray); border-radius: 6px;
+    padding: 6px 12px; font-size: 12px; color: var(--blue); text-decoration: none;
+    border: 1px solid var(--gray2);
+  }
+  .photo-link:hover { background: var(--blue-bg); }
+
+  .card-actions {
+    display: flex; align-items: center; gap: 10px;
+    padding: 0 14px 12px; margin-top: 2px;
+  }
+  .btn-expand {
+    background: none; border: 1.5px solid var(--gray2); color: var(--muted);
+    border-radius: 6px; padding: 5px 12px; font-size: 12px; cursor: pointer;
+    transition: all 0.15s;
+  }
+  .btn-expand:hover { border-color: var(--orange); color: var(--orange); }
+  .btn-log {
+    background: var(--orange); color: #fff; border: none;
+    border-radius: 6px; padding: 5px 14px; font-size: 12px; font-weight: 700;
+    cursor: pointer; transition: background 0.15s;
+  }
+  .btn-log:hover { background: #cf6710; }
+  .btn-log:disabled { background: var(--green); cursor: default; }
+
+  /* LOADING / ERROR / EMPTY STATES */
+  .state-box {
+    background: #fff; border-radius: var(--radius); box-shadow: var(--shadow);
+    padding: 32px 20px; text-align: center; color: var(--muted);
+  }
+  .state-box .icon { font-size: 36px; margin-bottom: 12px; }
+  .state-box p { font-size: 14px; margin-bottom: 14px; }
+  .state-box .btn-retry {
+    background: var(--orange); color: #fff; border: none;
+    border-radius: 7px; padding: 8px 20px; font-size: 14px; font-weight: 700;
+    cursor: pointer;
+  }
+
+  .spinner {
+    display: inline-block; width: 28px; height: 28px;
+    border: 3px solid var(--gray2); border-top-color: var(--orange);
+    border-radius: 50%; animation: spin 0.7s linear infinite; margin-bottom: 10px;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* LIGHTBOX */
+  #lightbox {
+    display: none; position: fixed; inset: 0; z-index: 500;
+    background: rgba(0,0,0,0.85); align-items: center; justify-content: center;
+  }
+  #lightbox.active { display: flex; }
+  #lightbox img { max-width: 92vw; max-height: 88vh; border-radius: 10px; }
+  #lightbox-close {
+    position: fixed; top: 18px; right: 22px; font-size: 30px; color: #fff; cursor: pointer;
+    background: none; border: none; line-height: 1;
+  }
+
+  @media (max-width: 480px) {
+    .stats-grid { grid-template-columns: 1fr 1fr; }
+    #main { padding: 10px 8px 80px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div id="topbar">
+  <div class="brand">
+    <div class="logo">FCD</div>
+    <span class="title">Dashboard</span>
+  </div>
+  <div class="actions">
+    <button id="btn-refresh" onclick="handleRefresh()">&#8635; Refresh</button>
+    <button class="settings-btn" onclick="showSetup(true)" title="Settings">&#9881;</button>
+  </div>
+</div>
+
+<!-- SETUP SCREEN -->
+<div id="setup-screen">
+  <div class="setup-card">
+    <h2>FCD Dashboard Setup</h2>
+    <hr class="divider">
+    <p>To load your receipts, connect to Netlify.</p>
+
+    <label for="inp-token">Netlify Personal Access Token</label>
+    <input type="password" id="inp-token" placeholder="nfp_xxxxxxxxxxxxxxxx" autocomplete="off">
+    <p class="hint">Get it at: <a href="https://app.netlify.com" target="_blank">app.netlify.com</a> → User Settings → Personal Access Tokens</p>
+
+    <label for="inp-site">Netlify Site ID</label>
+    <input type="text" id="inp-site" placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" autocomplete="off">
+    <p class="hint">Get it at: <a href="https://app.netlify.com" target="_blank">app.netlify.com</a> → fcdteam.com → Site Settings → General → Site ID</p>
+
+    <button class="btn-primary" onclick="saveSetup()">Connect &#8594;</button>
+    <div class="setup-error" id="setup-error"></div>
+  </div>
+</div>
+
+<!-- LIGHTBOX -->
+<div id="lightbox" onclick="closeLightbox()">
+  <button id="lightbox-close" onclick="closeLightbox()">&times;</button>
+  <img id="lightbox-img" src="" alt="Receipt photo">
+</div>
+
+<!-- MAIN -->
+<div id="main">
+
+  <!-- STATS -->
+  <div class="stats-grid" id="stats-grid">
+    <div class="stat-card">
+      <div class="label">Pending QB</div>
+      <div class="value" id="stat-pending">—</div>
+      <div class="sub">receipts to log</div>
+    </div>
+    <div class="stat-card">
+      <div class="label">Today's Spend</div>
+      <div class="value" id="stat-today">—</div>
+      <div class="sub">all submissions today</div>
+    </div>
+    <div class="stat-card" id="stat-daisy-card">
+      <div class="label">Daisy</div>
+      <div class="value" id="stat-daisy">—</div>
+      <div class="sub" id="stat-daisy-sub">/ $148,000 budget</div>
+      <div class="progress-bar-wrap"><div class="progress-bar-fill" id="bar-daisy" style="width:0%"></div></div>
+    </div>
+    <div class="stat-card" id="stat-mak-card">
+      <div class="label">Mak</div>
+      <div class="value" id="stat-mak">—</div>
+      <div class="sub" id="stat-mak-sub">/ $14,000 budget</div>
+      <div class="progress-bar-wrap"><div class="progress-bar-fill" id="bar-mak" style="width:0%"></div></div>
+    </div>
+  </div>
+
+  <!-- QB SYNC -->
+  <div class="qb-card">
+    <h3>QuickBooks Totals</h3>
+    <div class="last-sync" id="qb-last-sync">Last synced: Never</div>
+    <p>Ask Claude to sync QB and paste the result here:</p>
+    <textarea id="qb-textarea" placeholder='{"daisy_spent": 12500, "mak_spent": 3200, "synced_at": "2026-05-16T16:00:00"}'></textarea>
+    <button class="btn-save" onclick="saveQBData()">Save QB Data</button>
+    <div class="qb-save-msg" id="qb-save-msg">&#10003; Saved!</div>
+    <div class="qb-err-msg" id="qb-err-msg">Invalid JSON — check format and try again.</div>
+  </div>
+
+  <!-- FILTER TABS -->
+  <div class="filter-row">
+    <button class="tab-pill active" data-tab="all" onclick="setTab('all', this)">All</button>
+    <button class="tab-pill" data-tab="worker" onclick="setTab('worker', this)">Worker</button>
+    <button class="tab-pill" data-tab="cash" onclick="setTab('cash', this)">Cash</button>
+    <button class="tab-pill" data-tab="pending" onclick="setTab('pending', this)">&#9888; Pending QB</button>
+  </div>
+
+  <!-- FEED -->
+  <div class="feed" id="feed">
+    <div class="state-box" id="loading-state" style="display:none">
+      <div class="spinner"></div>
+      <p>Loading receipts from Netlify…</p>
+    </div>
+    <div class="state-box" id="error-state" style="display:none">
+      <div class="icon">&#128683;</div>
+      <p id="error-msg">Couldn't load — check token and try again.</p>
+      <button class="btn-retry" onclick="handleRefresh()">&#8635; Retry</button>
+    </div>
+    <div class="state-box" id="empty-state" style="display:none">
+      <div class="icon">&#128203;</div>
+      <p>No receipts yet. Workers submit via <strong>fcdteam.com/worker</strong>, you issue cash receipts at <strong>fcdteam.com/receipt</strong>.</p>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// ─── STATE ─────────────────────────────────────────────────────────────────
+const BUDGETS = { daisy: 148000, mak: 14000 };
+let currentTab = 'all';
+let allSubmissions = []; // [{type:'worker'|'cash', id, data, created_at}]
+
+// ─── INIT ──────────────────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+  registerPWA();
+  loadQBDisplay();
+  const token = ls('fcd_netlify_token');
+  const siteId = ls('fcd_netlify_site_id');
+  if (!token || !siteId) {
+    showSetup(false);
+  } else {
+    loadFromCacheOrFetch();
+  }
+});
+
+// ─── PWA ───────────────────────────────────────────────────────────────────
+function registerPWA() {
+  const manifest = {
+    name: 'FCD Dashboard',
+    short_name: 'FCD',
+    start_url: './',
+    display: 'standalone',
+    background_color: '#1C2B4A',
+    theme_color: '#1C2B4A',
+    icons: [{
+      src: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="12" fill="%23E87722"/><text x="50%" y="58%" dominant-baseline="middle" text-anchor="middle" font-family="Arial Black,sans-serif" font-weight="900" font-size="28" fill="white">FCD</text></svg>',
+      sizes: '192x192',
+      type: 'image/svg+xml'
+    }]
+  };
+  const blob = new Blob([JSON.stringify(manifest)], {type: 'application/manifest+json'});
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('link');
+  link.rel = 'manifest'; link.href = url;
+  document.head.appendChild(link);
+
+  if ('serviceWorker' in navigator) {
+    const swCode = `
+self.addEventListener('install', e => self.skipWaiting());
+self.addEventListener('activate', e => clients.claim());
+self.addEventListener('fetch', e => {
+  if (e.request.method !== 'GET') return;
+  e.respondWith(
+    caches.open('fcd-v1').then(async cache => {
+      const cached = await cache.match(e.request);
+      if (cached) return cached;
+      const resp = await fetch(e.request).catch(() => null);
+      if (resp && resp.ok) cache.put(e.request, resp.clone());
+      return resp;
+    })
+  );
+});`;
+    const swBlob = new Blob([swCode], {type: 'application/javascript'});
+    const swUrl = URL.createObjectURL(swBlob);
+    navigator.serviceWorker.register(swUrl).catch(() => {});
+  }
+}
+
+// ─── LOCALSTORAGE HELPERS ──────────────────────────────────────────────────
+function ls(key, val) {
+  if (val === undefined) return localStorage.getItem(key);
+  localStorage.setItem(key, val);
+}
+function lsj(key, val) {
+  if (val === undefined) {
+    try { return JSON.parse(localStorage.getItem(key)); } catch { return null; }
+  }
+  localStorage.setItem(key, JSON.stringify(val));
+}
+
+// ─── SETUP ─────────────────────────────────────────────────────────────────
+function showSetup(closeable) {
+  const screen = document.getElementById('setup-screen');
+  screen.classList.add('active');
+  // pre-fill
+  document.getElementById('inp-token').value = ls('fcd_netlify_token') || '';
+  document.getElementById('inp-site').value = ls('fcd_netlify_site_id') || '';
+  if (closeable) {
+    screen.onclick = e => { if (e.target === screen) hideSetup(); };
+  } else {
+    screen.onclick = null;
+  }
+}
+function hideSetup() {
+  document.getElementById('setup-screen').classList.remove('active');
+}
+function saveSetup() {
+  const token = document.getElementById('inp-token').value.trim();
+  const siteId = document.getElementById('inp-site').value.trim();
+  const errEl = document.getElementById('setup-error');
+  errEl.style.display = 'none';
+  if (!token || !siteId) {
+    errEl.textContent = 'Both fields are required.';
+    errEl.style.display = 'block';
+    return;
+  }
+  ls('fcd_netlify_token', token);
+  ls('fcd_netlify_site_id', siteId);
+  hideSetup();
+  handleRefresh();
+}
+
+// ─── FETCH ─────────────────────────────────────────────────────────────────
+async function fetchNetlifyForms(token, siteId) {
+  const formsRes = await fetch(`https://api.netlify.com/api/v1/sites/${siteId}/forms`, {
+    headers: { 'Authorization': `Bearer ${token}` }
+  });
+  if (!formsRes.ok) throw new Error(`Forms API error: ${formsRes.status}`);
+  const forms = await formsRes.json();
+
+  const workerForm = forms.find(f => f.name === 'worker-receipt');
+  const cashForm = forms.find(f => f.name === 'cash-receipt');
+  const results = { worker: [], cash: [] };
+
+  if (workerForm) {
+    const subRes = await fetch(`https://api.netlify.com/api/v1/forms/${workerForm.id}/submissions?per_page=100`, {
+      headers: { 'Authorization': `Bearer ${token}` }
+    });
+    if (subRes.ok) results.worker = await subRes.json();
+  }
+  if (cashForm) {
+    const subRes = await fetch(`https://api.netlify.com/api/v1/forms/${cashForm.id}/submissions?per_page=100`, {
+      headers: { 'Authorization': `Bearer ${token}` }
+    });
+    if (subRes.ok) results.cash = await subRes.json();
+  }
+  return results;
+}
+
+async function handleRefresh() {
+  const token = ls('fcd_netlify_token');
+  const siteId = ls('fcd_netlify_site_id');
+  if (!token || !siteId) { showSetup(false); return; }
+
+  showLoading();
+  try {
+    const data = await fetchNetlifyForms(token, siteId);
+    lsj('fcd_submissions_cache', { ...data, fetched_at: Date.now() });
+    processAndRender(data);
+  } catch (err) {
+    showError(err.message || 'Couldn\'t load — check token and try again.');
+  }
+}
+
+function loadFromCacheOrFetch() {
+  const cache = lsj('fcd_submissions_cache');
+  if (cache && cache.fetched_at && (Date.now() - cache.fetched_at < 5 * 60 * 1000)) {
+    processAndRender(cache);
+  } else {
+    handleRefresh();
+  }
+}
+
+// ─── PROCESS & RENDER ──────────────────────────────────────────────────────
+function processAndRender(data) {
+  const loggedIds = lsj('fcd_logged_ids') || [];
+  const loggedSet = new Set(loggedIds);
+
+  allSubmissions = [];
+
+  (data.worker || []).forEach(sub => {
+    allSubmissions.push({
+      type: 'worker',
+      id: sub.id,
+      created_at: sub.created_at,
+      data: sub.data || {},
+      logged: loggedSet.has(sub.id)
+    });
+  });
+
+  (data.cash || []).forEach(sub => {
+    const id = sub.id || (sub.data && sub.data.receipt_num) || sub.created_at;
+    allSubmissions.push({
+      type: 'cash',
+      id: sub.id,
+      created_at: sub.created_at,
+      data: sub.data || {},
+      logged: loggedSet.has(sub.id)
+    });
+  });
+
+  // Sort newest first
+  allSubmissions.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+
+  updateStats();
+  renderFeed();
+}
+
+// ─── STATS ─────────────────────────────────────────────────────────────────
+function updateStats() {
+  const loggedIds = new Set(lsj('fcd_logged_ids') || []);
+  const today = new Date().toDateString();
+
+  let pending = 0;
+  let todaySpend = 0;
+
+  allSubmissions.forEach(s => {
+    if (!s.logged) pending++;
+    const d = new Date(s.created_at);
+    if (d.toDateString() === today) {
+      const amt = parseFloat((s.data.amount || '').toString().replace(/[^0-9.]/g, '')) || 0;
+      todaySpend += amt;
+    }
+  });
+
+  const pendingEl = document.getElementById('stat-pending');
+  pendingEl.innerHTML = pending > 0
+    ? `${pending} <span class="badge-red">${pending}</span>`
+    : `${pending}`;
+
+  document.getElementById('stat-today').textContent = fmtMoney(todaySpend);
+
+  // QB sync stats
+  const qb = lsj('fcd_qb_sync');
+  if (qb) {
+    const daisy = qb.daisy_spent || 0;
+    const mak = qb.mak_spent || 0;
+    document.getElementById('stat-daisy').textContent = fmtMoney(daisy);
+    document.getElementById('stat-mak').textContent = fmtMoney(mak);
+    document.getElementById('bar-daisy').style.width = Math.min(100, (daisy / BUDGETS.daisy * 100)).toFixed(1) + '%';
+    document.getElementById('bar-mak').style.width = Math.min(100, (mak / BUDGETS.mak * 100)).toFixed(1) + '%';
+  } else {
+    ['stat-daisy', 'stat-mak'].forEach(id => {
+      document.getElementById(id).innerHTML = '<span style="font-size:13px;color:var(--muted)">Sync needed</span>';
+    });
+  }
+}
+
+function loadQBDisplay() {
+  const qb = lsj('fcd_qb_sync');
+  if (qb && qb.synced_at) {
+    document.getElementById('qb-last-sync').textContent = 'Last synced: ' + fmtDate(qb.synced_at);
+  }
+}
+
+function saveQBData() {
+  const raw = document.getElementById('qb-textarea').value.trim();
+  const saveMsg = document.getElementById('qb-save-msg');
+  const errMsg = document.getElementById('qb-err-msg');
+  saveMsg.style.display = 'none';
+  errMsg.style.display = 'none';
+  try {
+    const parsed = JSON.parse(raw);
+    if (typeof parsed.daisy_spent === 'undefined' || typeof parsed.mak_spent === 'undefined') {
+      throw new Error('Missing fields');
+    }
+    lsj('fcd_qb_sync', parsed);
+    document.getElementById('qb-last-sync').textContent = 'Last synced: ' + fmtDate(parsed.synced_at || new Date().toISOString());
+    saveMsg.style.display = 'block';
+    updateStats();
+    setTimeout(() => { saveMsg.style.display = 'none'; }, 3000);
+  } catch {
+    errMsg.style.display = 'block';
+  }
+}
+
+// ─── FILTER / RENDER ───────────────────────────────────────────────────────
+function setTab(tab, el) {
+  currentTab = tab;
+  document.querySelectorAll('.tab-pill').forEach(p => p.classList.remove('active'));
+  el.classList.add('active');
+  renderFeed();
+}
+
+function renderFeed() {
+  const feed = document.getElementById('feed');
+  // Remove old cards
+  feed.querySelectorAll('.receipt-card').forEach(c => c.remove());
+  hideStates();
+
+  let filtered = allSubmissions.filter(s => {
+    if (currentTab === 'worker') return s.type === 'worker';
+    if (currentTab === 'cash') return s.type === 'cash';
+    if (currentTab === 'pending') return !s.logged;
+    return true;
+  });
+
+  if (filtered.length === 0) {
+    if (allSubmissions.length === 0) {
+      document.getElementById('empty-state').style.display = 'block';
+    } else {
+      const box = document.createElement('div');
+      box.className = 'state-box';
+      box.innerHTML = '<div class="icon">&#128269;</div><p>No receipts match this filter.</p>';
+      feed.appendChild(box);
+    }
+    return;
+  }
+
+  filtered.forEach(s => {
+    feed.appendChild(buildCard(s));
+  });
+}
+
+function buildCard(s) {
+  const loggedIds = new Set(lsj('fcd_logged_ids') || []);
+  const isLogged = loggedIds.has(s.id);
+  const d = s.data;
+
+  const card = document.createElement('div');
+  card.className = 'receipt-card' + (isLogged ? ' logged' : '');
+  card.id = 'card-' + s.id;
+
+  let headerBadge = s.type === 'worker'
+    ? '<span class="type-badge worker">Worker Receipt</span>'
+    : '<span class="type-badge cash">Cash Receipt</span>';
+
+  let statusBadge = isLogged
+    ? '<span class="status-badge logged-qb">&#10003; Logged QB</span>'
+    : '<span class="status-badge pending">Pending QB</span>';
+
+  let badge1099 = (s.type === 'cash' && d.field_1099 === 'Yes')
+    ? '<span class="badge-1099">1099</span>' : '';
+
+  let name = '', site = '', amount = '', meta = [], details = '', photosHtml = '';
+
+  if (s.type === 'worker') {
+    name = d.worker_name || 'Unknown Worker';
+    site = d.job_site || '—';
+    amount = d.amount || '';
+    if (d.store_name) meta.push(d.store_name);
+    if (d.items_bought) meta.push(d.items_bought);
+
+    let detailLines = [];
+    if (d.store_name) detailLines.push(`<div class="expand-detail"><span>Store:</span> ${esc(d.store_name)}</div>`);
+    if (d.items_bought) detailLines.push(`<div class="expand-detail"><span>Items:</span> ${esc(d.items_bought)}</div>`);
+    if (d.submission_date) detailLines.push(`<div class="expand-detail"><span>Submission Date:</span> ${esc(d.submission_date)}</div>`);
+    details = detailLines.join('');
+
+    let photos = [];
+    if (d.store_photo) photos.push(buildPhoto(d.store_photo, 'Store'));
+    if (d.receipt_photo) photos.push(buildPhoto(d.receipt_photo, 'Receipt'));
+    if (photos.length) photosHtml = `<div class="photos-row">${photos.join('')}</div>`;
+
+  } else {
+    name = d.payee_name || 'Unknown Payee';
+    site = d.job_site || '—';
+    amount = d.amount || '';
+    if (d.category) meta.push(d.category);
+    if (d.payment_method) meta.push(d.payment_method);
+    if (d.payee_type) meta.push(d.payee_type);
+
+    let detailLines = [];
+    if (d.receipt_num) detailLines.push(`<div class="expand-detail"><span>Receipt #:</span> ${esc(d.receipt_num)}</div>`);
+    if (d.receipt_date) detailLines.push(`<div class="expand-detail"><span>Date:</span> ${esc(d.receipt_date)}</div>`);
+    if (d.description) detailLines.push(`<div class="expand-detail"><span>Description:</span> ${esc(d.description)}</div>`);
+    if (d.category) detailLines.push(`<div class="expand-detail"><span>Category:</span> ${esc(d.category)}</div>`);
+    if (d.payment_method) detailLines.push(`<div class="expand-detail"><span>Payment:</span> ${esc(d.payment_method)}</div>`);
+    if (d.payee_type) detailLines.push(`<div class="expand-detail"><span>Payee Type:</span> ${esc(d.payee_type)}</div>`);
+    if (d.field_1099) detailLines.push(`<div class="expand-detail"><span>1099:</span> ${esc(d.field_1099)}</div>`);
+    details = detailLines.join('');
+  }
+
+  let metaChips = '';
+  if (amount) metaChips += `<span class="meta-chip amount">$${esc(amount)}</span>`;
+  meta.slice(0,2).forEach(m => { metaChips += `<span class="meta-chip">${esc(m)}</span>`; });
+  metaChips += `<span class="meta-chip">${fmtDate(s.created_at)}</span>`;
+
+  const logBtnHtml = isLogged
+    ? `<button class="btn-log" disabled>&#10003; Logged QB</button>`
+    : `<button class="btn-log" onclick="markLogged('${s.id}')">&#10003; Mark as Logged</button>`;
+
+  card.innerHTML = `
+    <div class="card-header">
+      <div>${headerBadge}</div>
+      <div>${badge1099}${statusBadge}</div>
+    </div>
+    <div class="card-body">
+      <div class="card-name">${esc(name)}</div>
+      <div class="card-site">${esc(site)}</div>
+      <div class="card-meta">${metaChips}</div>
+    </div>
+    <div class="card-actions">
+      <button class="btn-expand" onclick="toggleExpand('${s.id}', this)">&#9660; Details</button>
+      ${logBtnHtml}
+    </div>
+    <div class="card-expand" id="expand-${s.id}">
+      ${details}
+      ${photosHtml}
+    </div>
+  `;
+  return card;
+}
+
+function buildPhoto(url, label) {
+  const isImage = /\.(jpg|jpeg|png|gif|webp)(\?|$)/i.test(url);
+  if (isImage) {
+    return `<img class="photo-thumb" src="${esc(url)}" alt="${label}" onclick="openLightbox('${esc(url)}')" title="${label}" loading="lazy">`;
+  }
+  return `<a class="photo-link" href="${esc(url)}" target="_blank">&#128247; ${label}</a>`;
+}
+
+function toggleExpand(id, btn) {
+  const exp = document.getElementById('expand-' + id);
+  const open = exp.classList.toggle('open');
+  btn.textContent = open ? '▲ Details' : '▼ Details';
+}
+
+function markLogged(id) {
+  const logged = lsj('fcd_logged_ids') || [];
+  if (!logged.includes(id)) logged.push(id);
+  lsj('fcd_logged_ids', logged);
+  // Update card
+  const card = document.getElementById('card-' + id);
+  if (card) {
+    card.classList.add('logged');
+    const statusEl = card.querySelector('.status-badge');
+    if (statusEl) { statusEl.className = 'status-badge logged-qb'; statusEl.textContent = '✓ Logged QB'; }
+    const logBtn = card.querySelector('.btn-log');
+    if (logBtn) { logBtn.disabled = true; logBtn.textContent = '✓ Logged QB'; }
+    const body = card.querySelector('.card-body');
+    if (body) body.style.background = 'var(--green-bg)';
+  }
+  updateStats();
+}
+
+// ─── UI STATES ─────────────────────────────────────────────────────────────
+function showLoading() {
+  hideStates();
+  document.getElementById('feed').querySelectorAll('.receipt-card, .state-box:not(#loading-state):not(#error-state):not(#empty-state)').forEach(e => e.remove());
+  document.getElementById('loading-state').style.display = 'block';
+}
+function showError(msg) {
+  hideStates();
+  document.getElementById('error-msg').textContent = msg || 'Couldn\'t load — check token and try again.';
+  document.getElementById('error-state').style.display = 'block';
+}
+function hideStates() {
+  ['loading-state', 'error-state', 'empty-state'].forEach(id => {
+    document.getElementById(id).style.display = 'none';
+  });
+}
+
+// ─── LIGHTBOX ──────────────────────────────────────────────────────────────
+function openLightbox(url) {
+  document.getElementById('lightbox-img').src = url;
+  document.getElementById('lightbox').classList.add('active');
+}
+function closeLightbox() {
+  document.getElementById('lightbox').classList.remove('active');
+  document.getElementById('lightbox-img').src = '';
+}
+
+// ─── HELPERS ───────────────────────────────────────────────────────────────
+function fmtMoney(n) {
+  if (!n && n !== 0) return '—';
+  return '$' + Number(n).toLocaleString('en-US', {minimumFractionDigits: 0, maximumFractionDigits: 2});
+}
+function fmtDate(str) {
+  if (!str) return '';
+  try {
+    const d = new Date(str);
+    return d.toLocaleDateString('en-US', {month:'short', day:'numeric', year:'numeric', hour:'2-digit', minute:'2-digit'});
+  } catch { return str; }
+}
+function esc(s) {
+  if (!s) return '';
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+</script>
+</body>
+</html>
