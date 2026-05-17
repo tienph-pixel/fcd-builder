@@ -738,8 +738,11 @@ function buildCard(s) {
     details = detailLines.join('');
 
     let photos = [];
-    if (d.store_photo) photos.push(buildPhoto(d.store_photo, 'Store'));
-    if (d.receipt_photo) photos.push(buildPhoto(d.receipt_photo, 'Receipt'));
+    // Netlify returns file fields as {url, filename, size} objects — extract .url
+    const storeUrl = d.store_photo && (d.store_photo.url || d.store_photo);
+    const rcptUrl  = d.receipt_photo && (d.receipt_photo.url || d.receipt_photo);
+    if (storeUrl) photos.push(buildPhoto(storeUrl, 'Store'));
+    if (rcptUrl)  photos.push(buildPhoto(rcptUrl,  'Receipt'));
     if (photos.length) photosHtml = `<div class="photos-row">${photos.join('')}</div>`;
 
   } else {
