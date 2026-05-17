@@ -235,10 +235,30 @@
   .btn-log {
     background: var(--orange); color: #fff; border: none;
     border-radius: 6px; padding: 5px 14px; font-size: 12px; font-weight: 700;
-    cursor: pointer; transition: background 0.15s;
+    cursor: pointer; transition: background 0.2s, transform 0.1s;
+    min-width: 110px; position: relative; overflow: hidden;
+    display: inline-flex; align-items: center; justify-content: center; gap: 5px;
   }
-  .btn-log:hover { background: #cf6710; }
+  .btn-log:hover:not(:disabled):not(.loading):not(.success) { background: #cf6710; }
+  .btn-log:active:not(:disabled) { transform: scale(0.96); }
+  .btn-log.loading {
+    background: var(--orange); cursor: default; opacity: 0.85;
+  }
+  .btn-log.success {
+    background: var(--green); cursor: default;
+  }
   .btn-log:disabled { background: var(--green); cursor: default; }
+  .btn-log-spinner {
+    display: inline-block; width: 12px; height: 12px;
+    border: 2px solid rgba(255,255,255,0.4); border-top-color: #fff;
+    border-radius: 50%; animation: spin 0.6s linear infinite;
+  }
+  @keyframes btn-pop {
+    0%   { transform: scale(0.85); }
+    60%  { transform: scale(1.12); }
+    100% { transform: scale(1); }
+  }
+  .btn-log.success { animation: btn-pop 0.3s ease forwards; }
 
   /* LOADING / ERROR / EMPTY STATES */
   .state-box {
@@ -944,8 +964,8 @@ function buildCard(s) {
   metaChips += `<span class="meta-chip">${fmtDate(s.created_at)}</span>`;
 
   const logBtnHtml = isLogged
-    ? `<button class="btn-log" disabled>&#10003; Logged QB</button>`
-    : `<button class="btn-log" onclick="markLogged('${s.id}')">&#10003; Mark as Logged</button>`;
+    ? `<button class="btn-log success" disabled>&#10003; Logged QB</button>`
+    : `<button class="btn-log" id="logbtn-${s.id}" onclick="markLogged('${s.id}')">&#128197; Log to QB</button>`;
 
   card.innerHTML = `
     <div class="card-header">
@@ -984,21 +1004,36 @@ function toggleExpand(id, btn) {
 }
 
 function markLogged(id) {
-  const logged = lsj('fcd_logged_ids') || [];
-  if (!logged.includes(id)) logged.push(id);
-  lsj('fcd_logged_ids', logged);
-  // Update card
   const card = document.getElementById('card-' + id);
-  if (card) {
-    card.classList.add('logged');
-    const statusEl = card.querySelector('.status-badge');
-    if (statusEl) { statusEl.className = 'status-badge logged-qb'; statusEl.textContent = '✓ Logged QB'; }
-    const logBtn = card.querySelector('.btn-log');
-    if (logBtn) { logBtn.disabled = true; logBtn.textContent = '✓ Logged QB'; }
-    const body = card.querySelector('.card-body');
-    if (body) body.style.background = 'var(--green-bg)';
+  const logBtn = card ? card.querySelector('.btn-log') : null;
+
+  // Step 1: loading spinner
+  if (logBtn) {
+    logBtn.disabled = true;
+    logBtn.classList.add('loading');
+    logBtn.innerHTML = '<span class="btn-log-spinner"></span> Logging…';
   }
-  updateStats();
+
+  // Step 2: after ~1.2s → success green
+  setTimeout(() => {
+    const logged = lsj('fcd_logged_ids') || [];
+    if (!logged.includes(id)) logged.push(id);
+    lsj('fcd_logged_ids', logged);
+
+    if (card) {
+      card.classList.add('logged');
+      const statusEl = card.querySelector('.status-badge');
+      if (statusEl) { statusEl.className = 'status-badge logged-qb'; statusEl.textContent = '✓ Logged QB'; }
+      if (logBtn) {
+        logBtn.classList.remove('loading');
+        logBtn.classList.add('success');
+        logBtn.innerHTML = '&#10003; Logged QB';
+      }
+      const body = card.querySelector('.card-body');
+      if (body) body.style.background = 'var(--green-bg)';
+    }
+    updateStats();
+  }, 1200);
 }
 
 // ─── UI STATES ─────────────────────────────────────────────────────────────

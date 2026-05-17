@@ -680,6 +680,70 @@
   .sign-submit-btn:active { transform: scale(0.98); }
   .sign-submit-btn:hover { background: var(--orange-dark); }
 
+  /* ── LOGIN SCREEN ── */
+  #login-screen {
+    display: none; position: fixed; inset: 0; z-index: 900;
+    background: var(--navy); align-items: center; justify-content: center;
+  }
+  #login-screen.active { display: flex; }
+  .login-card {
+    background: #fff; border-radius: 18px;
+    padding: 36px 28px 28px; width: 90%; max-width: 380px;
+    box-shadow: 0 12px 40px rgba(0,0,0,0.35);
+    display: flex; flex-direction: column; align-items: center;
+  }
+  .login-logo { margin-bottom: 12px; }
+  .login-logo img { width: 160px; height: auto; display: block; }
+  .login-card h2 { color: var(--navy); font-size: 18px; font-weight: 700; margin-bottom: 22px; }
+  .login-card label.auth-label {
+    font-size: 13px; font-weight: 600; color: var(--navy);
+    display: block; margin-bottom: 5px; align-self: flex-start; width: 100%;
+  }
+  .login-card input.auth-input {
+    width: 100%; border: 1.5px solid var(--gray); border-radius: 8px;
+    padding: 11px 12px; font-size: 15px; margin-bottom: 14px; outline: none;
+    transition: border 0.15s; box-sizing: border-box;
+    background: #fff; color: var(--text);
+  }
+  .login-card input.auth-input:focus { border-color: var(--orange); }
+  .pw-wrap {
+    position: relative; width: 100%; margin-bottom: 14px;
+  }
+  .pw-wrap input { width: 100%; margin-bottom: 0 !important; padding-right: 44px !important; }
+  .pw-eye {
+    position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
+    background: none; border: none; cursor: pointer; padding: 4px;
+    color: var(--gray-mid); font-size: 18px; line-height: 1; user-select: none;
+  }
+  .pw-eye:hover { color: var(--navy); }
+  .login-remember {
+    display: flex; align-items: center; gap: 8px; align-self: flex-start;
+    margin-bottom: 18px; font-size: 14px; color: var(--gray-mid); cursor: pointer;
+  }
+  .login-remember input { width: auto; margin: 0; }
+  .login-error {
+    color: var(--error); font-size: 13px; margin-bottom: 10px; display: none;
+    background: #ffebee; border-radius: 7px; padding: 8px 12px;
+    width: 100%; text-align: center; font-weight: 600;
+  }
+  .login-btn {
+    background: var(--orange); color: #fff; border: none;
+    border-radius: 8px; padding: 11px 22px; font-size: 15px; font-weight: 700;
+    cursor: pointer; width: 100%; margin-top: 4px; transition: background 0.15s;
+  }
+  .login-btn:hover { background: var(--orange-dark); }
+  .login-btn:disabled { opacity: 0.7; cursor: default; }
+  @keyframes shake {
+    0%,100% { transform: translateX(0); }
+    15%      { transform: translateX(-8px); }
+    30%      { transform: translateX(8px); }
+    45%      { transform: translateX(-6px); }
+    60%      { transform: translateX(6px); }
+    75%      { transform: translateX(-3px); }
+    90%      { transform: translateX(3px); }
+  }
+  .login-card.shake { animation: shake 0.45s ease; }
+
   /* ── PRINT STYLES ── */
   @media print {
     body { background: white; }
@@ -712,6 +776,28 @@
   <input type="text" name="description">
   <input type="text" name="field_1099">
 </form>
+
+<!-- LOGIN SCREEN -->
+<div id="login-screen">
+  <div class="login-card">
+    <div class="login-logo"><img src="/fcd-logo.png" alt="FCD"></div>
+    <h2>Cash Receipt Login</h2>
+    <label class="auth-label" for="rcpt-login-id">Username</label>
+    <input class="auth-input" type="text" id="rcpt-login-id" placeholder="Username" autocomplete="username"
+      onkeydown="if(event.key==='Enter') document.getElementById('rcpt-login-pw').focus()">
+    <label class="auth-label" for="rcpt-login-pw">Password</label>
+    <div class="pw-wrap">
+      <input class="auth-input" type="password" id="rcpt-login-pw" placeholder="Password" autocomplete="current-password"
+        onkeydown="if(event.key==='Enter') rcptDoLogin()">
+      <button class="pw-eye" type="button" onclick="rcptTogglePw()" id="rcpt-pw-eye" title="Show/hide password">&#128065;</button>
+    </div>
+    <label class="login-remember">
+      <input type="checkbox" id="rcpt-login-remember"> Remember me (30 days)
+    </label>
+    <div class="login-error" id="rcpt-login-error"></div>
+    <button class="login-btn" id="rcpt-login-btn" onclick="rcptDoLogin()">Sign In &#8594;</button>
+  </div>
+</div>
 
 <!-- TOP BAR (hidden in sign mode) -->
 <div class="top-bar" id="main-top-bar">
@@ -1439,11 +1525,126 @@ function showSignLinkPopup(url, name, amount) {
 }
 
 // ══════════════════════════════════════════════
+//  AUTH (shared with App 0 via same localStorage key)
+// ══════════════════════════════════════════════
+const RCPT_AUTH_USER   = 'tienpham';
+const RCPT_AUTH_PASS   = 'Future$2024';
+const RCPT_AUTH_KEY    = 'fcd_auth_expiry';
+const RCPT_LOCK_KEY    = 'fcd_lock_until';
+const RCPT_ATTEMPT_KEY = 'fcd_attempts';
+const RCPT_MAX_ATTEMPTS = 5;
+const RCPT_LOCK_MINUTES = 10;
+
+function rcptCheckAuth() {
+  const expiry = localStorage.getItem(RCPT_AUTH_KEY);
+  return expiry && parseInt(expiry, 10) > Date.now();
+}
+
+function rcptShowLogin() {
+  document.getElementById('login-screen').classList.add('active');
+  document.getElementById('main-top-bar').style.display = 'none';
+  document.getElementById('main-container').style.display = 'none';
+  setTimeout(() => document.getElementById('rcpt-login-id').focus(), 250);
+}
+
+function rcptHideLogin() {
+  document.getElementById('login-screen').classList.remove('active');
+  document.getElementById('main-top-bar').style.display = '';
+  document.getElementById('main-container').style.display = '';
+}
+
+function rcptTogglePw() {
+  const inp = document.getElementById('rcpt-login-pw');
+  const btn = document.getElementById('rcpt-pw-eye');
+  if (inp.type === 'password') {
+    inp.type = 'text';
+    btn.innerHTML = '&#128584;';
+  } else {
+    inp.type = 'password';
+    btn.innerHTML = '&#128065;';
+  }
+  inp.focus();
+}
+
+function rcptShowLoginError(msg) {
+  const err = document.getElementById('rcpt-login-error');
+  err.textContent = '✕ ' + msg;
+  err.style.display = 'block';
+  const card = document.querySelector('.login-card');
+  card.classList.remove('shake');
+  setTimeout(() => {
+    card.classList.add('shake');
+    setTimeout(() => card.classList.remove('shake'), 500);
+  }, 20);
+}
+
+function rcptDoLogin() {
+  const btn = document.getElementById('rcpt-login-btn');
+  const err = document.getElementById('rcpt-login-error');
+
+  const lockUntil = parseInt(localStorage.getItem(RCPT_LOCK_KEY) || '0', 10);
+  if (lockUntil > Date.now()) {
+    const mins = Math.ceil((lockUntil - Date.now()) / 60000);
+    rcptShowLoginError('Too many attempts. Try again in ' + mins + ' minute' + (mins > 1 ? 's' : '') + '.');
+    return;
+  }
+
+  const u = document.getElementById('rcpt-login-id').value.trim();
+  const p = document.getElementById('rcpt-login-pw').value;
+
+  if (!u || !p) {
+    rcptShowLoginError('Please enter username and password.');
+    return;
+  }
+
+  btn.disabled = true;
+  btn.textContent = 'Signing in…';
+
+  setTimeout(function() {
+    if (u === RCPT_AUTH_USER && p === RCPT_AUTH_PASS) {
+      localStorage.removeItem(RCPT_ATTEMPT_KEY);
+      localStorage.removeItem(RCPT_LOCK_KEY);
+      err.style.display = 'none';
+      const remember = document.getElementById('rcpt-login-remember').checked;
+      localStorage.setItem(RCPT_AUTH_KEY, String(Date.now() + (remember ? 30 : 1) * 86400000));
+      rcptHideLogin();
+      // Initialize the form now that user is logged in
+      document.getElementById('receipt-date').value = getTodayFormatted();
+      document.getElementById('receipt-num').placeholder = 'Auto / ' + getTodayStr() + '-XX';
+      var lastJob = localStorage.getItem('fcd_last_job');
+      if (lastJob) document.getElementById('job-site').value = lastJob;
+      initSignatureCanvas();
+      initNameAutocomplete();
+    } else {
+      btn.disabled = false;
+      btn.textContent = 'Sign In →';
+      const attempts = parseInt(localStorage.getItem(RCPT_ATTEMPT_KEY) || '0', 10) + 1;
+      localStorage.setItem(RCPT_ATTEMPT_KEY, String(attempts));
+      const remaining = RCPT_MAX_ATTEMPTS - attempts;
+      if (attempts >= RCPT_MAX_ATTEMPTS) {
+        localStorage.setItem(RCPT_LOCK_KEY, String(Date.now() + RCPT_LOCK_MINUTES * 60000));
+        localStorage.removeItem(RCPT_ATTEMPT_KEY);
+        rcptShowLoginError('Too many attempts. Locked for ' + RCPT_LOCK_MINUTES + ' minutes.');
+      } else {
+        rcptShowLoginError('Incorrect username or password. ' + remaining + ' attempt' + (remaining > 1 ? 's' : '') + ' remaining.');
+      }
+      document.getElementById('rcpt-login-pw').value = '';
+    }
+  }, 400);
+}
+
+// ══════════════════════════════════════════════
 //  INIT
 // ══════════════════════════════════════════════
 document.addEventListener('DOMContentLoaded', function() {
-  // Check if we're in signature request mode
+  // Check if we're in signature request mode (no login needed for signing)
   if (checkSignMode()) return;
+
+  // Auth check — sign mode bypasses login
+  if (!rcptCheckAuth()) {
+    rcptShowLogin();
+    return;
+  }
 
   // Normal mode: set date, leave receipt# as placeholder
   document.getElementById('receipt-date').value = getTodayFormatted();
