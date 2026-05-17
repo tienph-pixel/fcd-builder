@@ -1410,8 +1410,8 @@ async function submitSignMode() {
         Your signature has been sent to FCD. Thank you!<br>
         Su firma ha sido enviada a FCD. ¡Gracias!
       </div>
-      <button onclick="downloadSignedReceipt()" style="margin-top:8px;padding:14px 0;background:#E87722;color:#fff;border:none;border-radius:12px;font-size:15px;font-weight:700;cursor:pointer;width:260px;">
-        ⬇ Download Receipt / Descargar
+      <button onclick="downloadSignedReceipt()" style="margin-top:8px;padding:14px 16px;background:#E87722;color:#fff;border:none;border-radius:12px;font-size:15px;font-weight:700;cursor:pointer;width:280px;line-height:1.4;">
+        📸 Screenshot or Print Receipt<br><span style="font-size:12px;font-weight:500;opacity:0.85;">Ver / Imprimir Recibo</span>
       </button>
     </div>`;
 }
@@ -1419,56 +1419,87 @@ async function submitSignMode() {
 function downloadSignedReceipt() {
   const d = window._signedReceiptData || {};
   const amountStr = d.amountStr || ('$' + parseFloat(d.amount||0).toFixed(2));
-  const html = `<!DOCTYPE html><html><head><meta charset="UTF-8">
-<title>Receipt ${d.receiptNum||''} – ${d.name||''}</title>
-<style>
-  body{font-family:Arial,sans-serif;max-width:480px;margin:36px auto;padding:20px;color:#222;}
-  .hdr{text-align:center;margin-bottom:18px;}
-  .logo{font-size:24px;font-weight:900;color:#E87722;letter-spacing:1px;}
-  .co{font-size:12px;color:#666;margin-top:2px;}
-  hr{border:none;border-top:2px solid #e0e0e0;margin:14px 0;}
-  .row{display:flex;justify-content:space-between;padding:5px 0;font-size:13px;}
-  .lbl{color:#888;} .val{font-weight:600;text-align:right;max-width:60%;}
-  .amt{background:#f5f5f5;border-radius:8px;padding:14px;text-align:center;margin:14px 0;}
-  .amt-n{font-size:30px;font-weight:900;color:#1C2B4A;}
-  .sig-sec{text-align:center;margin-top:18px;}
-  .sig-img{max-width:200px;border:1px solid #ddd;border-radius:6px;margin:6px auto;display:block;}
-  .sig-note{font-size:11px;color:#999;margin-top:4px;}
-  @media print{button{display:none!important;}}
-</style></head><body>
-<div class="hdr">
-  <div class="logo">FCD</div>
-  <div class="co">Future Construction &amp; Design</div>
-  <div class="co">310-634-2157 · FutureConstructionTeam@gmail.com</div>
-</div>
-<div style="text-align:center;font-size:16px;font-weight:800;letter-spacing:.5px;">CASH PAYMENT RECEIPT</div>
-<hr>
-<div class="row"><span class="lbl">Receipt #</span><span class="val">${d.receiptNum||'—'}</span></div>
-<div class="row"><span class="lbl">Date</span><span class="val">${d.date||'—'}</span></div>
-<div class="row"><span class="lbl">Paid To</span><span class="val">${d.name||'—'}</span></div>
-${d.phone?`<div class="row"><span class="lbl">Phone</span><span class="val">${d.phone}</span></div>`:''}
-${d.payeeType?`<div class="row"><span class="lbl">Type</span><span class="val">${d.payeeType}</span></div>`:''}
-<div class="row"><span class="lbl">Job Site</span><span class="val">${d.jobSite||'—'}</span></div>
-<hr>
-<div class="amt">
-  <div style="font-size:11px;color:#888;text-transform:uppercase;letter-spacing:1px;">Amount Paid</div>
-  <div class="amt-n">${amountStr}</div>
-  <div style="font-size:13px;color:#666;margin-top:2px;">${d.method||'CASH'}</div>
-</div>
-${d.category?`<div class="row"><span class="lbl">Category</span><span class="val">${d.category}</span></div>`:''}
-${d.description?`<div class="row"><span class="lbl">Description</span><span class="val">${d.description}</span></div>`:''}
-<div class="sig-sec">
-  <div style="font-size:12px;color:#666;font-weight:600;">Payee Signature / Firma</div>
-  <img class="sig-img" src="${d.signatureImage||''}" alt="Signature">
-  <div class="sig-note">Signed digitally: ${d.signed_at||'—'}</div>
-  <div class="sig-note">Via FCD Receipt App · fcdteam.com</div>
-</div>
-<button onclick="window.print()" style="margin-top:20px;width:100%;padding:12px;background:#E87722;color:#fff;border:none;border-radius:8px;font-size:15px;font-weight:700;cursor:pointer;">
-  🖨 Print / Save as PDF
-</button>
-</body></html>`;
-  const blob = new Blob([html], { type: 'text/html' });
-  window.open(URL.createObjectURL(blob), '_blank');
+
+  // Remove existing overlay if any
+  const old = document.getElementById('rcpt-print-view');
+  if (old) old.remove();
+
+  const el = document.createElement('div');
+  el.id = 'rcpt-print-view';
+  el.style.cssText = 'position:fixed;inset:0;background:#fff;z-index:9999;overflow-y:auto;-webkit-overflow-scrolling:touch;';
+
+  const rows = [
+    ['Receipt #', d.receiptNum],
+    ['Date', d.date],
+    ['Paid To', d.name],
+    d.phone      ? ['Phone', d.phone]           : null,
+    d.payeeType  ? ['Type', d.payeeType]        : null,
+    ['Job Site', d.jobSite],
+    d.category   ? ['Category', d.category]     : null,
+    d.description? ['Description', d.description]: null,
+  ].filter(Boolean);
+
+  el.innerHTML = `
+    <style>
+      @media print {
+        body > *:not(#rcpt-print-view) { display:none!important; }
+        #rcpt-print-view { position:static!important; overflow:visible!important; }
+        .no-print { display:none!important; }
+      }
+    </style>
+    <div style="max-width:460px;margin:0 auto;padding:20px 18px 48px;">
+
+      <!-- Screenshot tip -->
+      <div class="no-print" style="background:#fff8f0;border:1.5px solid #E87722;border-radius:10px;padding:11px 14px;margin-bottom:18px;font-size:13px;color:#E87722;font-weight:700;text-align:center;line-height:1.5;">
+        📸 Take a screenshot to save your copy<br>
+        <span style="font-weight:500;color:#b85c10;">Toma una captura de pantalla para guardar</span>
+      </div>
+
+      <!-- Header -->
+      <div style="text-align:center;margin-bottom:14px;">
+        <div style="font-size:22px;font-weight:900;color:#E87722;letter-spacing:1px;">FCD</div>
+        <div style="font-size:13px;color:#666;">Future Construction &amp; Design</div>
+        <div style="font-size:12px;color:#999;">310-634-2157 · FutureConstructionTeam@gmail.com</div>
+      </div>
+      <div style="text-align:center;font-size:15px;font-weight:800;letter-spacing:.5px;margin-bottom:12px;">CASH PAYMENT RECEIPT</div>
+      <hr style="border:none;border-top:2px solid #e0e0e0;margin:0 0 10px;">
+
+      <!-- Fields -->
+      ${rows.map(([l,v]) => `
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;padding:7px 0;border-bottom:1px solid #f2f2f2;font-size:14px;">
+          <span style="color:#888;min-width:90px;">${l}</span>
+          <span style="font-weight:600;text-align:right;flex:1;padding-left:12px;">${v||'—'}</span>
+        </div>`).join('')}
+
+      <!-- Amount box -->
+      <div style="background:#f5f5f5;border-radius:10px;padding:16px;text-align:center;margin:16px 0;">
+        <div style="font-size:11px;color:#888;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;">Amount Paid</div>
+        <div style="font-size:34px;font-weight:900;color:#1C2B4A;line-height:1;">${amountStr}</div>
+        <div style="font-size:13px;color:#666;margin-top:4px;">${d.method||'CASH'}</div>
+      </div>
+
+      <!-- Signature -->
+      <div style="text-align:center;margin-top:16px;">
+        <div style="font-size:13px;color:#555;font-weight:700;margin-bottom:8px;">Payee Signature / Firma</div>
+        <img src="${d.signatureImage||''}" alt="Signature"
+          style="max-width:220px;width:100%;border:1.5px solid #ddd;border-radius:8px;display:block;margin:0 auto;">
+        <div style="font-size:11px;color:#aaa;margin-top:6px;">Signed digitally: ${d.signed_at||'—'}</div>
+        <div style="font-size:11px;color:#aaa;">Via FCD Receipt App · fcdteam.com</div>
+      </div>
+
+      <!-- Buttons -->
+      <div class="no-print" style="margin-top:28px;display:flex;flex-direction:column;gap:10px;">
+        <button onclick="window.print()" style="padding:14px;background:#1C2B4A;color:#fff;border:none;border-radius:12px;font-size:15px;font-weight:700;cursor:pointer;">
+          🖨 Print / Save as PDF
+        </button>
+        <button onclick="document.getElementById('rcpt-print-view').remove()" style="padding:13px;background:#f0f0f0;color:#555;border:none;border-radius:12px;font-size:14px;font-weight:600;cursor:pointer;">
+          ✕ Close
+        </button>
+      </div>
+    </div>`;
+
+  document.body.appendChild(el);
+  el.scrollTop = 0;
 }
 
 // ══════════════════════════════════════════════
