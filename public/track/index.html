@@ -260,17 +260,60 @@
   }
   @keyframes spin { to { transform: rotate(360deg); } }
 
+  /* LOGIN SCREEN */
+  #login-screen {
+    display: none; position: fixed; inset: 0; z-index: 900;
+    background: var(--navy); align-items: center; justify-content: center;
+  }
+  #login-screen.active { display: flex; }
+  .login-card {
+    background: #fff; border-radius: 18px;
+    padding: 36px 28px 28px; width: 90%; max-width: 380px;
+    box-shadow: 0 12px 40px rgba(0,0,0,0.35);
+    display: flex; flex-direction: column; align-items: center;
+  }
+  .login-logo {
+    background: var(--orange); color: #fff;
+    font-weight: 900; font-size: 22px; letter-spacing: 2px;
+    border-radius: 10px; padding: 8px 18px; margin-bottom: 10px;
+  }
+  .login-card h2 { color: var(--navy); font-size: 18px; font-weight: 700; margin-bottom: 22px; }
+  .login-card label { font-size: 13px; font-weight: 600; color: var(--navy); display: block; margin-bottom: 5px; align-self: flex-start; width: 100%; }
+  .login-card input[type=text],
+  .login-card input[type=password] {
+    width: 100%; border: 1.5px solid var(--gray2); border-radius: 8px;
+    padding: 11px 12px; font-size: 15px; margin-bottom: 14px; outline: none;
+    transition: border 0.15s;
+  }
+  .login-card input:focus { border-color: var(--orange); }
+  .login-remember {
+    display: flex; align-items: center; gap: 8px; align-self: flex-start;
+    margin-bottom: 18px; font-size: 14px; color: var(--muted); cursor: pointer;
+  }
+  .login-remember input { width: auto; margin: 0; }
+  .login-error { color: var(--red); font-size: 13px; margin-bottom: 10px; display: none; }
+
   /* LIGHTBOX */
   #lightbox {
     display: none; position: fixed; inset: 0; z-index: 500;
-    background: rgba(0,0,0,0.85); align-items: center; justify-content: center;
+    background: rgba(0,0,0,0.92);
+    flex-direction: column; align-items: center; justify-content: center; gap: 14px;
   }
   #lightbox.active { display: flex; }
-  #lightbox img { max-width: 92vw; max-height: 88vh; border-radius: 10px; }
+  #lightbox img { max-width: 92vw; max-height: 72vh; border-radius: 10px; cursor: pointer; }
   #lightbox-close {
     position: fixed; top: 18px; right: 22px; font-size: 30px; color: #fff; cursor: pointer;
     background: none; border: none; line-height: 1;
   }
+  #lightbox-actions {
+    display: flex; gap: 12px;
+  }
+  #lightbox-actions button {
+    background: rgba(255,255,255,0.15); border: 1.5px solid rgba(255,255,255,0.35);
+    color: #fff; border-radius: 8px; padding: 10px 22px; font-size: 15px; font-weight: 600;
+    cursor: pointer; transition: background 0.15s;
+  }
+  #lightbox-actions button:hover { background: rgba(255,255,255,0.28); }
 
   @media (max-width: 480px) {
     .stats-grid { grid-template-columns: 1fr 1fr; }
@@ -288,34 +331,36 @@
   </div>
   <div class="actions">
     <button id="btn-refresh" onclick="handleRefresh()">&#8635; Refresh</button>
-    <button class="settings-btn" onclick="showSetup(true)" title="Settings">&#9881;</button>
+    <button class="settings-btn" onclick="doLogout()" title="Log out" style="font-size:15px;">&#x2715;</button>
   </div>
 </div>
 
-<!-- SETUP SCREEN -->
-<div id="setup-screen">
-  <div class="setup-card">
-    <h2>FCD Dashboard Setup</h2>
-    <hr class="divider">
-    <p>To load your receipts, connect to Netlify.</p>
-
-    <label for="inp-token">Netlify Personal Access Token</label>
-    <input type="password" id="inp-token" placeholder="nfp_xxxxxxxxxxxxxxxx" autocomplete="off">
-    <p class="hint">Get it at: <a href="https://app.netlify.com" target="_blank">app.netlify.com</a> → User Settings → Personal Access Tokens</p>
-
-    <label for="inp-site">Netlify Site ID</label>
-    <input type="text" id="inp-site" placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" autocomplete="off">
-    <p class="hint">Get it at: <a href="https://app.netlify.com" target="_blank">app.netlify.com</a> → fcdteam.com → Site Settings → General → Site ID</p>
-
-    <button class="btn-primary" onclick="saveSetup()">Connect &#8594;</button>
-    <div class="setup-error" id="setup-error"></div>
+<!-- LOGIN SCREEN -->
+<div id="login-screen">
+  <div class="login-card">
+    <div class="login-logo">FCD</div>
+    <h2>Dashboard Login</h2>
+    <label for="login-id">Username</label>
+    <input type="text" id="login-id" placeholder="Username" autocomplete="username">
+    <label for="login-pw">Password</label>
+    <input type="password" id="login-pw" placeholder="Password" autocomplete="current-password"
+      onkeydown="if(event.key==='Enter') doLogin()">
+    <label class="login-remember">
+      <input type="checkbox" id="login-remember"> Remember me (30 days)
+    </label>
+    <div class="login-error" id="login-error">Incorrect username or password.</div>
+    <button class="btn-primary" onclick="doLogin()">Sign In &#8594;</button>
   </div>
 </div>
 
 <!-- LIGHTBOX -->
-<div id="lightbox" onclick="closeLightbox()">
+<div id="lightbox">
   <button id="lightbox-close" onclick="closeLightbox()">&times;</button>
-  <img id="lightbox-img" src="" alt="Receipt photo">
+  <img id="lightbox-img" src="" alt="Receipt photo" onclick="closeLightbox()">
+  <div id="lightbox-actions">
+    <button onclick="savePhoto()">&#11015; Save</button>
+    <button onclick="sharePhoto()">&#11014; Share</button>
+  </div>
 </div>
 
 <!-- MAIN -->
@@ -391,14 +436,69 @@ const BUDGETS = { daisy: 148000, mak: 14000 };
 let currentTab = 'all';
 let allSubmissions = []; // [{type:'worker'|'cash', id, data, created_at}]
 
+// ─── AUTH ──────────────────────────────────────────────────────────────────
+const AUTH_USER = 'tienpham';
+const AUTH_PASS = 'Future$2024';
+const AUTH_KEY  = 'fcd_auth_expiry';
+
+function checkAuth() {
+  const expiry = ls(AUTH_KEY);
+  return expiry && parseInt(expiry, 10) > Date.now();
+}
+
+function showLogin() {
+  document.getElementById('login-screen').classList.add('active');
+  document.getElementById('topbar').style.display = 'none';
+  document.getElementById('main').style.display = 'none';
+  setTimeout(() => document.getElementById('login-id').focus(), 200);
+}
+
+function hideLogin() {
+  document.getElementById('login-screen').classList.remove('active');
+  document.getElementById('topbar').style.display = '';
+  document.getElementById('main').style.display = '';
+}
+
+function doLogin() {
+  const u = document.getElementById('login-id').value.trim();
+  const p = document.getElementById('login-pw').value;
+  const err = document.getElementById('login-error');
+  if (u === AUTH_USER && p === AUTH_PASS) {
+    err.style.display = 'none';
+    const remember = document.getElementById('login-remember').checked;
+    const days = remember ? 30 : 1;
+    ls(AUTH_KEY, String(Date.now() + days * 86400000));
+    hideLogin();
+    loadFromCacheOrFetch();
+  } else {
+    err.style.display = 'block';
+    document.getElementById('login-pw').value = '';
+    document.getElementById('login-pw').focus();
+  }
+}
+
+function doLogout() {
+  localStorage.removeItem(AUTH_KEY);
+  document.getElementById('login-id').value = '';
+  document.getElementById('login-pw').value = '';
+  document.getElementById('login-error').style.display = 'none';
+  showLogin();
+}
+
 // ─── INIT ──────────────────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
   registerPWA();
-  // Pre-load FCD credentials
-  if (!ls('fcd_netlify_token')) ls('fcd_netlify_token', 'nfp_CCK6pGsrx82ANUwhHWZQpi16s6bgGe4w3ef1');
-  if (!ls('fcd_netlify_site_id')) ls('fcd_netlify_site_id', '873eb10a-fd02-4d4e-94d6-0e2ae12edff7');
-  loadQBDisplay();
-  loadFromCacheOrFetch();
+  // Credentials always hardcoded — never shown to users
+  ls('fcd_netlify_token',   'nfp_CCK6pGsrx82ANUwhHWZQpi16s6bgGe4w3ef1');
+  ls('fcd_netlify_site_id', '873eb10a-fd02-4d4e-94d6-0e2ae12edff7');
+
+  if (checkAuth()) {
+    loadQBDisplay();
+    loadFromCacheOrFetch();
+  } else {
+    showLogin();
+    loadQBDisplay(); // load QB in background silently
+  }
 });
 
 // ─── PWA ───────────────────────────────────────────────────────────────────
@@ -456,37 +556,8 @@ function lsj(key, val) {
   localStorage.setItem(key, JSON.stringify(val));
 }
 
-// ─── SETUP ─────────────────────────────────────────────────────────────────
-function showSetup(closeable) {
-  const screen = document.getElementById('setup-screen');
-  screen.classList.add('active');
-  // pre-fill
-  document.getElementById('inp-token').value = ls('fcd_netlify_token') || '';
-  document.getElementById('inp-site').value = ls('fcd_netlify_site_id') || '';
-  if (closeable) {
-    screen.onclick = e => { if (e.target === screen) hideSetup(); };
-  } else {
-    screen.onclick = null;
-  }
-}
-function hideSetup() {
-  document.getElementById('setup-screen').classList.remove('active');
-}
-function saveSetup() {
-  const token = document.getElementById('inp-token').value.trim();
-  const siteId = document.getElementById('inp-site').value.trim();
-  const errEl = document.getElementById('setup-error');
-  errEl.style.display = 'none';
-  if (!token || !siteId) {
-    errEl.textContent = 'Both fields are required.';
-    errEl.style.display = 'block';
-    return;
-  }
-  ls('fcd_netlify_token', token);
-  ls('fcd_netlify_site_id', siteId);
-  hideSetup();
-  handleRefresh();
-}
+// ─── SETUP (internal — no UI exposed) ──────────────────────────────────────
+// Credentials are hardcoded at init. No setup screen needed.
 
 // ─── FETCH ─────────────────────────────────────────────────────────────────
 async function fetchNetlifyForms(token, siteId) {
@@ -518,7 +589,7 @@ async function fetchNetlifyForms(token, siteId) {
 async function handleRefresh() {
   const token = ls('fcd_netlify_token');
   const siteId = ls('fcd_netlify_site_id');
-  if (!token || !siteId) { showSetup(false); return; }
+  if (!token || !siteId) return; // always set at init
 
   showLoading();
   try {
@@ -845,13 +916,51 @@ function hideStates() {
 }
 
 // ─── LIGHTBOX ──────────────────────────────────────────────────────────────
+let _lightboxUrl = '';
 function openLightbox(url) {
+  _lightboxUrl = url;
   document.getElementById('lightbox-img').src = url;
   document.getElementById('lightbox').classList.add('active');
 }
 function closeLightbox() {
   document.getElementById('lightbox').classList.remove('active');
   document.getElementById('lightbox-img').src = '';
+  _lightboxUrl = '';
+}
+function savePhoto() {
+  if (!_lightboxUrl) return;
+  const a = document.createElement('a');
+  a.href = _lightboxUrl;
+  a.download = 'receipt-photo.jpg';
+  a.target = '_blank';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+}
+async function sharePhoto() {
+  if (!_lightboxUrl) return;
+  if (navigator.share) {
+    try {
+      // Fetch the image and share as file (works on iOS Safari)
+      const resp = await fetch(_lightboxUrl);
+      const blob = await resp.blob();
+      const file = new File([blob], 'receipt-photo.jpg', { type: 'image/jpeg' });
+      if (navigator.canShare && navigator.canShare({ files: [file] })) {
+        await navigator.share({ files: [file], title: 'FCD Receipt Photo' });
+        return;
+      }
+      // Fallback: share URL
+      await navigator.share({ url: _lightboxUrl, title: 'FCD Receipt Photo' });
+    } catch (e) {
+      if (e.name !== 'AbortError') {
+        // Fallback: open in new tab
+        window.open(_lightboxUrl, '_blank');
+      }
+    }
+  } else {
+    // Desktop: open full-size in new tab
+    window.open(_lightboxUrl, '_blank');
+  }
 }
 
 // ─── HELPERS ───────────────────────────────────────────────────────────────
