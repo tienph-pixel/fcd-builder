@@ -4,6 +4,13 @@
 
 # Internal apps — serve directly, bypass Astro catch-all
 [[redirects]]
+  from = "/hub"
+  to = "/hub/index.html"
+  status = 200
+  force = true
+
+
+[[redirects]]
   from = "/worker"
   to = "/worker/index.html"
   status = 200
