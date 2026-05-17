@@ -350,12 +350,12 @@
   <!-- QB SYNC -->
   <div class="qb-card">
     <h3>QuickBooks Totals</h3>
-    <div class="last-sync" id="qb-last-sync">Last synced: Never</div>
-    <p>Ask Claude to sync QB and paste the result here:</p>
-    <textarea id="qb-textarea" placeholder='{"daisy_spent": 12500, "mak_spent": 3200, "synced_at": "2026-05-16T16:00:00"}'></textarea>
-    <button class="btn-save" onclick="saveQBData()">Save QB Data</button>
-    <div class="qb-save-msg" id="qb-save-msg">&#10003; Saved!</div>
-    <div class="qb-err-msg" id="qb-err-msg">Invalid JSON — check format and try again.</div>
+    <div class="last-sync" id="qb-last-sync">Last synced: Loading…</div>
+    <div style="display:flex;gap:8px;margin-top:8px;">
+      <button class="btn-save" id="qb-refresh-btn" onclick="loadQBFromGitHub(true)">&#8635; Refresh QB</button>
+      <div class="qb-save-msg" id="qb-save-msg" style="display:none;align-self:center;">&#10003; Updated!</div>
+      <div class="qb-err-msg" id="qb-err-msg" style="display:none;align-self:center;">Could not load QB data.</div>
+    </div>
   </div>
 
   <!-- FILTER TABS -->
@@ -614,31 +614,53 @@ function updateStats() {
   }
 }
 
-function loadQBDisplay() {
+async function loadQBDisplay() {
   const qb = lsj('fcd_qb_sync');
   if (qb && qb.synced_at) {
     document.getElementById('qb-last-sync').textContent = 'Last synced: ' + fmtDate(qb.synced_at);
   }
+  // Auto-fetch on load (silent, no spinner)
+  await loadQBFromGitHub(false);
 }
 
-function saveQBData() {
-  const raw = document.getElementById('qb-textarea').value.trim();
+async function loadQBFromGitHub(showFeedback) {
+  const btn = document.getElementById('qb-refresh-btn');
   const saveMsg = document.getElementById('qb-save-msg');
   const errMsg = document.getElementById('qb-err-msg');
   saveMsg.style.display = 'none';
   errMsg.style.display = 'none';
+  if (btn) { btn.disabled = true; btn.textContent = '⏳ Loading…'; }
+
   try {
-    const parsed = JSON.parse(raw);
+    // Bust cache so we always get the latest deploy
+    const url = '/data/qb-sync.json?t=' + Date.now();
+    const res = await fetch(url);
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const parsed = await res.json();
     if (typeof parsed.daisy_spent === 'undefined' || typeof parsed.mak_spent === 'undefined') {
       throw new Error('Missing fields');
     }
     lsj('fcd_qb_sync', parsed);
     document.getElementById('qb-last-sync').textContent = 'Last synced: ' + fmtDate(parsed.synced_at || new Date().toISOString());
-    saveMsg.style.display = 'block';
+    if (showFeedback) {
+      saveMsg.style.display = 'inline';
+      setTimeout(() => { saveMsg.style.display = 'none'; }, 3000);
+    }
     updateStats();
-    setTimeout(() => { saveMsg.style.display = 'none'; }, 3000);
-  } catch {
-    errMsg.style.display = 'block';
+  } catch (e) {
+    if (showFeedback) {
+      errMsg.style.display = 'inline';
+      setTimeout(() => { errMsg.style.display = 'none'; }, 4000);
+    }
+    // Fall back to cached value silently
+    const cached = lsj('fcd_qb_sync');
+    if (cached && cached.synced_at) {
+      document.getElementById('qb-last-sync').textContent = 'Last synced: ' + fmtDate(cached.synced_at) + ' (cached)';
+    } else {
+      document.getElementById('qb-last-sync').textContent = 'QB data not available yet';
+    }
+  } finally {
+    if (btn) { btn.disabled = false; btn.textContent = '↻ Refresh QB'; }
   }
 }
 
